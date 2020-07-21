@@ -84,6 +84,11 @@ protected:
 	void PilotTakingControl(APilotCharacter* PilotRef, bool bTaking, USceneComponent* AttachPoint, FTransform RelativeTransformToSeat, FTransform InitialCameraTransform);
 
 public:
+
+	/** Get Owned Pilot Character */
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE APilotCharacter* GetOwnedPilot() const { return OwnedPilot; }
+	
 	/** Sit pilot down to the Mech and takes control of it */
 	UFUNCTION(BlueprintCallable)
     void PilotSitDown(APilotCharacter* PilotRef);

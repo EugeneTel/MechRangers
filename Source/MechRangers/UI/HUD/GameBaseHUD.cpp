@@ -4,16 +4,28 @@
 #include "GameBaseHUD.h"
 #include "Engine/Canvas.h"
 #include "Engine/Texture2D.h"
-
-
-#include "Log.h"
+#include "MechRangers/Core/MechRangersGameMode.h"
 #include "MechRangers/Gameplay/Characters/Pilot/PilotCharacter.h"
+#include "Engine/World.h"
+#include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "Log.h"
 
 AGameBaseHUD::AGameBaseHUD()
 {   
     // Set the crosshair texture
     static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("Texture2D'/Game/MechRangers/UI/HUD/Textures/Crosshair-blue.Crosshair-blue'"));
     CrosshairTex = CrosshairTexObj.Object;
+}
+
+void AGameBaseHUD::BeginPlay()
+{
+    UWorld* World = GetWorld();
+    if (World)
+    {
+        AMechRangersGameMode* GameMode = Cast<AMechRangersGameMode>(World->GetAuthGameMode());
+    
+        bVRMode = GameMode->bVRMode;
+    }
 }
 
 void AGameBaseHUD::DrawHUD()
@@ -23,13 +35,16 @@ void AGameBaseHUD::DrawHUD()
     if (Canvas == nullptr)
         return;
 
-    DrawLimbsCrosshairs();
+   // DrawLimbsCrosshairs();
 }
 
-void AGameBaseHUD::DrawCrosshair(FVector ScreenLocation, ELimbCrosshairType CrosshairType)
+void AGameBaseHUD::DrawCrosshairFlat(FVector CrosshairLocation, ELimbCrosshairType CrosshairType)
 {
     if (CrosshairType == ELimbCrosshairType::ELCT_None)
         return;
+
+    FVector ScreenLocation;
+    GetOwningPlayerController()->ProjectWorldLocationToScreenWithDistance(CrosshairLocation, ScreenLocation, true);
 
     // Calculate crosshair size
     float CrosshairMaxSize = 80.f;
@@ -65,10 +80,13 @@ void AGameBaseHUD::DrawLimbsCrosshairs()
         if (Limb && Limb->GetCrosshairType() != ELimbCrosshairType::ELCT_None)
         {
             FVector TraceEndPoint = Limb->GetTraceEndPoint();
-            FVector ScreenLocation;
-            if (GetOwningPlayerController()->ProjectWorldLocationToScreenWithDistance(TraceEndPoint, ScreenLocation, true))
+
+            if (bVRMode)
             {
-                DrawCrosshair(ScreenLocation, Limb->GetCrosshairType());
+                
+            } else
+            {
+                DrawCrosshairFlat(TraceEndPoint, Limb->GetCrosshairType());
             }
         }
     }

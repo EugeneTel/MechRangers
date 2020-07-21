@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/CapsuleComponent.h"
-#include "GameFramework/Actor.h"
 #include "BaseLimb.generated.h"
+
+class ACrosshairBase;
 
 /** Limb Type */
 UENUM(BlueprintType)
@@ -50,9 +50,17 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	FVector TraceEndPoint;
 
+	/** Crosshair instance for the current limb */
+	UPROPERTY(BlueprintReadWrite)
+	ACrosshairBase* Crosshair;
+
 	/** Crosshair Type of the Limb */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	ELimbCrosshairType CrosshairType;
+
+	/** Crosshair actor class with widget */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<ACrosshairBase> CrosshairClass;
 
 	/** Controlling speed (rotate, move etc.) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -75,5 +83,9 @@ public:
 	/** Make a line trace */
 	UFUNCTION(BlueprintCallable)
 	void Trace();
+
+	/** Spawn Crosshair from the class */
+	UFUNCTION(BlueprintCallable)
+	void SpawnCrosshair();
 
 };

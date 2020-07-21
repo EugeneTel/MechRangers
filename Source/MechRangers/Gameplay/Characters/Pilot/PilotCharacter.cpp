@@ -3,6 +3,9 @@
 
 #include "PilotCharacter.h"
 
+#include "MechRangers/Core/MechRangersGameMode.h"
+#include "MechRangers/Gameplay/Mechs/BaseMech.h"
+
 APilotCharacter::APilotCharacter()
 {
     bVRMode = true;
@@ -22,6 +25,14 @@ void APilotCharacter::BeginPlay()
     if (OwningMech)
     {
         OwningMech->PilotSitDown(this);
+    }
+
+    UWorld* World = GetWorld();
+    if (World)
+    {
+        AMechRangersGameMode* GameMode = Cast<AMechRangersGameMode>(World->GetAuthGameMode());
+    
+        bVRMode = GameMode->bVRMode;
     }
     
     // Set Tracking to Floor. Without it in Oculus Rift is under floor.

@@ -4,6 +4,11 @@
 #include "BaseLimb.h"
 
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/Actor.h"
+#include "MechRangers/UI/HUD/CrosshairBase.h"
+#include "MechRangers/Gameplay/Characters/Pilot/PilotCharacter.h"
+#include "MechRangers/Gameplay/Mechs/BaseMech.h"
 #include "Log.h"
 
 // Sets default values
@@ -27,7 +32,8 @@ ABaseLimb::ABaseLimb()
 void ABaseLimb::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SpawnCrosshair();
 }
 
 // Called every frame
@@ -62,5 +68,27 @@ void ABaseLimb::Trace()
 
 	// Save trace end point for future usage
 	TraceEndPoint = EndPoint;
+
+	// Update Crosshair Position
+	if (Crosshair)
+	{
+		Crosshair->SetActorLocation(EndPoint);
+
+		ABaseMech* Mech = Cast<ABaseMech>(GetOwner());
+		if (Mech)
+		{
+			Crosshair->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Crosshair->GetActorLocation(), Mech->GetOwnedPilot()->GetActorLocation()));
+		}
+	}
+}
+
+void ABaseLimb::SpawnCrosshair()
+{
+	if (!CrosshairClass)
+		return;
+
+	FVector SpawnLocation = GetActorLocation();
+	FActorSpawnParameters SpawnParams;
+	Crosshair = GetWorld()->SpawnActor<ACrosshairBase>(CrosshairClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 }
 

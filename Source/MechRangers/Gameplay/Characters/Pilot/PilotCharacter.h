@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "VRCharacter.h"
-#include "MechRangers/Gameplay/Mechs/BaseMech.h"
 
 #include "PilotCharacter.generated.h"
+
+class ABaseMech;
 
 /**
  * 
@@ -18,8 +19,8 @@ class MECHRANGERS_API APilotCharacter : public AVRCharacter
 
 protected:
     
-    /** Is OwnedPilot in VR Mode */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Settings)
+    /** Is in VR Mode */
+    UPROPERTY(BlueprintReadWrite)
     bool bVRMode;
 
     /** Camera for Flat mode */

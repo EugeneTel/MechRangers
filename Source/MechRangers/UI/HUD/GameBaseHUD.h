@@ -16,6 +16,11 @@ class MECHRANGERS_API AGameBaseHUD : public AHUD
 {
 	GENERATED_BODY()
 
+protected:
+
+	/** Is VRMode */
+	UPROPERTY(BlueprintReadWrite)
+	bool bVRMode;
 
 public:
 
@@ -24,12 +29,14 @@ public:
 	UTexture2D* CrosshairTex;
 
 	AGameBaseHUD();
+
+	void BeginPlay() override;
 	
 	virtual void DrawHUD() override;
 
-	/** Draw Crosshair on the screen */
+	/** Draw Crosshair for Flat game mode on the screen */
 	UFUNCTION(BlueprintCallable)
-	void DrawCrosshair(FVector ScreenLocation, ELimbCrosshairType CrosshairType);
+	void DrawCrosshairFlat(FVector CrosshairLocation, ELimbCrosshairType CrosshairType);
 
 	/** Draw crosshair for each mech limb */
 	UFUNCTION(BlueprintCallable)

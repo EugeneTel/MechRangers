@@ -3,3 +3,7 @@
 
 #include "MechRangersGameMode.h"
 
+AMechRangersGameMode::AMechRangersGameMode()
+{
+    bVRMode = true;
+}

@@ -13,5 +13,12 @@ UCLASS()
 class MECHRANGERS_API AMechRangersGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
+public:
+
+    AMechRangersGameMode();
+
+    /** Is VR Mode */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bVRMode;
 };
