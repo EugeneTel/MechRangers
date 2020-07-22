@@ -9,6 +9,7 @@
 #include "MechRangers/UI/HUD/CrosshairBase.h"
 #include "MechRangers/Gameplay/Characters/Pilot/PilotCharacter.h"
 #include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "MechRangers/Gameplay/Weapons/WeaponBase.h"
 #include "Log.h"
 
 // Sets default values
@@ -20,12 +21,22 @@ ABaseLimb::ABaseLimb()
 	// Create Components
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetupAttachment(RootComponent);
 
 	// Setup Defaults
 	ControlSpeed = 20.f;
 	CrosshairType = ELimbCrosshairType::ELCT_None;
+}
+
+void ABaseLimb::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// TODO: Check Authority
+
+	// Needs to happen after character is added to repgraph
+	GetWorldTimerManager().SetTimerForNextTick(this, &ABaseLimb::SpawnDefaultInventory);
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +55,21 @@ void ABaseLimb::Tick(float DeltaTime)
 	Trace();
 }
 
+void ABaseLimb::SetOwnedMech(ABaseMech* NewMech)
+{
+	OwnedMech = NewMech;
+}
+
+ABaseMech* ABaseLimb::GetOwnedMech() const
+{
+	return OwnedMech;
+}
+
+UStaticMeshComponent* ABaseLimb::GetMesh() const
+{
+	return MeshComp;
+}
+
 void ABaseLimb::Control(const float AxisX, const float AxisY)
 {
 	const float RotationSpeed = ControlSpeed * GetWorld()->GetDeltaSeconds(); 
@@ -53,8 +79,8 @@ void ABaseLimb::Control(const float AxisX, const float AxisY)
 void ABaseLimb::Trace()
 {
 	const float TraceLength = 10000.f;
-	const FVector StartPoint = Mesh->GetSocketLocation(FName("Muzzle"));
-	FVector EndPoint = StartPoint + Mesh->GetForwardVector() * TraceLength;
+	const FVector StartPoint = MeshComp->GetSocketLocation(FName("Muzzle"));
+	FVector EndPoint = StartPoint + MeshComp->GetForwardVector() * TraceLength;
 
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
@@ -92,3 +118,93 @@ void ABaseLimb::SpawnCrosshair()
 	Crosshair = GetWorld()->SpawnActor<ACrosshairBase>(CrosshairClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+// Inventory
+//----------------------------------------------------------------------------------------------------------------------
+
+void ABaseLimb::SetCurrentWeapon(AWeaponBase* NewWeapon, AWeaponBase* LastWeapon)
+{
+	AWeaponBase* LocalLastWeapon = nullptr;
+
+	if (LastWeapon != NULL)
+	{
+		LocalLastWeapon = LastWeapon;
+	}
+	else if (NewWeapon != CurrentWeapon)
+	{
+		LocalLastWeapon = CurrentWeapon;
+	}
+
+	// unequip previous
+	if (LocalLastWeapon)
+	{
+		LocalLastWeapon->OnUnEquip();
+	}
+
+	CurrentWeapon = NewWeapon;
+
+	// equip new one
+	if (NewWeapon)
+	{
+		NewWeapon->SetOwnedLimb(this);	// Make sure weapon's Limb is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
+
+		NewWeapon->OnEquip(LastWeapon);
+	}
+}
+
+void ABaseLimb::SpawnDefaultInventory()
+{
+	if (SocketsConfig.Num() == 0)
+		return;
+	
+	for (const TPair<ELimbSocket, FLimbSocketData>& SocketConfig : SocketsConfig)
+	{
+		FLimbSocketData SocketData = SocketConfig.Value;
+
+		if (SocketData.DefaultWeapon)
+		{
+			const ELimbSocket Socket = SocketConfig.Key;
+
+			FActorSpawnParameters SpawnInfo;
+			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>(SocketData.DefaultWeapon, SpawnInfo);
+			AddWeapon(Socket, NewWeapon);
+		}
+	}
+}
+
+void ABaseLimb::DestroyInventory()
+{
+}
+
+void ABaseLimb::AddWeapon(ELimbSocket Socket, AWeaponBase* Weapon)
+{
+	if (Weapon && GetLocalRole() == ROLE_Authority)
+	{
+		Weapon->OnEnterInventory(this);
+		Weapon->AttachMeshToLimb(Socket);
+		Inventory.Add(Socket, Weapon);
+		Weapon->StartFire();
+	}
+}
+
+void ABaseLimb::EquipWeapon(const ELimbSocket Socket)
+{
+	if (!Inventory.Contains(Socket))
+		return;
+
+	// TODO: Server implementation
+	SetCurrentWeapon(Inventory[Socket]);
+}
+
+FName ABaseLimb::GetWeaponAttachPoint(const ELimbSocket Socket) const
+{
+	FName AttachPoint;
+	
+	if (SocketsConfig.Contains(Socket))
+	{
+		AttachPoint = SocketsConfig[Socket].AttachPoint;
+	}
+
+	return AttachPoint;
+}

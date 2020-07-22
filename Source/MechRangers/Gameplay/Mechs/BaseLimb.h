@@ -6,6 +6,8 @@
 #include "BaseLimb.generated.h"
 
 class ACrosshairBase;
+class ABaseMech;
+class AWeaponBase;
 
 /** Limb Type */
 UENUM(BlueprintType)
@@ -23,10 +25,44 @@ enum class ELimbCrosshairType : uint8
 	ELCT_Basic UMETA(DisplayName = "Basic")
 };
 
+/** Limb sockets for weapon attachment */
+UENUM(BlueprintType)
+enum class ELimbSocket : uint8
+{
+	ELS_Primary UMETA(DisplayName = "Primary"),
+	ELS_Secondary UMETA(DisplayName = "Secondary")
+};
+
+/** Limb Socket data used for weapon spawning and attaching */ 
+USTRUCT(BlueprintType)
+struct FLimbSocketData
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Mesh Socket name for attachment */
+	UPROPERTY(EditDefaultsOnly)
+	FName AttachPoint;
+
+	/** Default Weapon will be spawned and attached */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AWeaponBase> DefaultWeapon;
+
+	/** defaults */
+	FLimbSocketData()
+	{
+		AttachPoint = NAME_None;
+		DefaultWeapon = nullptr;
+	}
+	
+};
+
 UCLASS()
 class MECHRANGERS_API ABaseLimb : public AActor
 {
 	GENERATED_BODY()
+
+	/** spawn inventory, setup initial variables */
+	virtual void PostInitializeComponents() override;
 
 protected:
 	
@@ -44,7 +80,25 @@ protected:
 
 	/** Limb's Mesh component */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* MeshComp;
+
+	/** Mech owned by the Limb */
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	ABaseMech* OwnedMech;
+
+	/** Limb sockets configuration. Used for spawning weapons */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TMap<ELimbSocket, FLimbSocketData> SocketsConfig;
+
+	/** weapons in inventory */
+	// @TODO: Replication
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	TMap<ELimbSocket, AWeaponBase*> Inventory;
+
+	/** currently equipped weapon */
+	// @TODO: Replication
+	UPROPERTY(Transient/*, ReplicatedUsing = OnRep_CurrentWeapon*/)
+	AWeaponBase* CurrentWeapon;
 
 	/** Saved Trace End Point from the last Trace */
 	UPROPERTY(BlueprintReadWrite)
@@ -75,6 +129,18 @@ public:
 	/** Get Crosshair Type of the current Limb */
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ELimbCrosshairType GetCrosshairType() const { return CrosshairType; }
+
+	/** Set the Mech Owned by the Limb */
+	UFUNCTION(BlueprintCallable)
+	void SetOwnedMech(ABaseMech* NewMech);
+
+	/** Get the Mech Owned by the Limb */
+	UFUNCTION(BlueprintCallable)
+    ABaseMech* GetOwnedMech() const;
+
+	/** Get Mesh component */
+	UFUNCTION(BlueprintCallable)
+	UStaticMeshComponent* GetMesh() const;
 	
 	/** Control the Limb (rotate, move etc.) */
 	UFUNCTION(BlueprintCallable)
@@ -87,5 +153,32 @@ public:
 	/** Spawn Crosshair from the class */
 	UFUNCTION(BlueprintCallable)
 	void SpawnCrosshair();
+
+//----------------------------------------------------------------------------------------------------------------------
+// Inventory
+//----------------------------------------------------------------------------------------------------------------------
+public:
+	/** get weapon attach point */
+	FName GetWeaponAttachPoint(ELimbSocket Socket) const;
+	
+protected:
+	
+	/** updates current weapon */
+	UFUNCTION(BlueprintCallable)
+    void SetCurrentWeapon(class AWeaponBase* NewWeapon, class AWeaponBase* LastWeapon = nullptr);
+	
+	/** [server] spawns default inventory */
+	void SpawnDefaultInventory();
+
+	/** [server] remove all weapons from inventory and destroy them */
+	void DestroyInventory();
+
+	/** [server] add weapon to inventory */
+	void AddWeapon(ELimbSocket Socket, AWeaponBase* Weapon);
+
+	/** [server + local] equips weapon from inventory */
+	void EquipWeapon(ELimbSocket Socket);
+
+
 
 };
