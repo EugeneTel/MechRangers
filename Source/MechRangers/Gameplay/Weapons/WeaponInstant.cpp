@@ -2,6 +2,10 @@
 
 
 #include "WeaponInstant.h"
+#include "Kismet/GameplayStatics.h"
+#include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "MechRangers/Effects/WeaponImpactEffect.h"
 
 void AWeaponInstant::FireWeapon()
 {
@@ -38,4 +42,105 @@ float AWeaponInstant::GetCurrentSpread() const
     FinalSpread *= InstantConfig.TargetingSpreadMod;
 
     return FinalSpread;
+}
+
+void AWeaponInstant::ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir,
+    int32 RandomSeed, float ReticleSpread)
+{
+    // @TODO: Implement Server Notification
+
+    // process a confirmed hit
+    ProcessInstantHit_Confirmed(Impact, Origin, ShootDir, RandomSeed, ReticleSpread);
+}
+
+void AWeaponInstant::ProcessInstantHit_Confirmed(const FHitResult& Impact, const FVector& Origin,
+    const FVector& ShootDir, int32 RandomSeed, float ReticleSpread)
+{
+    // handle damage
+    if (ShouldDealDamage(Impact.GetActor()))
+    {
+        DealDamage(Impact, ShootDir);
+    }
+
+    // @TODO: play FX on remote clients
+
+    // play FX locally
+    if (GetNetMode() != NM_DedicatedServer)
+    {
+        const FVector EndTrace = Origin + ShootDir * InstantConfig.WeaponRange;
+        const FVector EndPoint = Impact.GetActor() ? Impact.ImpactPoint : EndTrace;
+
+        SpawnTrailEffect(EndPoint);
+        SpawnImpactEffects(Impact);
+    }
+}
+
+bool AWeaponInstant::ShouldDealDamage(AActor* TestActor) const
+{
+    // if we're an actor on the server, or the actor's role is authoritative, we should register damage
+    if (TestActor)
+    {
+        if (GetNetMode() != NM_Client ||
+            TestActor->GetLocalRole() == ROLE_Authority ||
+            TestActor->GetTearOff())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void AWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)
+{
+    FPointDamageEvent PointDmg;
+    PointDmg.DamageTypeClass = InstantConfig.DamageType;
+    PointDmg.HitInfo = Impact;
+    PointDmg.ShotDirection = ShootDir;
+    PointDmg.Damage = InstantConfig.HitDamage;    
+
+    Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, OwnedLimb->GetOwnedMech()->Controller, this);
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Effects
+//----------------------------------------------------------------------------------------------------------------------
+
+void AWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
+{
+    if (ImpactTemplate && Impact.bBlockingHit)
+    {
+        FHitResult UseImpact = Impact;
+
+        // trace again to find component lost during replication
+        if (!Impact.Component.IsValid())
+        {
+            const FVector StartTrace = Impact.ImpactPoint + Impact.ImpactNormal * 10.0f;
+            const FVector EndTrace = Impact.ImpactPoint - Impact.ImpactNormal * 10.0f;
+            FHitResult Hit = WeaponTrace(StartTrace, EndTrace);
+            UseImpact = Hit;
+        }
+
+        FTransform const SpawnTransform(Impact.ImpactNormal.Rotation(), Impact.ImpactPoint);
+        AWeaponImpactEffect* EffectActor = GetWorld()->SpawnActorDeferred<AWeaponImpactEffect>(ImpactTemplate, SpawnTransform);
+        if (EffectActor)
+        {
+            EffectActor->SurfaceHit = UseImpact;
+            UGameplayStatics::FinishSpawningActor(EffectActor, SpawnTransform);
+        }
+    }
+}
+
+void AWeaponInstant::SpawnTrailEffect(const FVector& EndPoint) const
+{
+    if (!TrailFX)
+        return;
+    
+    const FVector Origin = GetMuzzleLocation();
+
+    UParticleSystemComponent* TrailPSC = UGameplayStatics::SpawnEmitterAtLocation(this, TrailFX, Origin);
+    if (TrailPSC)
+    {
+        TrailPSC->SetVectorParameter(TrailTargetParam, EndPoint);
+    }
 }

@@ -6,6 +6,8 @@
 #include "MechRangers/Gameplay/Weapons/WeaponBase.h"
 #include "WeaponInstant.generated.h"
 
+class AWeaponImpactEffect;
+
 /**
  * Instant Weapon Data Structure
  */
@@ -101,5 +103,41 @@ protected:
 
     /** get current spread */
     float GetCurrentSpread() const;
+
+    /** process the instant hit and notify the server if necessary */
+    void ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir, int32 RandomSeed, float ReticleSpread);
+
+    /** continue processing the instant hit, as if it has been confirmed by the server */
+    void ProcessInstantHit_Confirmed(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir, int32 RandomSeed, float ReticleSpread);
+
+    /** check if weapon should deal damage to actor */
+    bool ShouldDealDamage(AActor* TestActor) const;
+
+    /** handle damage */
+    void DealDamage(const FHitResult& Impact, const FVector& ShootDir);
+
+//----------------------------------------------------------------------------------------------------------------------
+// Effects
+//----------------------------------------------------------------------------------------------------------------------
+
+protected:
+
+    /** impact effects */
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    TSubclassOf<AWeaponImpactEffect> ImpactTemplate;
+
+    /** smoke trail */
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    UParticleSystem* TrailFX;
+
+    /** param name for beam target in smoke trail */
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    FName TrailTargetParam;
+
+    /** spawn effects for impact */
+    void SpawnImpactEffects(const FHitResult& Impact);
+
+    /** spawn trail effect */
+    void SpawnTrailEffect(const FVector& EndPoint) const;
     
 };
