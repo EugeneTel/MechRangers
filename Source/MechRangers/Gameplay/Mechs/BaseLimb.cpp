@@ -27,6 +27,7 @@ ABaseLimb::ABaseLimb()
 	// Setup Defaults
 	ControlSpeed = 20.f;
 	CrosshairType = ELimbCrosshairType::ELCT_None;
+	bDebug = false;
 }
 
 void ABaseLimb::PostInitializeComponents()
@@ -90,7 +91,12 @@ void ABaseLimb::Trace()
 		EndPoint = HitResult.ImpactPoint;
 	}
 
-	DrawDebugLine(GetWorld(), StartPoint, EndPoint, FColor::Green, false, -1, 0.f, 2.f);
+	// Draw debug line
+	if (bDebug)
+	{
+		DrawDebugLine(GetWorld(), StartPoint, EndPoint, FColor::Green, false, -1, 0.f, 2.f);
+	}
+
 
 	// Save trace end point for future usage
 	TraceEndPoint = EndPoint;

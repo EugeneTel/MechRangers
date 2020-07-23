@@ -23,6 +23,7 @@ AExplosionEffect::AExplosionEffect(const FObjectInitializer& ObjectInitializer) 
 	ExplosionLight->SetVisibleFlag(true);
 
 	ExplosionLightFadeOut = 0.2f;
+	ExplosionFXScale = FVector::OneVector;
 }
 
 // Called when the game starts or when spawned
@@ -32,7 +33,7 @@ void AExplosionEffect::BeginPlay()
 
 	if (ExplosionFX)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionFX, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(this, ExplosionFX, GetActorLocation(), GetActorRotation(), ExplosionFXScale);
 	}
 
 	if (ExplosionSound)

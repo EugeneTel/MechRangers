@@ -20,9 +20,8 @@ void AWeaponInstant::FireWeapon()
     const FVector StartTrace = GetDamageStartLocation(AimDir);
     const FVector EndTrace = StartTrace + ShootDir * InstantConfig.WeaponRange;
 
-    const FHitResult Impact = WeaponTrace(StartTrace, EndTrace, true);
-
-    // @TODO: Process instant hit (damage, effects etc.)
+    const FHitResult Impact = WeaponTrace(StartTrace, EndTrace);
+    ProcessInstantHit(Impact, StartTrace, ShootDir, RandomSeed, CurrentSpread);
 
     CurrentFiringSpread = FMath::Min(InstantConfig.FiringSpreadMax, CurrentFiringSpread + InstantConfig.FiringSpreadIncrement);
 }
@@ -99,7 +98,9 @@ void AWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDi
     PointDmg.ShotDirection = ShootDir;
     PointDmg.Damage = InstantConfig.HitDamage;    
 
-    Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, OwnedLimb->GetOwnedMech()->Controller, this);
+    // @TODO: Deal Damage
+    
+    //Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, OwnedLimb->GetOwnedMech()->Controller, this);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -138,7 +139,7 @@ void AWeaponInstant::SpawnTrailEffect(const FVector& EndPoint) const
     
     const FVector Origin = GetMuzzleLocation();
 
-    UParticleSystemComponent* TrailPSC = UGameplayStatics::SpawnEmitterAtLocation(this, TrailFX, Origin);
+    UParticleSystemComponent* TrailPSC = UGameplayStatics::SpawnEmitterAtLocation(this, TrailFX, Origin, FRotator::ZeroRotator, FVector(3.f));
     if (TrailPSC)
     {
         TrailPSC->SetVectorParameter(TrailTargetParam, EndPoint);

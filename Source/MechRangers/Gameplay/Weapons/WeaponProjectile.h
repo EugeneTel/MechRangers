@@ -8,7 +8,7 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
-class AWeaponProjectile;
+class AProjectileBase;
 
 
 USTRUCT()
@@ -18,7 +18,7 @@ struct FProjectileWeaponData
 
     /** projectile class */
     UPROPERTY(EditDefaultsOnly, Category=Projectile)
-	TSubclassOf<AWeaponProjectile> ProjectileClass;
+	TSubclassOf<AProjectileBase> ProjectileClass;
 
 	/** life time */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)

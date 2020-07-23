@@ -8,6 +8,8 @@
 
 #include "WeaponBase.generated.h"
 
+class USoundCue;
+
 
 USTRUCT()
 struct FWeaponData
@@ -83,6 +85,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+
+	/** Enable debug mode */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Config)
+	bool bDebug;
 
 	/** Weapon mesh  */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
@@ -268,6 +274,56 @@ public:
 // Effects
 //----------------------------------------------------------------------------------------------------------------------
 protected:
+
+	/** firing audio (bLoopedFireSound set) */
+	UPROPERTY(Transient)
+	UAudioComponent* FireAC;
+
+	/** FX for muzzle flash */
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
+	UParticleSystem* MuzzleFX;
+
+	/** Scale muzzle FX */
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
+	FVector MuzzleFXScale;
+
+	/** spawned component for muzzle FX */
+	UPROPERTY(Transient)
+	UParticleSystemComponent* MuzzlePSC;
+
+	/** spawned component for second muzzle FX (Needed for split screen) */
+	UPROPERTY(Transient)
+	UParticleSystemComponent* MuzzlePSCSecondary;
+
+	/** camera shake on firing */
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
+	TSubclassOf<UCameraShake> FireCameraShake;
+
+	/** force feedback effect to play when the weapon is fired */
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
+	UForceFeedbackEffect *FireForceFeedback;
+
+	/** single fire sound (bLoopedFireSound not set) */
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundCue* FireSound;
+
+	/** looped fire sound (bLoopedFireSound set) */
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundCue* FireLoopSound;
+
+	/** finished burst sound (bLoopedFireSound set) */
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundCue* FireFinishSound;
+
+	/** is muzzle FX looped? */
+	UPROPERTY(EditDefaultsOnly, Category=Effects)
+	uint32 bLoopedMuzzleFX : 1;
+
+	/** is fire sound looped? */
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	uint32 bLoopedFireSound : 1;
+
+protected:
 	/** Called in local and network play to do the cosmetic fx for firing */
 	virtual void SimulateWeaponFire();
 
@@ -292,6 +348,9 @@ protected:
 	FVector GetMuzzleDirection() const;
 	
 	/** find hit */
-	FHitResult WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo, const bool bDebug = false) const;
+	FHitResult WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const;
+
+	/** play weapon sounds */
+	UAudioComponent* PlayWeaponSound(USoundCue* Sound);
 	
 };

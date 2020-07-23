@@ -30,6 +30,10 @@ class MECHRANGERS_API AExplosionEffect : public AActor
 	UPROPERTY(EditDefaultsOnly, Category=Effect)
 	UParticleSystem* ExplosionFX;
 
+	/** Scale explosion FX */
+	UPROPERTY(EditDefaultsOnly, Category=Effect)
+	FVector ExplosionFXScale;
+
 protected:
 	/** spawn explosion */
 	virtual void BeginPlay() override;

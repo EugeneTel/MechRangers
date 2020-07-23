@@ -42,7 +42,7 @@ void AWeaponImpactEffect::PostInitializeComponents()
     UParticleSystem* ImpactFX = GetImpactFX(HitSurfaceType);
     if (ImpactFX)
     {
-        UGameplayStatics::SpawnEmitterAtLocation(this, ImpactFX, GetActorLocation(), GetActorRotation());
+        UGameplayStatics::SpawnEmitterAtLocation(this, ImpactFX, GetActorLocation(), GetActorRotation(), FVector(2.f));
     }
 
     // play sound

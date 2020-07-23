@@ -78,6 +78,10 @@ public:
 
 protected:
 
+	/** Is Debug mode */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDebug;
+
 	/** Limb's Mesh component */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* MeshComp;

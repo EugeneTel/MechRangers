@@ -3,8 +3,12 @@
 
 #include "WeaponBase.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 #include "MechRangers/MechRangers.h"
 #include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "Sound/SoundCue.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AWeaponBase::AWeaponBase()
@@ -15,6 +19,23 @@ AWeaponBase::AWeaponBase()
 	// create components
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetupAttachment(GetRootComponent());
+
+	bDebug = false;
+	bLoopedMuzzleFX = false;
+	MuzzleFXScale = FVector::OneVector;
+	bEquipped = false;
+	bWantsToFire = false;
+	CurrentState = EWeaponState::EWS_Idle;
+
+	CurrentAmmo = 0;
+	CurrentAmmoInClip = 0;
+	LastFireTime = 0.0f;
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.TickGroup = TG_PrePhysics;
+	// SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
+	// bReplicates = true;
+	// bNetUseOwnerRelevancy = true;
 
 }
 
@@ -326,10 +347,59 @@ void AWeaponBase::OnUnEquip()
 
 void AWeaponBase::SimulateWeaponFire()
 {
+	if (GetLocalRole() == ROLE_Authority && CurrentState != EWeaponState::EWS_Firing)
+		return;
+
+	if (MuzzleFX)
+	{
+		if (!bLoopedMuzzleFX || MuzzlePSC == nullptr)
+		{
+			MuzzlePSC = UGameplayStatics::SpawnEmitterAttached(MuzzleFX, MeshComp, MuzzleAttachPoint, FVector::ZeroVector, FRotator::ZeroRotator, MuzzleFXScale);
+		}
+	}
+
+	// @TODO: Weapon Animation
+
+	if (bLoopedFireSound)
+	{
+		if (FireAC == nullptr)
+		{
+			FireAC = PlayWeaponSound(FireLoopSound);
+		}
+	}
+	else
+	{
+		PlayWeaponSound(FireSound);
+	}
+
+	// @TODO: Camera Shake
 }
 
 void AWeaponBase::StopSimulatingWeaponFire()
 {
+	if (bLoopedMuzzleFX )
+	{
+		if( MuzzlePSC != nullptr )
+		{
+			MuzzlePSC->DeactivateSystem();
+			MuzzlePSC = nullptr;
+		}
+		if( MuzzlePSCSecondary != nullptr )
+		{
+			MuzzlePSCSecondary->DeactivateSystem();
+			MuzzlePSCSecondary = nullptr;
+		}
+	}
+
+	if (FireAC)
+	{
+		FireAC->FadeOut(0.1f, 0.0f);
+		FireAC = nullptr;
+
+		PlayWeaponSound(FireFinishSound);
+	}
+
+	// @TODO: Stop Weapon Animation
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -360,7 +430,7 @@ FVector AWeaponBase::GetMuzzleDirection() const
 	return MeshComp->GetSocketRotation(MuzzleAttachPoint).Vector();
 }
 
-FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo, const bool bDebug) const
+FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const
 {
 	// Perform trace to retrieve hit info
 	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), true, this);
@@ -370,6 +440,7 @@ FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& Tra
 	FHitResult Hit(ForceInit);
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
 
+	// Draw debug line
 	if (bDebug)
 	{
 		DrawDebugLine(GetWorld(), TraceFrom, TraceTo, FColor::Green, false, 5, 0.f, 1.f);
@@ -381,6 +452,17 @@ FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& Tra
 	}
 
 	return Hit;
+}
+
+UAudioComponent* AWeaponBase::PlayWeaponSound(USoundCue* Sound)
+{
+	UAudioComponent* AC = nullptr;
+	if (Sound && OwnedLimb)
+	{
+		AC = UGameplayStatics::SpawnSoundAttached(Sound, OwnedLimb->GetRootComponent());
+	}
+
+	return AC;
 }
 
 
