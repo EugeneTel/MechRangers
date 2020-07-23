@@ -93,4 +93,17 @@ public:
 	UFUNCTION(BlueprintCallable)
     void PilotSitDown(APilotCharacter* PilotRef);
 
+//----------------------------------------------------------------------------------------------------------------------
+// Weapon Usage
+//----------------------------------------------------------------------------------------------------------------------
+
+public:
+	/** Starts weapon fire from defined limb and socket */
+	UFUNCTION(BlueprintCallable)
+	void LimbStartFire(ELimbType LimbType, ELimbSocket Socket);
+
+	/** Stops weapon fire from defined limb and socket */
+	UFUNCTION(BlueprintCallable)
+    void LimbStopFire(ELimbType LimbType, ELimbSocket Socket);
+	
 };

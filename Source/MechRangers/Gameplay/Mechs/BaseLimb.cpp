@@ -122,11 +122,19 @@ void ABaseLimb::SpawnCrosshair()
 // Inventory
 //----------------------------------------------------------------------------------------------------------------------
 
-void ABaseLimb::SetCurrentWeapon(AWeaponBase* NewWeapon, AWeaponBase* LastWeapon)
+void ABaseLimb::SetCurrentWeapon(const ELimbSocket Socket, AWeaponBase* NewWeapon, AWeaponBase* LastWeapon)
 {
 	AWeaponBase* LocalLastWeapon = nullptr;
+	AWeaponBase* CurrentWeapon = nullptr;
 
-	if (LastWeapon != NULL)
+	bool const bSocketUsed = CurrentWeapons.Contains(Socket);
+
+	if (bSocketUsed)
+	{
+		CurrentWeapon = CurrentWeapons[Socket];
+	}
+
+	if (LastWeapon != nullptr)
 	{
 		LocalLastWeapon = LastWeapon;
 	}
@@ -135,20 +143,28 @@ void ABaseLimb::SetCurrentWeapon(AWeaponBase* NewWeapon, AWeaponBase* LastWeapon
 		LocalLastWeapon = CurrentWeapon;
 	}
 
-	// unequip previous
+	// UnEquip previous
 	if (LocalLastWeapon)
 	{
 		LocalLastWeapon->OnUnEquip();
 	}
 
-	CurrentWeapon = NewWeapon;
+	// add or update weapon in socket
+	if (bSocketUsed)
+	{
+		CurrentWeapons[Socket] = NewWeapon;  
+	}
+	else
+	{
+		CurrentWeapons.Add(Socket, NewWeapon);
+	}
 
 	// equip new one
 	if (NewWeapon)
 	{
 		NewWeapon->SetOwnedLimb(this);	// Make sure weapon's Limb is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
 
-		NewWeapon->OnEquip(LastWeapon);
+		NewWeapon->OnEquip(Socket, LastWeapon);
 	}
 }
 
@@ -168,23 +184,23 @@ void ABaseLimb::SpawnDefaultInventory()
 			FActorSpawnParameters SpawnInfo;
 			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>(SocketData.DefaultWeapon, SpawnInfo);
-			AddWeapon(Socket, NewWeapon);
+			InventoryAdd(Socket, NewWeapon);
+			EquipWeapon(Socket);
 		}
 	}
 }
 
 void ABaseLimb::DestroyInventory()
 {
+	// TODO: Implement
 }
 
-void ABaseLimb::AddWeapon(ELimbSocket Socket, AWeaponBase* Weapon)
+void ABaseLimb::InventoryAdd(ELimbSocket Socket, AWeaponBase* Weapon)
 {
 	if (Weapon && GetLocalRole() == ROLE_Authority)
 	{
 		Weapon->OnEnterInventory(this);
-		Weapon->AttachMeshToLimb(Socket);
 		Inventory.Add(Socket, Weapon);
-		Weapon->StartFire();
 	}
 }
 
@@ -194,7 +210,7 @@ void ABaseLimb::EquipWeapon(const ELimbSocket Socket)
 		return;
 
 	// TODO: Server implementation
-	SetCurrentWeapon(Inventory[Socket]);
+	SetCurrentWeapon(Socket, Inventory[Socket]);
 }
 
 FName ABaseLimb::GetWeaponAttachPoint(const ELimbSocket Socket) const
@@ -207,4 +223,31 @@ FName ABaseLimb::GetWeaponAttachPoint(const ELimbSocket Socket) const
 	}
 
 	return AttachPoint;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Weapon Usage
+//----------------------------------------------------------------------------------------------------------------------
+
+void ABaseLimb::StartWeaponFire(const ELimbSocket Socket)
+{
+	if (CurrentWeapons.Contains(Socket) && IsValid(CurrentWeapons[Socket]))
+	{
+		CurrentWeapons[Socket]->StartFire();
+	}
+}
+
+void ABaseLimb::StopWeaponFire(const ELimbSocket Socket)
+{
+	if (CurrentWeapons.Contains(Socket) && IsValid(CurrentWeapons[Socket]))
+	{
+		CurrentWeapons[Socket]->StopFire();
+	}
+}
+
+bool ABaseLimb::CanFire(const ELimbSocket Socket) const
+{
+	// TODO: Check for alive etc.
+
+	return true;
 }

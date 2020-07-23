@@ -181,8 +181,7 @@ protected:
 //----------------------------------------------------------------------------------------------------------------------
 protected:
 	/** is weapon currently equipped? */
-	uint32 bIsEquipped : 1;
-
+	uint32 bEquipped : 1;
 
 public:
 	
@@ -254,10 +253,10 @@ public:
 
 public:
 	/** check if it's currently equipped */
-	FORCEINLINE bool IsEquipped() const { return bIsEquipped; }
+	FORCEINLINE bool IsEquipped() const { return bEquipped; }
 	
 	/** weapon is being equipped by owner */
-	virtual void OnEquip(const AWeaponBase* LastWeapon);
+	virtual void OnEquip(const ELimbSocket Socket, AWeaponBase* LastWeapon);
 
 	/** weapon is now equipped by owner */
 	virtual void OnEquipFinished();

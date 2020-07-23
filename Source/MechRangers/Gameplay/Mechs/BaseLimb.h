@@ -95,10 +95,10 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	TMap<ELimbSocket, AWeaponBase*> Inventory;
 
-	/** currently equipped weapon */
+	/** currently equipped weapons at limb */
 	// @TODO: Replication
 	UPROPERTY(Transient/*, ReplicatedUsing = OnRep_CurrentWeapon*/)
-	AWeaponBase* CurrentWeapon;
+	TMap<ELimbSocket, AWeaponBase*> CurrentWeapons;
 
 	/** Saved Trace End Point from the last Trace */
 	UPROPERTY(BlueprintReadWrite)
@@ -163,9 +163,9 @@ public:
 	
 protected:
 	
-	/** updates current weapon */
+	/** updates current weapon for selected socket in limb */
 	UFUNCTION(BlueprintCallable)
-    void SetCurrentWeapon(class AWeaponBase* NewWeapon, class AWeaponBase* LastWeapon = nullptr);
+    void SetCurrentWeapon(ELimbSocket Socket, AWeaponBase* NewWeapon, AWeaponBase* LastWeapon = nullptr);
 	
 	/** [server] spawns default inventory */
 	void SpawnDefaultInventory();
@@ -174,11 +174,23 @@ protected:
 	void DestroyInventory();
 
 	/** [server] add weapon to inventory */
-	void AddWeapon(ELimbSocket Socket, AWeaponBase* Weapon);
+	void InventoryAdd(ELimbSocket Socket, AWeaponBase* Weapon);
 
 	/** [server + local] equips weapon from inventory */
 	void EquipWeapon(ELimbSocket Socket);
 
+//----------------------------------------------------------------------------------------------------------------------
+// Weapon Usage
+//----------------------------------------------------------------------------------------------------------------------
 
+public:
+	/** [local] starts weapon fire */
+	void StartWeaponFire(const ELimbSocket Socket);
 
+	/** [local] stops weapon fire */
+	void StopWeaponFire(const ELimbSocket Socket);
+
+	/** check if pawn can fire weapon */
+	bool CanFire(const ELimbSocket Socket) const;
+	
 };

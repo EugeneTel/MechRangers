@@ -65,7 +65,7 @@ void ABaseMech::PilotSitDown(APilotCharacter* PilotRef)
 }
 
 void ABaseMech::PilotTakingControl(APilotCharacter* PilotRef, bool bTaking, USceneComponent* AttachPoint,
-    FTransform RelativeTransformToSeat, FTransform InitialCameraTransform)
+                                   FTransform RelativeTransformToSeat, FTransform InitialCameraTransform)
 {
     PilotRef->SetSeatedMode(AttachPoint, bTaking, RelativeTransformToSeat, InitialCameraTransform);
 
@@ -73,4 +73,24 @@ void ABaseMech::PilotTakingControl(APilotCharacter* PilotRef, bool bTaking, USce
 
     // @TODO: Posses the Mech by the OwnedPilot
 
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+// Weapon Usage
+//----------------------------------------------------------------------------------------------------------------------
+
+void ABaseMech::LimbStartFire(const ELimbType LimbType, const ELimbSocket Socket)
+{
+    if (Limbs.Contains(LimbType) && IsValid(Limbs[LimbType]) && Limbs[LimbType]->CanFire(Socket))
+    {
+        Limbs[LimbType]->StartWeaponFire(Socket);
+    }
+}
+
+void ABaseMech::LimbStopFire(const ELimbType LimbType, const ELimbSocket Socket)
+{
+    if (Limbs.Contains(LimbType) && IsValid(Limbs[LimbType]))
+    {
+        Limbs[LimbType]->StopWeaponFire(Socket);
+    }
 }

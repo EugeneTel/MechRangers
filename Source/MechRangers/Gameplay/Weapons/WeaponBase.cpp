@@ -62,6 +62,13 @@ void AWeaponBase::StartFire()
 
 void AWeaponBase::StopFire()
 {
+	// TODO: Server side implementation
+	
+	if (bWantsToFire)
+	{
+		bWantsToFire = false;
+		DetermineWeaponState();
+	}
 }
 
 bool AWeaponBase::CanFire() const
@@ -135,6 +142,7 @@ void AWeaponBase::SetWeaponState(EWeaponState NewState)
 {
 	const EWeaponState PrevState = CurrentState;
 
+	// Check for finish Firing 
 	if (PrevState == EWeaponState::EWS_Firing && NewState != EWeaponState::EWS_Firing)
 	{
 		OnBurstFinished();
@@ -142,6 +150,7 @@ void AWeaponBase::SetWeaponState(EWeaponState NewState)
 
 	CurrentState = NewState;
 
+	// Check for start Firing
 	if (PrevState != EWeaponState::EWS_Firing && NewState == EWeaponState::EWS_Firing)
 	{
 		OnBurstStarted();
@@ -152,7 +161,7 @@ void AWeaponBase::DetermineWeaponState()
 {
 	EWeaponState NewState = EWeaponState::EWS_Idle;
 
-	if (bIsEquipped)
+	if (bEquipped)
 	{
 		// @TODO: Implement reload state
 
@@ -242,7 +251,7 @@ void AWeaponBase::OnLeaveInventory()
 bool AWeaponBase::IsAttachedToPawn() const
 {
 	// TODO: Pending Equip if needed
-	return bIsEquipped; /*|| bPendingEquip;*/
+	return bEquipped; /*|| bPendingEquip;*/
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -288,8 +297,12 @@ void AWeaponBase::UseAmmo()
 	// @TODO: Player stats record
 }
 
-void AWeaponBase::OnEquip(const AWeaponBase* LastWeapon)
+void AWeaponBase::OnEquip(const ELimbSocket Socket, AWeaponBase* LastWeapon)
 {
+	AttachMeshToLimb(Socket);
+	
+	bEquipped = true;
+	
 	// TODO: Implement
 }
 
@@ -300,6 +313,8 @@ void AWeaponBase::OnEquipFinished()
 
 void AWeaponBase::OnUnEquip()
 {
+	bEquipped = false;
+	
 	// TODO: Implement
 }
 
@@ -348,7 +363,7 @@ FVector AWeaponBase::GetMuzzleDirection() const
 FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo, const bool bDebug) const
 {
 	// Perform trace to retrieve hit info
-	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), true, GetInstigator());
+	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), true, this);
 	TraceParams.bReturnPhysicalMaterial = true;
 	TraceParams.bDebugQuery = true;
 
@@ -361,7 +376,7 @@ FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& Tra
 
 		if (Hit.bBlockingHit)
 		{
-			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 12.f, 8, FColor::Green,false,5.f,0,1.f);
+			DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 12.f, 8, FColor::Red,false,5.f,0,1.f);
 		}
 	}
 
