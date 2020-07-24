@@ -59,6 +59,7 @@ void ABaseLimb::Tick(float DeltaTime)
 void ABaseLimb::SetOwnedMech(ABaseMech* NewMech)
 {
 	OwnedMech = NewMech;
+	SetOwner(NewMech);
 }
 
 ABaseMech* ABaseLimb::GetOwnedMech() const

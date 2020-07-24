@@ -98,9 +98,20 @@ void AWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDi
     PointDmg.ShotDirection = ShootDir;
     PointDmg.Damage = InstantConfig.HitDamage;    
 
-    // @TODO: Deal Damage
-    
-    //Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, OwnedLimb->GetOwnedMech()->Controller, this);
+    if (OwnedLimb)
+    {
+        auto OwnMech = OwnedLimb->GetOwnedMech();
+        if (OwnMech)
+        {
+            auto OMC = OwnMech->GetController();
+
+            if (OMC)
+            {
+                Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, OMC, OwnMech);
+            }
+        }
+    }   
+
 }
 
 //----------------------------------------------------------------------------------------------------------------------
