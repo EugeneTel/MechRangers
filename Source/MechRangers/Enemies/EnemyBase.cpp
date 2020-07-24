@@ -4,6 +4,7 @@
 #include "EnemyBase.h"
 #include "EnemyAIController.h"
 #include "Kismet/GameplayStatics.h"
+#include "NavigationSystem.h"
 
 #include "Log.h"
 
@@ -24,26 +25,40 @@ void AEnemyBase::BeginPlay()
 
 	CurrentHealth = MaxHealth;
 
-	//GetWorldTimerManager().SetTimerForNextTick(this, &AEnemyBase::MoveToPlayer);
-
-	MoveToPlayer();
-	
+	StartMovement();
 }
 
-void AEnemyBase::MoveToPlayer()
+bool AEnemyBase::GetMovePoint(AActor* ToActor, FVector& OutResult)
+{
+	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	if(!NavSys)
+		return false;
+	 
+	FNavLocation Result;
+
+	bool const bSuccess = NavSys->GetRandomPointInNavigableRadius(ToActor->GetActorLocation(), 200.f, Result);
+
+	//Out
+	OutResult = Result.Location;
+	return bSuccess;
+}
+
+void AEnemyBase::MoveToPoint(FVector& Point)
 {
 	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
 	if (EnemyController)
 	{
-		auto PC = UGameplayStatics::GetPlayerController(this, 0);
-		if (PC)
+
+		EPathFollowingRequestResult::Type RequestResult = EnemyController->MoveToLocation(Point);
+
+		if (RequestResult != EPathFollowingRequestResult::RequestSuccessful)
 		{
-			auto PlayerPawn = PC->GetPawn();
-			if (PlayerPawn)
-			{
-				auto RequestResult = EnemyController->MoveToActor(PlayerPawn);
-			}
+			ULog::Error("Enemy Path Request Error!!!");
+		} else
+		{
+			ULog::Success("Enemy Path Successfully Set!!!");
 		}
+			
 	}
 }
 
@@ -83,6 +98,24 @@ void AEnemyBase::TakeHealth(const float Damage)
 void AEnemyBase::Death()
 {
 	Destroy();
+}
+
+void AEnemyBase::StartMovement()
+{
+	if (!MoveToActor)
+		return;
+
+	FVector MovePoint;
+	if (GetMovePoint(MoveToActor, MovePoint))
+	{
+		MoveToPoint(MovePoint);
+	}
+	
+}
+
+void AEnemyBase::SetMoveToActor(AActor* NewActor)
+{
+	MoveToActor = NewActor;
 }
 
 
