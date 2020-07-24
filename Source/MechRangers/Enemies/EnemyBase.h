@@ -19,6 +19,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	/** Is Enemy Alive */
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	bool bAlive;
+
 	/** Max Health for Enemy */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHealth;
@@ -39,6 +43,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void Death();
 
+	/** Destroy Enemy actor */
+	UFUNCTION(BlueprintCallable)
+	void DestroyEnemy();
+
 	/** Start enemy movement */
 	UFUNCTION(BlueprintCallable)
 	void StartMovement();
@@ -50,6 +58,13 @@ protected:
     /** Get point for enemy movement */
     UFUNCTION(BlueprintCallable)
     bool GetMovePoint(AActor* ToActor, FVector& OutResult);
+
+	/** When actor will be destroyed after Enemy Death */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DestroyTimer;
+
+	/** Timer for destroying enemy */
+	FTimerHandle TimerHandle_Destroy;
 	
 
 public:	
@@ -65,5 +80,9 @@ public:
 	/** Set actor where enemy should move */
 	UFUNCTION(BlueprintCallable)
 	void SetMoveToActor(AActor* NewActor);
+
+	/** Is Enemy IsAlive */
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	bool IsAlive();
 
 };

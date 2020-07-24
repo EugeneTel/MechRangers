@@ -5,6 +5,7 @@
 #include "EnemyAIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
+#include "TimerManager.h"
 
 #include "Log.h"
 
@@ -16,6 +17,8 @@ AEnemyBase::AEnemyBase()
 
 	AIControllerClass = AEnemyAIController::StaticClass();
 	MaxHealth = 50.f;
+	bAlive = true;
+	DestroyTimer = 5.f;
 }
 
 // Called when the game starts or when spawned
@@ -67,7 +70,6 @@ void AEnemyBase::MoveToPoint(FVector& Point)
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -80,7 +82,10 @@ void AEnemyBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 float AEnemyBase::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	TakeHealth(Damage);
+	if (bAlive)
+	{
+		TakeHealth(Damage);
+	}
 
 	return CurrentHealth;
 }
@@ -96,6 +101,22 @@ void AEnemyBase::TakeHealth(const float Damage)
 }
 
 void AEnemyBase::Death()
+{
+	bAlive = false;
+	
+	AEnemyAIController* EnemyController = Cast<AEnemyAIController>(GetController());
+	if (EnemyController)
+	{
+		EnemyController->StopMovement();
+	}
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Destroy actor by timer 
+	GetWorldTimerManager().SetTimer(TimerHandle_Destroy, this, &AEnemyBase::DestroyEnemy, DestroyTimer, false);
+}
+
+void AEnemyBase::DestroyEnemy()
 {
 	Destroy();
 }
@@ -116,6 +137,11 @@ void AEnemyBase::StartMovement()
 void AEnemyBase::SetMoveToActor(AActor* NewActor)
 {
 	MoveToActor = NewActor;
+}
+
+bool AEnemyBase::IsAlive()
+{
+	return bAlive;
 }
 
 
