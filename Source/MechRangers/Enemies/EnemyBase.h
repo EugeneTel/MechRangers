@@ -59,9 +59,9 @@ protected:
     UFUNCTION(BlueprintCallable)
     bool GetMovePoint(AActor* ToActor, FVector& OutResult);
 
-	/** When actor will be destroyed after Enemy Death */
+	/** Min and Max time when actor will be destroyed after Enemy Death */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float DestroyTimer;
+	FVector2D TimeBeforeDestroy;
 
 	/** Timer for destroying enemy */
 	FTimerHandle TimerHandle_Destroy;

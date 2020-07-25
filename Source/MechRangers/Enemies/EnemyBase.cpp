@@ -18,7 +18,7 @@ AEnemyBase::AEnemyBase()
 	AIControllerClass = AEnemyAIController::StaticClass();
 	MaxHealth = 50.f;
 	bAlive = true;
-	DestroyTimer = 5.f;
+	TimeBeforeDestroy = FVector2D(3, 5);
 }
 
 // Called when the game starts or when spawned
@@ -112,8 +112,10 @@ void AEnemyBase::Death()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	float DestroyTime = FMath::RandRange(TimeBeforeDestroy.X, TimeBeforeDestroy.Y);
+
 	// Destroy actor by timer 
-	GetWorldTimerManager().SetTimer(TimerHandle_Destroy, this, &AEnemyBase::DestroyEnemy, DestroyTimer, false);
+	GetWorldTimerManager().SetTimer(TimerHandle_Destroy, this, &AEnemyBase::DestroyEnemy, DestroyTime, false);
 }
 
 void AEnemyBase::DestroyEnemy()
