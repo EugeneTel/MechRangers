@@ -80,6 +80,9 @@ void ABaseLimb::Control(const float AxisX, const float AxisY)
 
 void ABaseLimb::Trace()
 {
+	check(OwnedMech)
+	check(OwnedMech->GetOwnedPilot())
+	
 	const float TraceLength = 10000.f;
 	const FVector StartPoint = MeshComp->GetSocketLocation(FName("Muzzle"));
 	FVector EndPoint = StartPoint + MeshComp->GetForwardVector() * TraceLength;
@@ -107,11 +110,7 @@ void ABaseLimb::Trace()
 	{
 		Crosshair->SetActorLocation(EndPoint);
 
-		ABaseMech* Mech = Cast<ABaseMech>(GetOwner());
-		if (Mech)
-		{
-			Crosshair->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Crosshair->GetActorLocation(), Mech->GetOwnedPilot()->GetActorLocation()));
-		}
+		Crosshair->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Crosshair->GetActorLocation(), OwnedMech->GetOwnedPilot()->GetActorLocation()));
 	}
 }
 

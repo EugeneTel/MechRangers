@@ -57,8 +57,8 @@ public:
     FORCEINLINE bool IsVRMode() const { return bVRMode; }
 
     /** Returns a Mech owned by current OwnedPilot */
-    UFUNCTION(BlueprintCallable)
-    FORCEINLINE ABaseMech* GetOwningMech() const { return OwningMech; };
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+    ABaseMech* GetOwningMech() const;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Input

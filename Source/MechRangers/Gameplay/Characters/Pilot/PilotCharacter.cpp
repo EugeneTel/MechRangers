@@ -90,6 +90,11 @@ void APilotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
     PlayerInputComponent->BindAction("GripRight", IE_Released, this, &APilotCharacter::GripRightReleased);
 }
 
+ABaseMech* APilotCharacter::GetOwningMech() const
+{
+    return OwningMech;
+}
+
 void APilotCharacter::GripLeftPressed()
 {
     bGripPressedLeft = true;

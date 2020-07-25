@@ -31,6 +31,10 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	float CurrentHealth;
 
+	/** Random between min and max movement speed */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D MovementSpeedRange;
+
 	/** Move enemy to selected actor */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	AActor* MoveToActor;

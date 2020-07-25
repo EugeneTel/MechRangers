@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
 #include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Log.h"
 
@@ -19,6 +20,7 @@ AEnemyBase::AEnemyBase()
 	MaxHealth = 50.f;
 	bAlive = true;
 	TimeBeforeDestroy = FVector2D(3, 5);
+	MovementSpeedRange = FVector2D(500.f, 600.f);
 }
 
 // Called when the game starts or when spawned
@@ -27,6 +29,12 @@ void AEnemyBase::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentHealth = MaxHealth;
+
+	UCharacterMovementComponent* MovementComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	if (GetMovementComponent())
+	{
+		MovementComp->MaxWalkSpeed = FMath::RandRange(MovementSpeedRange.X, MovementSpeedRange.Y);
+	}
 
 	StartMovement();
 }
@@ -39,7 +47,7 @@ bool AEnemyBase::GetMovePoint(AActor* ToActor, FVector& OutResult)
 	 
 	FNavLocation Result;
 
-	bool const bSuccess = NavSys->GetRandomPointInNavigableRadius(ToActor->GetActorLocation(), 200.f, Result);
+	bool const bSuccess = NavSys->GetRandomPointInNavigableRadius(ToActor->GetActorLocation(), 500.f, Result);
 
 	//Out
 	OutResult = Result.Location;

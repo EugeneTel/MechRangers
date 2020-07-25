@@ -20,8 +20,9 @@ AEnemySpawner::AEnemySpawner()
 	bSpawnerActive = false;
 	Radius = 300.f;
 	MaxEnemies = 10;
-	OneTimeSpawnEnemies = FIntPoint(2,4);
-	Interval = FVector2D(5, 10);
+	SingleSpawnEnemiesRange = FIntPoint(2,4);
+	SpawnIntervalRange = FVector2D(5, 10);
+	SpawnScaleRange = FVector2D(1.f, 1.5f);
 	
 }
 
@@ -51,7 +52,7 @@ void AEnemySpawner::SpawnEnemies()
 		return;
 
 	// Calculate how many to spawn
-	int32 SpawnNumber = FMath::RandRange(OneTimeSpawnEnemies.X, OneTimeSpawnEnemies.Y);
+	int32 SpawnNumber = FMath::RandRange(SingleSpawnEnemiesRange.X, SingleSpawnEnemiesRange.Y);
 	SpawnNumber = FMath::Min(SpawnNumber, MaxEnemies - SpawnedEnemies);
 	if (SpawnNumber <= 0)
 		return;
@@ -70,7 +71,7 @@ void AEnemySpawner::SpawnEnemies()
 	}
 
 	// Set timer for the next spawn
-	const float NextSpawnTime = FMath::RandRange(Interval.X, Interval.Y);
+	const float NextSpawnTime = FMath::RandRange(SpawnIntervalRange.X, SpawnIntervalRange.Y);
 	if (NextSpawnTime)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle_NextSpawn, this, &AEnemySpawner::SpawnEnemies, NextSpawnTime, false);
@@ -99,7 +100,8 @@ bool AEnemySpawner::SpawnEnemy(FVector& Location)
 	if (!EnemyClass)
 		return false;
 
-	const FTransform SpawnTransform(FRotator::ZeroRotator, Location, FVector::OneVector);
+	const FVector SpawnScale(FMath::RandRange(SpawnScaleRange.X, SpawnScaleRange.Y));
+	const FTransform SpawnTransform(FRotator::ZeroRotator, Location, SpawnScale);
 
 	AEnemyBase* NewEnemy = Cast<AEnemyBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, EnemyClass, SpawnTransform));
 	if (NewEnemy)

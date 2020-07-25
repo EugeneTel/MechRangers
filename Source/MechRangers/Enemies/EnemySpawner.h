@@ -39,7 +39,11 @@ protected:
 
 	/** Min and Max number can be spawned at the same time */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Spawn)
-	FIntPoint OneTimeSpawnEnemies;
+	FIntPoint SingleSpawnEnemiesRange;
+
+	/** Random between min and max scale */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D SpawnScaleRange;
 
 	/** How many spawned already enemies */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Spawn)
@@ -47,7 +51,7 @@ protected:
 
 	/** Min and Max time between spawning */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Spawn)
-	FVector2D Interval;
+	FVector2D SpawnIntervalRange;
 
 	/** Enemy for spawn */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Spawn)
