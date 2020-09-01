@@ -1,8 +1,12 @@
-// Copyright PlatoSpace.com. All Rights Reserved.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #include "MRMech.h"
+#include "Components/CapsuleComponent.h"
 #include "MechComponents/MRMechMovementComponent.h"
 #include "MechComponents/MRMechLivingComponent.h"
+#include "MechDataAssets/MRMechLoadoutDataAsset.h"
+#include "MechDataAssets/MRMechModelDataAsset.h"
+#include "MRMechAnimInstance.h"
 
 // Sets default values
 AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
@@ -19,7 +23,13 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 void AMRMech::BeginPlay()
 {
 	Super::BeginPlay();
+
+	check(MechLoadoutAsset);
 	
+	MechLoadout = MechLoadoutAsset->GetLoadout();
+	MechModelData = MechLoadout.MechModelAsset->GetModelData();
+
+	SetupMech();
 }
 
 // Called every frame
@@ -34,6 +44,52 @@ void AMRMech::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis("MoveForward", this, &AMRMech::MoveForward);
+	PlayerInputComponent->BindAxis("TurnRate", this, &AMRMech::TurnAtRate);
+}
+
+void AMRMech::SetupMech()
+{
+	// Setup Skeletal Mesh
+	USkeletalMeshComponent* MechMesh = GetMesh();
+	MechMesh->SetSkeletalMesh(MechModelData.SkeletalMesh);
+	MechMesh->SetAnimClass(MechModelData.AnimClass);
+
+	// Setup Capsule
+	UMRMechCapsuleDataAsset* CapsuleDataAsset = MechModelData.CapsuleAsset;
+	GetCapsuleComponent()->SetCapsuleHalfHeight(CapsuleDataAsset->HalfHeight);
+	GetCapsuleComponent()->SetCapsuleRadius(CapsuleDataAsset->Radius);
+
+	// Add mesh offset if needed
+	if (CapsuleDataAsset->MeshOffset)
+	{
+		GetMesh()->AddLocalOffset(FVector(0.f, 0.f, CapsuleDataAsset->MeshOffset));
+	}
+
+	// Setup Movement params
+	GetCharacterMovement()->MaxStepHeight = CapsuleDataAsset->MaxStepHeight;
+	GetCharacterMovement()->SetWalkableFloorAngle(CapsuleDataAsset->WalkableFloorAngle);
+}
+
+void AMRMech::MoveForward(float Val)
+{
+	if (Controller && Val != 0.f)
+	{
+		// Limit pitch when walking or falling
+		const bool bLimitRotation = (GetCharacterMovement()->IsMovingOnGround() || GetCharacterMovement()->IsFalling());
+		const FRotator Rotation = bLimitRotation ? GetActorRotation() : Controller->GetControlRotation();
+		const FVector Direction = FRotationMatrix(Rotation).GetScaledAxis(EAxis::X);
+		AddMovementInput(Direction, Val);
+	}
+}
+
+void AMRMech::TurnAtRate(float Val)
+{
+	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
+	float BaseTurnRate = 20.f;
+	
+	// calculate delta for this frame from the rate information
+	AddControllerYawInput(Val * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 

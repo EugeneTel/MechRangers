@@ -1,10 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include "MechRangersGameMode.generated.h"
+
+class AMRMech;
+class UMRMechLoadoutDataAsset;
 
 /**
  * 
@@ -19,6 +22,14 @@ public:
     AMechRangersGameMode();
 
     /** Is VR Mode */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=MechRangers)
     bool bVRMode;
+
+    /** Spawned Mech */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=MechRangers)
+    TSubclassOf<AMRMech> MechClass;
+
+    /** Default Mech Loadout */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=MechRangers)
+    UMRMechLoadoutDataAsset* MechLoadoutAsset;
 };

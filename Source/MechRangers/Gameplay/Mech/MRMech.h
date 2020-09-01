@@ -1,4 +1,4 @@
-// Copyright PlatoSpace.com. All Rights Reserved.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
@@ -6,6 +6,8 @@
 #include "MechComponents/MRMechLivingComponent.h"
 #include "GameFramework/Character.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
+#include "MechDataAssets/MRMechModelDataAsset.h"
+
 
 #include "MRMech.generated.h"
 
@@ -27,8 +29,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	/** Setup Mech from Loadout Asset */
+	UFUNCTION(BlueprintCallable)
+	void SetupMech();
 
 //----------------------------------------------------------------------------------------------------------------------
 // Components
@@ -47,4 +50,26 @@ protected:
 	/** Loadout asset for the Mech. Every Mech must have it! */ 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category=Mech)
 	UMRMechLoadoutDataAsset* MechLoadoutAsset;
+
+	/** Active Loadout structure for the Mech */
+	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category=Mech)
+	FMechLoadout MechLoadout;
+
+	/** Active Mech model data structure */
+	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category=Mech)
+	FMechModelData MechModelData;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Input handlers
+//----------------------------------------------------------------------------------------------------------------------
+public:
+	
+	/** setup pawn specific input handlers */
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	/** Move forward/back */
+	void MoveForward(float Val);
+
+	/** Frame rate independent turn */
+	void TurnAtRate(float Val);
 };

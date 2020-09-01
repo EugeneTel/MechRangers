@@ -1,4 +1,4 @@
-// Copyright PlatoSpace.com. All Rights Reserved.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
@@ -30,10 +30,14 @@ class MECHRANGERS_API UMRMechLoadoutDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
-public:
+protected:
 
     /** Mech Loadout Structure */
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FMechLoadout MechLoadout;
-    
+
+public:
+
+    UFUNCTION(BlueprintCallable)
+    FMechLoadout GetLoadout() const { return MechLoadout; }
 };

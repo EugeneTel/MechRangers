@@ -1,8 +1,9 @@
-// Copyright PlatoSpace.com. All Rights Reserved.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MRMechCapsuleDataAsset.h"
 #include "Engine/DataAsset.h"
 #include "MRMechModelDataAsset.generated.h"
 
@@ -49,6 +50,10 @@ struct FMechModelData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UMRMechAnimInstance> AnimClass;
 
+	/** Capsule component parameters */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMRMechCapsuleDataAsset* CapsuleAsset;
+
 	/** Cockpit for VR players */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMechCockpit VRCockpit;
@@ -62,10 +67,15 @@ class MECHRANGERS_API UMRMechModelDataAsset : public UDataAsset
 {
 	GENERATED_BODY()
 
-public:
+protected:
 
 	/** Structure represents a Mech */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FMechModelData MechModelData;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	FMechModelData GetModelData() const { return MechModelData; }
 	
 };

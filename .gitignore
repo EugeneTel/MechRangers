@@ -14,3 +14,4 @@ Plugins/Developer/RiderLink
 *.suo
 *.xcodeproj
 *.xcworkspace
+.p4ignore

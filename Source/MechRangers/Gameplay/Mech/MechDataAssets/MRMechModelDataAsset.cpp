@@ -1,4 +1,4 @@
-// Copyright PlatoSpace.com. All Rights Reserved.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 
 #include "MRMechModelDataAsset.h"
