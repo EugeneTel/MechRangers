@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+// Copyright PlatoSpace.com. All Rights Reserved.
 
 #include "MRMech.h"
-#include "Components/MRMechMovementComponent.h"
+#include "MechComponents/MRMechMovementComponent.h"
+#include "MechComponents/MRMechLivingComponent.h"
 
 // Sets default values
 AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
@@ -35,4 +35,5 @@ void AMRMech::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
 

@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright PlatoSpace.com. All Rights Reserved.
+
+#pragma once
 
 #include "MRMechTypes.generated.h"
 

@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/MRMechLivingComponent.h"
+#include "MechComponents/MRMechLivingComponent.h"
 #include "GameFramework/Character.h"
+#include "MechDataAssets/MRMechLoadoutDataAsset.h"
+
 #include "MRMech.generated.h"
 
 UCLASS()
@@ -13,10 +15,6 @@ class MECHRANGERS_API AMRMech : public ACharacter
 	GENERATED_BODY()
 
 protected:
-
-	/** Models the various health containing parts of a Mech, including interactions between health components. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UMRMechLivingComponent* LivingComponent;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,4 +30,21 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+//----------------------------------------------------------------------------------------------------------------------
+// Components
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+	
+	/** Models the various health containing parts of a Mech, including interactions between health components. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMRMechLivingComponent* LivingComponent;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Configs
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+
+	/** Loadout asset for the Mech. Every Mech must have it! */ 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category=Mech)
+	UMRMechLoadoutDataAsset* MechLoadoutAsset;
 };

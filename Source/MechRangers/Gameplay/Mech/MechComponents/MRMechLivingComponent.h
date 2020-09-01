@@ -1,20 +1,20 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MRMechHealthComponent.generated.h"
+#include "MRMechLivingComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MECHRANGERS_API UMRMechHealthComponent : public UActorComponent
+class MECHRANGERS_API UMRMechLivingComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UMRMechHealthComponent();
+	UMRMechLivingComponent();
 
 protected:
 	// Called when the game starts
