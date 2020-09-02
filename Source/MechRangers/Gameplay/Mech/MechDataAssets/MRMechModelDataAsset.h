@@ -24,12 +24,12 @@ struct FMechCockpit
 
 	/** Cockpit attachment socket */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString Socket;
+	FName Socket;
 
 	FMechCockpit()
 	{
 		CockpitClass = nullptr;
-		Socket = FString("Cockpit");
+		Socket = FName("Cockpit");
 	}
 	
 };

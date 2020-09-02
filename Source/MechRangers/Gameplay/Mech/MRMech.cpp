@@ -7,6 +7,7 @@
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
 #include "MRMechAnimInstance.h"
+#include "MRMechCockpit.h"
 
 // Sets default values
 AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
@@ -69,6 +70,39 @@ void AMRMech::SetupMech()
 	// Setup Movement params
 	GetCharacterMovement()->MaxStepHeight = CapsuleDataAsset->MaxStepHeight;
 	GetCharacterMovement()->SetWalkableFloorAngle(CapsuleDataAsset->WalkableFloorAngle);
+
+	// Setup Cockpit
+	Cockpit = SpawnCockpit(MechModelData.VRCockpit);
+}
+
+AMRMechCockpit* AMRMech::SpawnCockpit(const FMechCockpit CockpitData)
+{
+	if (!CockpitData.CockpitClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't spawn a Cockpit! CockpitClass is not specified in CockpitData"));
+		return nullptr;
+	}
+
+	if (CockpitData.Socket.IsNone())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't spawn a Cockpit! Cockpit Socket is not specified in CockpitData"));
+		return nullptr;
+	}
+
+	const FActorSpawnParameters SpawnParams;
+	AMRMechCockpit* NewMechCockpit = GetWorld()->SpawnActor<AMRMechCockpit>(CockpitData.CockpitClass, SpawnParams);
+
+	if (NewMechCockpit)
+	{
+		//NewMechCockpit->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform, CockpitData.Socket);
+		NewMechCockpit->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, CockpitData.Socket);
+		return NewMechCockpit;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can't spawn a Cockpit!"));
+		return nullptr;
+	}
 }
 
 void AMRMech::MoveForward(float Val)

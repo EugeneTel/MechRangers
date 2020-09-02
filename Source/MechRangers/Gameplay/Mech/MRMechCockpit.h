@@ -21,8 +21,11 @@ protected:
 public:
 	// Sets default values for this actor's properties
 	AMRMechCockpit();
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
+private:
+
+	/** The main skeletal mesh associated with this Cockpit. */
+	UPROPERTY(Category=Cockpit, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* MeshComponent;
 
 };

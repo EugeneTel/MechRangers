@@ -8,7 +8,6 @@
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
 
-
 #include "MRMech.generated.h"
 
 UCLASS()
@@ -32,6 +31,14 @@ public:
 	/** Setup Mech from Loadout Asset */
 	UFUNCTION(BlueprintCallable)
 	void SetupMech();
+
+	/** Current Mechs Cockpit actor instance */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	AMRMechCockpit* Cockpit;
+
+	/** Setup Cockpit for mech from Mech Model Data */
+	UFUNCTION(BlueprintCallable)
+	AMRMechCockpit* SpawnCockpit(FMechCockpit CockpitData);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Components
