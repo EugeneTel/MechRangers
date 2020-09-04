@@ -30,7 +30,7 @@ public:
 
 	/** Setup Mech from Loadout Asset */
 	UFUNCTION(BlueprintCallable)
-	void SetupMech();
+	void ConstructMech();
 
 	/** Current Mechs Cockpit actor instance */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -65,6 +65,12 @@ protected:
 	/** Active Mech model data structure */
 	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category=Mech)
 	FMechModelData MechModelData;
+
+public:
+
+	/** Set Mech loadout */
+	UFUNCTION(BlueprintCallable)
+	void SetLoadout(FMechLoadout NewLoadout);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Input handlers

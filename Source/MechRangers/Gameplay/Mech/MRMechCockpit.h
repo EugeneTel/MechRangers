@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "MRMechCockpit.generated.h"
 
+class USphereComponent;
+
 /**
  * General class for all Mech Cockpits
  */
@@ -25,7 +27,19 @@ public:
 private:
 
 	/** The main skeletal mesh associated with this Cockpit. */
-	UPROPERTY(Category=Cockpit, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
 
+	/** Where a pilot should be attached */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	USceneComponent* PilotAttachmentPoint;
+
+	/** OwnedPilot head zone visualization */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	USphereComponent* HeadZoneVisualizer;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	USceneComponent* GetPilotAttachmentPoint() const;
 };

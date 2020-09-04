@@ -8,6 +8,7 @@
 #include "MechDataAssets/MRMechModelDataAsset.h"
 #include "MRMechAnimInstance.h"
 #include "MRMechCockpit.h"
+#include "Log.h"
 
 // Sets default values
 AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
@@ -26,11 +27,15 @@ void AMRMech::BeginPlay()
 	Super::BeginPlay();
 
 	check(MechLoadoutAsset);
-	
-	MechLoadout = MechLoadoutAsset->GetLoadout();
-	MechModelData = MechLoadout.MechModelAsset->GetModelData();
 
-	SetupMech();
+	// Try to setup default Loadout if not set on creation
+	if (!MechLoadout.MechModelAsset && MechLoadoutAsset)
+	{
+		MechLoadout = MechLoadoutAsset->GetLoadout();
+		MechModelData = MechLoadout.MechModelAsset->GetModelData();
+
+		ConstructMech();
+	}
 }
 
 // Called every frame
@@ -38,6 +43,12 @@ void AMRMech::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AMRMech::SetLoadout(FMechLoadout NewLoadout)
+{
+	MechLoadout = NewLoadout;
+	MechModelData = MechLoadout.MechModelAsset->GetModelData();
 }
 
 // Called to bind functionality to input
@@ -49,7 +60,7 @@ void AMRMech::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("TurnRate", this, &AMRMech::TurnAtRate);
 }
 
-void AMRMech::SetupMech()
+void AMRMech::ConstructMech()
 {
 	// Setup Skeletal Mesh
 	USkeletalMeshComponent* MechMesh = GetMesh();
@@ -119,6 +130,9 @@ void AMRMech::MoveForward(float Val)
 
 void AMRMech::TurnAtRate(float Val)
 {
+	if (Val == 0)
+		return;
+	
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	float BaseTurnRate = 20.f;
 	
