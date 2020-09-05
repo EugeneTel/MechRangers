@@ -10,6 +10,7 @@
 #include "MRPilotFP.generated.h"
 
 class UMRMechControlComponent;
+class UCameraComponent;
 
 UCLASS()
 class MECHRANGERS_API AMRPilotFP : public ACharacter, public IMRPilotInterface
@@ -35,6 +36,9 @@ private:
 	UPROPERTY(Category=MRPilot, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UMRMechControlComponent* MechControl;
 
+	UPROPERTY(Category=MRPilot, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	UCameraComponent* CameraComponent;
+
 public:
 
 	/** Get Mech Control Component */
@@ -56,14 +60,44 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SitIntoMech(AMRMech* NewMech);
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// Input
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+	
 	/** Input Mech Move Forward */
-	UFUNCTION(Category=MRPilot, BlueprintCallable)
 	void MechMoveForward(float Val);
 
 	/** Input Mech Turn Rate */
-	UFUNCTION(Category=MRPilot, BlueprintCallable)
     void MechTurnAtRate(float Val);
 
+	/**  MoveForward or Limb left Y-axis control for Gamepad controls */
+	void Move_LimbLeftY(float Val);
+
+	/**  TurnRate or Limb left X-axis control for Gamepad controls */
+	void Turn_LimbLeftX(float Val);
 	
+	/**  LookRight or Limb right X-axis control for Gamepad controls */
+	void LookRight_LimbRightX(float Val);
+
+	/**  LookUp or Limb right Y-axis control for Gamepad controls */
+	void LookUp_LimbRightY(float Val);
+
+	/**  Change movement mode */
+	void ChangeMovementModePressed();
+
+//----------------------------------------------------------------------------------------------------------------------
+// Control
+//----------------------------------------------------------------------------------------------------------------------
+protected:
 	
+	/** Movement control mode. */
+	bool bIsMovementMode;
+	
+	/** Pilot LookUp */
+	void LookUp(float Val);
+
+	/** Pilot LookRight */
+	void LookRight(float Val);
 };

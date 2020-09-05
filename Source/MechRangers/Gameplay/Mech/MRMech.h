@@ -73,13 +73,8 @@ public:
 	void SetLoadout(FMechLoadout NewLoadout);
 
 //----------------------------------------------------------------------------------------------------------------------
-// Input handlers
+// Controlling
 //----------------------------------------------------------------------------------------------------------------------
-public:
-	
-	/** setup pawn specific input handlers */
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
 	/** Move forward/back */
 	void MoveForward(float Val);
 

@@ -19,6 +19,10 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 
 	// Create Defaults
 	LivingComponent = CreateDefaultSubobject<UMRMechLivingComponent>(TEXT("LivingComponent"));
+
+	// Setup Mech
+	bUseControllerRotationYaw = false;
+	AutoPossessAI = EAutoPossessAI::Disabled;
 }
 
 // Called when the game starts or when spawned
@@ -49,15 +53,6 @@ void AMRMech::SetLoadout(FMechLoadout NewLoadout)
 {
 	MechLoadout = NewLoadout;
 	MechModelData = MechLoadout.MechModelAsset->GetModelData();
-}
-
-// Called to bind functionality to input
-void AMRMech::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAxis("MoveForward", this, &AMRMech::MoveForward);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AMRMech::TurnAtRate);
 }
 
 void AMRMech::ConstructMech()
@@ -116,6 +111,10 @@ AMRMechCockpit* AMRMech::SpawnCockpit(const FMechCockpit CockpitData)
 	}
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+// Controlling
+//----------------------------------------------------------------------------------------------------------------------
+
 void AMRMech::MoveForward(float Val)
 {
 	if (Controller && Val != 0.f)
@@ -134,10 +133,10 @@ void AMRMech::TurnAtRate(float Val)
 		return;
 	
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	float BaseTurnRate = 20.f;
-	
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Val * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	const float BaseTurnRate = 40.f;
+	const float Delta = Val * BaseTurnRate * GetWorld()->GetDeltaSeconds();
+	AddActorWorldRotation(FRotator(0.f, Delta, 0.f));
+
+	// Adjust camera to Mech Rotation
+	Controller->SetControlRotation(GetActorRotation());
 }
-
-
