@@ -23,6 +23,9 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 	// Setup Mech
 	bUseControllerRotationYaw = false;
 	AutoPossessAI = EAutoPossessAI::Disabled;
+
+	// Setup Defaults
+	bIsCombatMode = false;
 }
 
 // Called when the game starts or when spawned
@@ -115,6 +118,11 @@ AMRMechCockpit* AMRMech::SpawnCockpit(const FMechCockpit CockpitData)
 // Controlling
 //----------------------------------------------------------------------------------------------------------------------
 
+void AMRMech::SetCombatMode(bool const Val)
+{
+	bIsCombatMode = Val;
+}
+
 void AMRMech::MoveForward(float Val)
 {
 	if (Controller && Val != 0.f)
@@ -139,4 +147,18 @@ void AMRMech::TurnAtRate(float Val)
 
 	// Adjust camera to Mech Rotation
 	Controller->SetControlRotation(GetActorRotation());
+}
+
+void AMRMech::AddArmLeftRotator(const FRotator Rot)
+{
+	const float BateRotRate = 1.f;
+	ArmLeftRotator += Rot * (BateRotRate * GetWorld()->GetDeltaSeconds());
+	ULog::Rotator(ArmLeftRotator, false, "Arm Left: ");
+}
+
+void AMRMech::AddArmRightRotator(const FRotator Rot)
+{
+	const float BateRotRate = 1.f;
+	ArmRightRotator += Rot * (BateRotRate * GetWorld()->GetDeltaSeconds());
+	ULog::Rotator(ArmRightRotator, false, "Arm Right: ");
 }

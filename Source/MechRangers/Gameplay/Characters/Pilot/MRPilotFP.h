@@ -72,28 +72,29 @@ protected:
 	/** Input Mech Turn Rate */
     void MechTurnAtRate(float Val);
 
-	/**  MoveForward or Limb left Y-axis control for Gamepad controls */
-	void Move_LimbLeftY(float Val);
+	/**  MoveForward or Left Arm Yaw (Y-axis) control for Gamepad controls */
+	void Move_ArmLeftYaw(float Val);
 
-	/**  TurnRate or Limb left X-axis control for Gamepad controls */
-	void Turn_LimbLeftX(float Val);
+	/**  TurnRate or Left Arm Pitch (X-axis) control for Gamepad controls */
+	void Turn_ArmLeftPitch(float Val);
 	
-	/**  LookRight or Limb right X-axis control for Gamepad controls */
-	void LookRight_LimbRightX(float Val);
+	/**  LookRight or Right Arm Pitch (X-axis) control for Gamepad controls */
+	void LookRight_ArmRightPitch(float Val);
 
-	/**  LookUp or Limb right Y-axis control for Gamepad controls */
-	void LookUp_LimbRightY(float Val);
+	/**  LookUp or Right Arm Yaw (Y-axis) control for Gamepad controls */
+	void LookUp_ArmRightYaw(float Val);
 
-	/**  Change movement mode */
-	void ChangeMovementModePressed();
+	/**  Change combat mode */
+	void CombatModePressed();
 
 //----------------------------------------------------------------------------------------------------------------------
 // Control
 //----------------------------------------------------------------------------------------------------------------------
 protected:
 	
-	/** Movement control mode. */
-	bool bIsMovementMode;
+	/** Is Combat mode or Movement mode. */
+	UPROPERTY(Category=MRPilot, VisibleInstanceOnly, BlueprintReadWrite)
+	bool bIsCombatMode;
 	
 	/** Pilot LookUp */
 	void LookUp(float Val);

@@ -55,29 +55,64 @@ protected:
 protected:
 
 	/** Loadout asset for the Mech. Every Mech must have it! */ 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category=Mech)
+	UPROPERTY(Category=MRMech, BlueprintReadOnly, EditAnywhere)
 	UMRMechLoadoutDataAsset* MechLoadoutAsset;
 
 	/** Active Loadout structure for the Mech */
-	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category=Mech)
+	UPROPERTY(Category=MRMech, BlueprintReadWrite, VisibleInstanceOnly)
 	FMechLoadout MechLoadout;
 
 	/** Active Mech model data structure */
-	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category=Mech)
+	UPROPERTY(Category=MRMech, BlueprintReadWrite, VisibleInstanceOnly)
 	FMechModelData MechModelData;
+
+	
+	/** Is Combat mode or Movement mode. */
+	UPROPERTY(Category=MRMech, VisibleInstanceOnly, BlueprintReadWrite)
+	bool bIsCombatMode;
 
 public:
 
 	/** Set Mech loadout */
 	UFUNCTION(BlueprintCallable)
 	void SetLoadout(FMechLoadout NewLoadout);
+	
+	/** Checks is Mech in combat mode */
+	UFUNCTION(BlueprintCallable)
+    FORCEINLINE bool IsCombatMode() const { return bIsCombatMode; }
+
+	/** Set Mech Combat Mode state */
+	UFUNCTION(BlueprintCallable)
+    void SetCombatMode(bool const Val);
 
 //----------------------------------------------------------------------------------------------------------------------
-// Controlling
+// Movement controls
 //----------------------------------------------------------------------------------------------------------------------
+public:
 	/** Move forward/back */
 	void MoveForward(float Val);
 
 	/** Frame rate independent turn */
 	void TurnAtRate(float Val);
+
+//----------------------------------------------------------------------------------------------------------------------
+// Arm controls
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	FRotator ArmLeftRotator;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRotator ArmRightRotator;
+	
+public:
+
+	FORCEINLINE FRotator GetArmLeftRotator() const { return ArmLeftRotator; }
+	FORCEINLINE FRotator GetArmRightRotator() const { return ArmRightRotator; }
+
+	void AddArmLeftRotator(const FRotator Rot);
+
+	void AddArmRightRotator(const FRotator Rot);
+
+	
 };

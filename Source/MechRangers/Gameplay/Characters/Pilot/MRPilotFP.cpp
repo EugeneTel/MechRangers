@@ -24,7 +24,7 @@ AMRPilotFP::AMRPilotFP()
 	bUseControllerRotationPitch = true;
 
 	// Setup defaults
-	bIsMovementMode = true;
+	bIsCombatMode = false;
 }
 
 // Called when the game starts or when spawned
@@ -42,13 +42,13 @@ void AMRPilotFP::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	// Axis
 	PlayerInputComponent->BindAxis("MoveForward", this, &AMRPilotFP::MechMoveForward);
 	PlayerInputComponent->BindAxis("TurnRate", this, &AMRPilotFP::MechTurnAtRate);
-	PlayerInputComponent->BindAxis("Move_LimbLeftY", this, &AMRPilotFP::Move_LimbLeftY);
-	PlayerInputComponent->BindAxis("Turn_LimbLeftX", this, &AMRPilotFP::Turn_LimbLeftX);
-	PlayerInputComponent->BindAxis("LookRight_LimbRightX", this, &AMRPilotFP::LookRight_LimbRightX);
-	PlayerInputComponent->BindAxis("LookUp_LimbRightY", this, &AMRPilotFP::LookUp_LimbRightY);
+	PlayerInputComponent->BindAxis("Move_ArmLeftYaw", this, &AMRPilotFP::Move_ArmLeftYaw);
+	PlayerInputComponent->BindAxis("Turn_ArmLeftPitch", this, &AMRPilotFP::Turn_ArmLeftPitch);
+	PlayerInputComponent->BindAxis("LookRight_ArmRightPitch", this, &AMRPilotFP::LookRight_ArmRightPitch);
+	PlayerInputComponent->BindAxis("LookUp_ArmRightYaw", this, &AMRPilotFP::LookUp_ArmRightYaw);
 
 	// Action
-	PlayerInputComponent->BindAction("ChangeMovementMode", EInputEvent::IE_Pressed, this, &AMRPilotFP::ChangeMovementModePressed);
+	PlayerInputComponent->BindAction("CombatMode", EInputEvent::IE_Pressed, this, &AMRPilotFP::CombatModePressed);
 
 }
 
@@ -132,7 +132,7 @@ void AMRPilotFP::LookRight(float Val)
 	if (FMath::Abs(CameraRotation.Yaw) > LookLimit)
 	{
 		CameraRotation.Yaw = CameraRotation.Yaw > 0 ? LookLimit : LookLimit * -1;
-		CameraComponent->SetRelativeRotation(CameraRotation);
+		//CameraComponent->SetRelativeRotation(CameraRotation);
 	}
 	
 }
@@ -141,58 +141,66 @@ void AMRPilotFP::LookRight(float Val)
 // Input
 //----------------------------------------------------------------------------------------------------------------------
 
-void AMRPilotFP::Move_LimbLeftY(float Val)
+void AMRPilotFP::Move_ArmLeftYaw(float Val)
 {
 	if (Val == 0.f)
 		return;
 	
-	if (bIsMovementMode)
+	if (bIsCombatMode)
+	{
+		ULog::Success("AddArmLeftYaw");
+		MechControl->AddArmLeftYaw(Val);
+	} else
 	{
 		MechControl->MoveForward(Val);
-	} else
-	{
-		// TODO: Limb control
 	}
 }
 
-void AMRPilotFP::Turn_LimbLeftX(float Val)
+void AMRPilotFP::Turn_ArmLeftPitch(float Val)
 {
 	if (Val == 0.f)
 		return;
 	
-	if (bIsMovementMode)
+	if (bIsCombatMode)
+	{
+		MechControl->AddArmLeftPitch(Val);
+	} else
 	{
 		MechControl->TurnAtRate(Val);
-	} else
-	{
-		// TODO: Limb control
 	}
 }
 
-void AMRPilotFP::LookRight_LimbRightX(float Val)
+void AMRPilotFP::LookRight_ArmRightPitch(float Val)
 {
-	if (bIsMovementMode)
+	if (Val == 0.f)
+		return;
+	
+	if (bIsCombatMode)
+	{
+		MechControl->AddArmRightPitch(Val);
+	} else
 	{
 		LookRight(Val);
-	} else
-	{
-		// TODO: Limb control
 	}
 }
 
-void AMRPilotFP::LookUp_LimbRightY(float Val)
+void AMRPilotFP::LookUp_ArmRightYaw(float Val)
 {
-	if (bIsMovementMode)
+	if (Val == 0.f)
+		return;
+	
+	if (bIsCombatMode)
+	{
+		MechControl->AddArmRightYaw(Val);
+	} else
 	{
 		LookUp(Val);
-	} else
-	{
-		// TODO: Limb control
 	}
 }
 
-void AMRPilotFP::ChangeMovementModePressed()
+void AMRPilotFP::CombatModePressed()
 {
-	bIsMovementMode = !bIsMovementMode;
-	ULog::Bool(bIsMovementMode, "Movement Mode:", "", LO_Both);
+	bIsCombatMode = !bIsCombatMode;
+	MechControl->SetCombatMode(bIsCombatMode);
+	ULog::Bool(bIsCombatMode, "Set Combat Mode:", "", LO_Both);
 }

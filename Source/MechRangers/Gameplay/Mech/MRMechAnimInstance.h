@@ -20,18 +20,34 @@ private:
     FRotator LastKnownRot;
     
 protected:
-    
-    /** Magnitude of velocity */
-    UPROPERTY(BlueprintReadWrite)
-    float Speed;
-
-    /** Speed at which the Mech turning in Degrees/Sec. Sign indicates turn directions. */
-    UPROPERTY(BlueprintReadWrite)
-    float TurnSpeed;
 
     /** Current Mech */
     UPROPERTY(BlueprintReadWrite)
     AMRMech* MechOwner;
+    
+    /** Magnitude of velocity */
+    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
+    float Speed;
+
+    /** Speed at which the Mech turning in Degrees/Sec. Sign indicates turn directions. */
+    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
+    float TurnSpeed;
+
+    /** Is Mech combat mode enabled */
+    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
+    bool bIsCombatMode;
+
+    /** Right Arm Aim Rotator */
+    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
+    FRotator ArmRightAimRotator;
+
+    /** Left Arm Aim Rotator */
+    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
+    FRotator ArmLeftAimRotator;
+
+    /** Left Arm Aim Rotator */
+    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
+    float ArmAimBlend;
 
 public:
 

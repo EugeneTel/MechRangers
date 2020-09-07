@@ -31,13 +31,38 @@ private:
 public:
 	/** Move Mech Forward */
 	UFUNCTION(BlueprintCallable)
-    void MoveForward(float Val);
+    void MoveForward(const float Val) const;
 
 	/** Turn Mech At rate */
 	UFUNCTION(BlueprintCallable)
-    void TurnAtRate(float Val);
+    void TurnAtRate(const float Val) const;
 
 	/** Attach a Pilot to a Mech */
 	UFUNCTION(BlueprintCallable)
 	void SitPilotIntoMech(AMRMech* NewMech);
+
+	/** Set Mech combat mode */
+	UFUNCTION(BlueprintCallable)
+	void SetCombatMode(const bool Val);
+
+	/** Get Mech combat mode */
+	UFUNCTION(BlueprintCallable)
+	bool IsCombatMode() const;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Arm controls
+//----------------------------------------------------------------------------------------------------------------------
+public:
+	
+	UFUNCTION(BlueprintCallable)
+	void AddArmLeftPitch(const float Val) const;
+
+	UFUNCTION(BlueprintCallable)
+	void AddArmLeftYaw(const float Val) const;
+
+	UFUNCTION(BlueprintCallable)
+	void AddArmRightPitch(const float Val) const;
+
+	UFUNCTION(BlueprintCallable)
+	void AddArmRightYaw(const float Val) const;
 };
