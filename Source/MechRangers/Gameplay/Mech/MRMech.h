@@ -104,15 +104,20 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite)
 	FRotator ArmRightRotator;
+
+	/** Add rotation to arms with limitation */
+	void AddArmRotator(FRotator& ArmRotator, const FRotator& AddRot);
 	
 public:
 
 	FORCEINLINE FRotator GetArmLeftRotator() const { return ArmLeftRotator; }
 	FORCEINLINE FRotator GetArmRightRotator() const { return ArmRightRotator; }
 
-	void AddArmLeftRotator(const FRotator Rot);
+	/** Add Left Arm Rotation */
+	void AddArmLeftRotator(const FRotator& Rot);
 
-	void AddArmRightRotator(const FRotator Rot);
+	/** Add Right Arm Rotation */
+	void AddArmRightRotator(const FRotator& Rot);
 
 	
 };

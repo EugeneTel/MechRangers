@@ -14,10 +14,10 @@ enum class EMechPart : uint8
 {
     EMP_Head UMETA(DisplayName = "Head"),
     EMP_Torso UMETA(DisplayName = "Torso"),
-    EMP_LeftArm UMETA(DisplayName = "LeftArm"),
-    EMP_RightArm UMETA(DisplayName = "RightArm"),
-    EMP_LeftLeg UMETA(DisplayName = "LeftLeg"),
-    EMP_RightLeg UMETA(DisplayName = "RightLeg"),
+    EMP_LeftArm UMETA(DisplayName = "Left Arm"),
+    EMP_RightArm UMETA(DisplayName = "Right Arm"),
+    EMP_LeftLeg UMETA(DisplayName = "Left Leg"),
+    EMP_RightLeg UMETA(DisplayName = "Righ tLeg"),
     EMP_Invalid UMETA(DisplayName = "Invalid")
 };
 
@@ -31,4 +31,16 @@ enum class EPartHealth : uint8
     EPH_Damaged UMETA(DisplayName = "Damaged"),
     EPH_Destroyed UMETA(DisplayName = "Destroyed"),
     EPH_Invalid UMETA(DisplayName = "Invalid")
+};
+
+/**
+ * Weapon's size list
+ */
+UENUM(BlueprintType)
+enum class EWeaponSize : uint8
+{
+    EWS_Small UMETA(DisplayName = "Small"),
+    EWS_Medium UMETA(DisplayName = "Medium"),
+    EWS_Large UMETA(DisplayName = "Large"),
+    EWS_Invalid UMETA(DisplayName = "Invalid"),
 };

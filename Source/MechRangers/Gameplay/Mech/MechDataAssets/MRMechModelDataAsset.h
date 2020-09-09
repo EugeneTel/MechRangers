@@ -9,6 +9,7 @@
 
 class AMRMechCockpit;
 class UMRMechAnimInstance;
+class UMRMechHardpointDataAsset;
 
 /**
  * Structure for Mech Cockpit
@@ -53,6 +54,10 @@ struct FMechModelData
 	/** Capsule component parameters */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMRMechCapsuleDataAsset* CapsuleAsset;
+
+	/** Hardpoint asset which contains all weapon slots */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMRMechHardpointDataAsset* WeaponHardpointAsset;
 
 	/** Cockpit for VR players */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -18,6 +18,7 @@ public class MechRangers : ModuleRules
 			"VRExpansionPlugin",
 			"NavigationSystem",
 			"AIModule",
+			"GameplayTags",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Debug" });

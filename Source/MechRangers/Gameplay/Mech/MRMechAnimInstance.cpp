@@ -7,7 +7,6 @@ void UMRMechAnimInstance::NativeInitializeAnimation()
 {
     MechOwner = Cast<AMRMech>(TryGetPawnOwner());
     bIsCombatMode = false;
-    ArmAimBlend = 0;
 }
 
 void UMRMechAnimInstance::NativeUpdateAnimation(float DeltaSeconds)

@@ -149,16 +149,29 @@ void AMRMech::TurnAtRate(float Val)
 	Controller->SetControlRotation(GetActorRotation());
 }
 
-void AMRMech::AddArmLeftRotator(const FRotator Rot)
+void AMRMech::AddArmRotator(FRotator& ArmRotator, const FRotator& AddRot)
 {
-	const float BateRotRate = 1.f;
-	ArmLeftRotator += Rot * (BateRotRate * GetWorld()->GetDeltaSeconds());
-	ULog::Rotator(ArmLeftRotator, false, "Arm Left: ");
+	const float BaseRotRate = 2.f;
+	ArmRotator += AddRot * (BaseRotRate * GetWorld()->GetDeltaSeconds());
+
+	const float RotateLimit = 1.f;
+	if (FMath::Abs(ArmRotator.Pitch) > RotateLimit)
+	{
+		ArmRotator.Pitch = ArmRotator.Pitch > 0 ? RotateLimit : RotateLimit * -1;
+	}
+
+	if (FMath::Abs(ArmRotator.Yaw) > RotateLimit)
+	{
+		ArmRotator.Yaw = ArmRotator.Yaw > 0 ? RotateLimit : RotateLimit * -1;
+	}
 }
 
-void AMRMech::AddArmRightRotator(const FRotator Rot)
+void AMRMech::AddArmLeftRotator(const FRotator& Rot)
 {
-	const float BateRotRate = 1.f;
-	ArmRightRotator += Rot * (BateRotRate * GetWorld()->GetDeltaSeconds());
-	ULog::Rotator(ArmRightRotator, false, "Arm Right: ");
+	AddArmRotator(ArmLeftRotator, Rot);
+}
+
+void AMRMech::AddArmRightRotator(const FRotator& Rot)
+{
+	AddArmRotator(ArmRightRotator, Rot);
 }

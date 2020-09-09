@@ -45,10 +45,6 @@ protected:
     UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
     FRotator ArmLeftAimRotator;
 
-    /** Left Arm Aim Rotator */
-    UPROPERTY(Category=MRMechAnim, VisibleInstanceOnly, BlueprintReadWrite)
-    float ArmAimBlend;
-
 public:
 
     virtual void NativeInitializeAnimation() override;
