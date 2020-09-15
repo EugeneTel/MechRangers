@@ -9,7 +9,7 @@
 #include "MechRangers/Gameplay/Mech/MRMechTypes.h"
 #include "MRWeaponDataAsset.generated.h"
 
-class AWeaponBase;
+class AMRWeapon;
 class UMRSlotTypeDataAsset;
 
 /**
@@ -26,7 +26,7 @@ public:
 	FName Name;
 
 	UPROPERTY(Category=General, EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<AWeaponBase> WeaponActor;
+	TSubclassOf<AMRWeapon> WeaponClass;
 
 	UPROPERTY(Category=EquipRules, EditDefaultsOnly, BlueprintReadWrite)
 	FGameplayTagContainer WeaponType;

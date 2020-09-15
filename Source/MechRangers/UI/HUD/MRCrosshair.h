@@ -1,25 +1,24 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CrosshairBase.generated.h"
+#include "MRCrosshair.generated.h"
 
 UCLASS()
-class MECHRANGERS_API ACrosshairBase : public AActor
+class MECHRANGERS_API AMRCrosshair : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ACrosshairBase();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+	// Sets default values for this actor's properties
+	AMRCrosshair();
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

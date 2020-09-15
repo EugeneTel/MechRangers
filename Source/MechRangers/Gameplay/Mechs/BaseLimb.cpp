@@ -6,10 +6,10 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/Actor.h"
-#include "MechRangers/UI/HUD/CrosshairBase.h"
+#include "MechRangers/UI/HUD/MRCrosshair.h"
 #include "MechRangers/Gameplay/Characters/Pilot/PilotCharacter.h"
 #include "MechRangers/Gameplay/Mechs/BaseMech.h"
-#include "MechRangers/Gameplay/Weapons/WeaponBase.h"
+#include "MechRangers/Gameplay/Weapons/MRWeapon.h"
 #include "Log.h"
 
 // Sets default values
@@ -121,17 +121,17 @@ void ABaseLimb::SpawnCrosshair()
 
 	FVector SpawnLocation = GetActorLocation();
 	FActorSpawnParameters SpawnParams;
-	Crosshair = GetWorld()->SpawnActor<ACrosshairBase>(CrosshairClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	Crosshair = GetWorld()->SpawnActor<AMRCrosshair>(CrosshairClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Inventory
 //----------------------------------------------------------------------------------------------------------------------
 
-void ABaseLimb::SetCurrentWeapon(const ELimbSocket Socket, AWeaponBase* NewWeapon, AWeaponBase* LastWeapon)
+void ABaseLimb::SetCurrentWeapon(const ELimbSocket Socket, AMRWeapon* NewWeapon, AMRWeapon* LastWeapon)
 {
-	AWeaponBase* LocalLastWeapon = nullptr;
-	AWeaponBase* CurrentWeapon = nullptr;
+	AMRWeapon* LocalLastWeapon = nullptr;
+	AMRWeapon* CurrentWeapon = nullptr;
 
 	bool const bSocketUsed = CurrentWeapons.Contains(Socket);
 
@@ -168,9 +168,9 @@ void ABaseLimb::SetCurrentWeapon(const ELimbSocket Socket, AWeaponBase* NewWeapo
 	// equip new one
 	if (NewWeapon)
 	{
-		NewWeapon->SetOwnedLimb(this);	// Make sure weapon's Limb is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
-
-		NewWeapon->OnEquip(Socket, LastWeapon);
+		// NewWeapon->SetOwnedLimb(this);	// Make sure weapon's Limb is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
+		//
+		// NewWeapon->OnEquip(Socket, LastWeapon);
 	}
 }
 
@@ -189,7 +189,7 @@ void ABaseLimb::SpawnDefaultInventory()
 
 			FActorSpawnParameters SpawnInfo;
 			SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			AWeaponBase* NewWeapon = GetWorld()->SpawnActor<AWeaponBase>(SocketData.DefaultWeapon, SpawnInfo);
+			AMRWeapon* NewWeapon = GetWorld()->SpawnActor<AMRWeapon>(SocketData.DefaultWeapon, SpawnInfo);
 			InventoryAdd(Socket, NewWeapon);
 			EquipWeapon(Socket);
 		}
@@ -201,12 +201,12 @@ void ABaseLimb::DestroyInventory()
 	// TODO: Implement
 }
 
-void ABaseLimb::InventoryAdd(ELimbSocket Socket, AWeaponBase* Weapon)
+void ABaseLimb::InventoryAdd(ELimbSocket Socket, AMRWeapon* Weapon)
 {
 	if (Weapon && GetLocalRole() == ROLE_Authority)
 	{
-		Weapon->OnEnterInventory(this);
-		Inventory.Add(Socket, Weapon);
+		// Weapon->OnEnterInventory(this);
+		// Inventory.Add(Socket, Weapon);
 	}
 }
 

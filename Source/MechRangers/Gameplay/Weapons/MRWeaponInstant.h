@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MechRangers/Gameplay/Weapons/WeaponBase.h"
-#include "WeaponInstant.generated.h"
+#include "MechRangers/Gameplay/Weapons/MRWeapon.h"
+#include "MRWeaponInstant.generated.h"
 
 class AWeaponImpactEffect;
 
@@ -71,7 +71,7 @@ struct FInstantWeaponData
  * 
  */
 UCLASS()
-class MECHRANGERS_API AWeaponInstant : public AWeaponBase
+class MECHRANGERS_API AMRWeaponInstant : public AMRWeapon
 {
 	GENERATED_BODY()
 

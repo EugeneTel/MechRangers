@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MRMechCapsuleDataAsset.h"
 #include "Engine/DataAsset.h"
+#include "MechRangers/Gameplay/Mech/MRMechTypes.h"
 #include "MRMechModelDataAsset.generated.h"
 
 class AMRMechCockpit;
@@ -44,23 +45,27 @@ struct FMechModelData
 	GENERATED_BODY()
 
 	/** Skeletal mesh of a Mech */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	USkeletalMesh* SkeletalMesh;
 
 	/** Animation blueprint for a Mech */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UMRMechAnimInstance> AnimClass;
 
 	/** Capsule component parameters */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMRMechCapsuleDataAsset* CapsuleAsset;
 
 	/** Hardpoint asset which contains all weapon slots */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UMRMechHardpointDataAsset* WeaponHardpointAsset;
 
+	/** Mech Aim system configuration */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FMechAim MechAimConfig;
+
 	/** Cockpit for VR players */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMechCockpit VRCockpit;
 };
 

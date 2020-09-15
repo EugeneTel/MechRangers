@@ -28,6 +28,10 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	AMRMech* Mech;
 
+	/** Cached Mech's weapon system component */
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UMRWeaponSystemComponent* WeaponSystem;
+
 public:
 	/** Move Mech Forward */
 	UFUNCTION(BlueprintCallable)
@@ -65,4 +69,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddArmRightYaw(const float Val) const;
+
+//----------------------------------------------------------------------------------------------------------------------
+// WeaponControls
+//----------------------------------------------------------------------------------------------------------------------
+public:
+	/** Weapon handlers */
+	void PrimaryLeftWeaponStart() const;
+	void PrimaryLeftWeaponFinish() const;
+	void PrimaryRightWeaponStart() const;
+	void PrimaryRightWeaponFinish() const;
+	void SecondaryLeftWeaponStart() const;
+	void SecondaryLeftWeaponFinish() const;
+	void SecondaryRightWeaponStart() const;
+	void SecondaryRightWeaponFinish() const;
 };

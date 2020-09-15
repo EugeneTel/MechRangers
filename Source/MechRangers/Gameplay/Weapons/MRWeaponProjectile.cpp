@@ -1,17 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
-
-#include "WeaponProjectile.h"
+#include "MRWeaponProjectile.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "MechRangers/Gameplay/Weapons/Projectiles/ProjectileBase.h"
+#include "MechRangers/Gameplay/Weapons/Projectiles/MRProjectile.h"
 
-void AWeaponProjectile::ApplyWeaponConfig(FProjectileWeaponData& Data)
+void AMRWeaponProjectile::ApplyWeaponConfig(FProjectileWeaponData& Data)
 {
     Data = ProjectileConfig;
 }
 
-void AWeaponProjectile::FireWeapon()
+void AMRWeaponProjectile::FireWeapon()
 {
     FVector ShootDir = GetAdjustedAim();
     FVector Origin = GetMuzzleLocation();
@@ -64,10 +63,10 @@ void AWeaponProjectile::FireWeapon()
     ServerFireProjectile(Origin, ShootDir);
 }
 
-void AWeaponProjectile::ServerFireProjectile_Implementation(const FVector Origin, FVector_NetQuantizeNormal ShootDir)
+void AMRWeaponProjectile::ServerFireProjectile_Implementation(const FVector Origin, FVector_NetQuantizeNormal ShootDir)
 {
     const FTransform SpawnTransform(ShootDir.Rotation(), Origin);
-    AProjectileBase* Projectile = Cast<AProjectileBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileConfig.ProjectileClass, SpawnTransform));
+    AMRProjectile* Projectile = Cast<AMRProjectile>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileConfig.ProjectileClass, SpawnTransform));
     if (Projectile)
     {
         Projectile->SetInstigator(GetInstigator());
@@ -78,7 +77,7 @@ void AWeaponProjectile::ServerFireProjectile_Implementation(const FVector Origin
     }
 }
 
-bool AWeaponProjectile::ServerFireProjectile_Validate(FVector Origin, FVector_NetQuantizeNormal ShootDir)
+bool AMRWeaponProjectile::ServerFireProjectile_Validate(FVector Origin, FVector_NetQuantizeNormal ShootDir)
 {
     return true;
 }

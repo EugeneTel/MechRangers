@@ -87,6 +87,16 @@ protected:
 	/**  Change combat mode */
 	void CombatModePressed();
 
+	/** Action handlers */
+	void PrimaryLeftActionPressed();
+	void PrimaryLeftActionReleased();
+	void PrimaryRightActionPressed();
+	void PrimaryRightActionReleased();
+	void SecondaryLeftActionPressed();
+	void SecondaryLeftActionReleased();
+	void SecondaryRightActionPressed();
+	void SecondaryRightActionReleased();
+
 //----------------------------------------------------------------------------------------------------------------------
 // Control
 //----------------------------------------------------------------------------------------------------------------------

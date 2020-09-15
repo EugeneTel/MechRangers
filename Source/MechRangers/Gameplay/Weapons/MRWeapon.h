@@ -1,12 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "MechRangers/Gameplay/Mechs/BaseLimb.h"
 
-#include "WeaponBase.generated.h"
+#include "MRWeapon.generated.h"
 
 class USoundCue;
 
@@ -69,7 +70,7 @@ enum class EWeaponState : uint8
 };
 
 UCLASS(Abstract)
-class MECHRANGERS_API AWeaponBase : public AActor
+class MECHRANGERS_API AMRWeapon : public AActor
 {
 	GENERATED_BODY()
 
@@ -79,7 +80,7 @@ protected:
 	
 public:	
 	// Sets default values for this actor's properties
-	AWeaponBase();
+	AMRWeapon();
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -92,20 +93,27 @@ protected:
 
 	/** Weapon mesh  */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
-	UStaticMeshComponent* MeshComp;
+	USkeletalMeshComponent* MeshComp;
 
-	/** Weapon owned by Limb */
+	/** Weapon owned by Mech */
 	UPROPERTY(BlueprintReadWrite)
-	ABaseLimb* OwnedLimb;
+	AMRMech* Mech;
 
 	/** name of bone/socket for muzzle in weapon mesh */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
 	FName MuzzleAttachPoint;
 
+	/** Mech Aim system */
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+	AMRMechAim* AimSystem;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void SetOwnedLimb(ABaseLimb* NewLimb);
+	void SetMech(AMRMech* InMech);
+
+	UFUNCTION(BlueprintCallable)
+	void SetAimSystem(AMRMechAim* InAimSystem);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Input
@@ -160,7 +168,7 @@ protected:
 protected:
 	
 	/** [local] weapon specific fire implementation */
-	virtual void FireWeapon() PURE_VIRTUAL(AWeaponBase::FireWeapon,);
+	virtual void FireWeapon() PURE_VIRTUAL(AMRWeapon::FireWeapon,);
 	
 	/** [local + server] handle weapon fire */
 	void HandleFiring();
@@ -190,15 +198,15 @@ protected:
 	uint32 bEquipped : 1;
 
 public:
-	
-	/** attaches weapon mesh to limb's mesh */
-	void AttachMeshToLimb(ELimbSocket Socket) const;
 
-	/** detaches weapon mesh from limb */
-	void DetachMeshFromLimb() const;
+	/** attaches weapon mesh to mech mesh */
+	void AttachMesh(const FName SocketName) const;
+
+	/** detaches weapon mesh from mech */
+	void DetachMesh() const;
 	
 	/** [server] weapon was added to pawn's inventory */
-	virtual void OnEnterInventory(ABaseLimb* NewOwner);
+	virtual void OnEnterInventory(AMRMech* NewOwner);
 
 	/** [server] weapon was removed from pawn's inventory */
 	virtual void OnLeaveInventory();
@@ -262,7 +270,7 @@ public:
 	FORCEINLINE bool IsEquipped() const { return bEquipped; }
 	
 	/** weapon is being equipped by owner */
-	virtual void OnEquip(const ELimbSocket Socket, AWeaponBase* LastWeapon);
+	virtual void OnEquip(const FWeaponSpawnData& WeaponSpawnData);
 
 	/** weapon is now equipped by owner */
 	virtual void OnEquipFinished();
@@ -314,6 +322,14 @@ protected:
 	/** finished burst sound (bLoopedFireSound set) */
 	UPROPERTY(EditDefaultsOnly, Category=Sound)
 	USoundCue* FireFinishSound;
+		
+	/** Weapon Fire animation */
+	UPROPERTY(Category=Animation, EditDefaultsOnly, BlueprintReadOnly)
+	UAnimationAsset* FireAnim;
+
+	/** is fire animation looped? */
+	UPROPERTY(EditDefaultsOnly, Category=Animation)
+	uint32 bLoopedFireAnim : 1;
 
 	/** is muzzle FX looped? */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
@@ -323,6 +339,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category=Sound)
 	uint32 bLoopedFireSound : 1;
 
+	/** is fire animation playing? */
+	uint32 bPlayingFireAnim : 1;
+
 protected:
 	/** Called in local and network play to do the cosmetic fx for firing */
 	virtual void SimulateWeaponFire();
@@ -330,13 +349,19 @@ protected:
 	/** Called in local and network play to stop cosmetic fx (e.g. for a looping shot). */
 	virtual void StopSimulatingWeaponFire();
 
+	/** play weapon animations */
+	void PlayWeaponAnimation(UAnimationAsset* Animation, const bool bIsLoopedAnim = false);
+
+	/** stop playing weapon animations */
+	void StopWeaponAnimation(const UAnimationAsset* Animation);
+	
 //----------------------------------------------------------------------------------------------------------------------
 // Weapon Usage Helpers
 //----------------------------------------------------------------------------------------------------------------------
 
 protected:
 	/** Get the aim of the weapon, allowing for adjustments to be made by the weapon */
-	virtual FVector GetAdjustedAim() const;
+	virtual FVector GetAdjustedAim();
 
 	/** get the originating location for start damage */
 	FVector GetDamageStartLocation(const FVector& AimDir) const;
@@ -351,6 +376,6 @@ protected:
 	FHitResult WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const;
 
 	/** play weapon sounds */
-	UAudioComponent* PlayWeaponSound(USoundCue* Sound);
+	UAudioComponent* PlayWeaponSound(USoundCue* Sound) const;
 	
 };

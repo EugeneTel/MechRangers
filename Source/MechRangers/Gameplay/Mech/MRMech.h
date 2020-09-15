@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MechComponents/MRMechLivingComponent.h"
 #include "GameFramework/Character.h"
+#include "MechComponents/MRWeaponSystemComponent.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
 
@@ -49,6 +50,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRMechLivingComponent* LivingComponent;
 
+	/** Component responsible for all manipulations with weapons */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMRWeaponSystemComponent* WeaponSystem;
+
 //----------------------------------------------------------------------------------------------------------------------
 // Configs
 //----------------------------------------------------------------------------------------------------------------------
@@ -84,6 +89,10 @@ public:
 	/** Set Mech Combat Mode state */
 	UFUNCTION(BlueprintCallable)
     void SetCombatMode(bool const Val);
+
+	/** Get Weapon System component */
+	UFUNCTION(BlueprintCallable)
+	UMRWeaponSystemComponent* GetWeaponSystem() const;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Movement controls

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
@@ -6,13 +6,13 @@
 #include "GameFramework/HUD.h"
 #include "MechRangers/Gameplay/Mechs/BaseLimb.h"
 
-#include "GameBaseHUD.generated.h"
+#include "MRGameHUD.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MECHRANGERS_API AGameBaseHUD : public AHUD
+class MECHRANGERS_API AMRGameHUD : public AHUD
 {
 	GENERATED_BODY()
 
@@ -28,7 +28,7 @@ public:
 	UPROPERTY()
 	UTexture2D* CrosshairTex;
 
-	AGameBaseHUD();
+	AMRGameHUD();
 
 	void BeginPlay() override;
 	

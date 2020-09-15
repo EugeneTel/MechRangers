@@ -1,13 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
-
-#include "WeaponInstant.h"
+#include "MRWeaponInstant.h"
 #include "Kismet/GameplayStatics.h"
 #include "MechRangers/Gameplay/Mechs/BaseMech.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "MechRangers/Effects/WeaponImpactEffect.h"
 
-void AWeaponInstant::FireWeapon()
+void AMRWeaponInstant::FireWeapon()
 {
     const int32 RandomSeed = FMath::Rand();
     const FRandomStream WeaponRandomStream(RandomSeed);
@@ -26,14 +25,14 @@ void AWeaponInstant::FireWeapon()
     CurrentFiringSpread = FMath::Min(InstantConfig.FiringSpreadMax, CurrentFiringSpread + InstantConfig.FiringSpreadIncrement);
 }
 
-void AWeaponInstant::OnBurstFinished()
+void AMRWeaponInstant::OnBurstFinished()
 {
     Super::OnBurstFinished();
 
     CurrentFiringSpread = 0.0f;
 }
 
-float AWeaponInstant::GetCurrentSpread() const
+float AMRWeaponInstant::GetCurrentSpread() const
 {
     float FinalSpread = InstantConfig.WeaponSpread + CurrentFiringSpread;
 
@@ -43,7 +42,7 @@ float AWeaponInstant::GetCurrentSpread() const
     return FinalSpread;
 }
 
-void AWeaponInstant::ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir,
+void AMRWeaponInstant::ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir,
     int32 RandomSeed, float ReticleSpread)
 {
     // @TODO: Implement Server Notification
@@ -52,7 +51,7 @@ void AWeaponInstant::ProcessInstantHit(const FHitResult& Impact, const FVector& 
     ProcessInstantHit_Confirmed(Impact, Origin, ShootDir, RandomSeed, ReticleSpread);
 }
 
-void AWeaponInstant::ProcessInstantHit_Confirmed(const FHitResult& Impact, const FVector& Origin,
+void AMRWeaponInstant::ProcessInstantHit_Confirmed(const FHitResult& Impact, const FVector& Origin,
     const FVector& ShootDir, int32 RandomSeed, float ReticleSpread)
 {
     // handle damage
@@ -74,7 +73,7 @@ void AWeaponInstant::ProcessInstantHit_Confirmed(const FHitResult& Impact, const
     }
 }
 
-bool AWeaponInstant::ShouldDealDamage(AActor* TestActor) const
+bool AMRWeaponInstant::ShouldDealDamage(AActor* TestActor) const
 {
     // if we're an actor on the server, or the actor's role is authoritative, we should register damage
     if (TestActor)
@@ -90,7 +89,7 @@ bool AWeaponInstant::ShouldDealDamage(AActor* TestActor) const
     return false;
 }
 
-void AWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)
+void AMRWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)
 {
     FPointDamageEvent PointDmg;
     PointDmg.DamageTypeClass = InstantConfig.DamageType;
@@ -98,27 +97,22 @@ void AWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDi
     PointDmg.ShotDirection = ShootDir;
     PointDmg.Damage = InstantConfig.HitDamage;    
 
-    if (OwnedLimb)
+    if (Mech)
     {
-        auto OwnMech = OwnedLimb->GetOwnedMech();
-        if (OwnMech)
+        AController* MechController = Mech->GetController();
+
+        if (MechController)
         {
-            auto OMC = OwnMech->GetController();
-
-            if (OMC)
-            {
-                Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, OMC, OwnMech);
-            }
+            Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, MechController, Mech);
         }
-    }   
-
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Effects
 //----------------------------------------------------------------------------------------------------------------------
 
-void AWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
+void AMRWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
 {
     if (ImpactTemplate && Impact.bBlockingHit)
     {
@@ -143,7 +137,7 @@ void AWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
     }
 }
 
-void AWeaponInstant::SpawnTrailEffect(const FVector& EndPoint) const
+void AMRWeaponInstant::SpawnTrailEffect(const FVector& EndPoint) const
 {
     if (!TrailFX)
         return;

@@ -1,8 +1,9 @@
 ﻿// Copyright PlatoSpace.com. All Rights Reserved.
 
 #pragma once
-
 #include "MRMechTypes.generated.h"
+
+class AMRMechAim;
 
 /**
 * Mech Part types. Limbs and other devices must belongs to some part type
@@ -43,4 +44,28 @@ enum class EWeaponSize : uint8
     EWS_Medium UMETA(DisplayName = "Medium"),
     EWS_Large UMETA(DisplayName = "Large"),
     EWS_Invalid UMETA(DisplayName = "Invalid"),
+};
+
+/** Weapon Crosshair Type */
+UENUM(BlueprintType)
+enum class ECrosshairType : uint8
+{
+    ECT_None UMETA(DisplayName = "None"),
+    ECT_Basic UMETA(DisplayName = "Basic")
+};
+
+/**
+ * Mech's weapon aim configuration
+ */
+USTRUCT(BlueprintType)
+struct FMechAim
+{
+    GENERATED_BODY()
+
+    /** Cockpit attachment socket */
+    UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
+    FName Socket;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    TSubclassOf<AMRMechAim> MechAimClass;
 };

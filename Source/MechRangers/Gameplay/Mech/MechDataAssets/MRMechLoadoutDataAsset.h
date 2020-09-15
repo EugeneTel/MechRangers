@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "MechRangers/Gameplay/Weapons/MRWeaponTypes.h"
 #include "MRMechLoadoutDataAsset.generated.h"
 
 class UMRMechModelDataAsset;
@@ -17,8 +18,11 @@ struct FMechLoadout
     GENERATED_BODY()
 
     /** Mech Model Data Asset with technical information for a Mech */
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     UMRMechModelDataAsset* MechModelAsset;
+
+    UPROPERTY(Category=WeaponLoadout, EditDefaultsOnly, BlueprintReadOnly)
+    TArray<FWeaponLoadout> WeaponLoadouts;
 };
 
 /**

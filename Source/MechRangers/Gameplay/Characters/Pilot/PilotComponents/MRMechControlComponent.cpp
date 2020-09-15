@@ -1,6 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 #include "MRMechControlComponent.h"
+#include "Log.h"
 
 // Sets default values for this component's properties
 UMRMechControlComponent::UMRMechControlComponent()
@@ -27,6 +28,7 @@ void UMRMechControlComponent::TurnAtRate(const float Val) const
 void UMRMechControlComponent::SitPilotIntoMech(AMRMech* NewMech)
 {
 	Mech = NewMech;
+	WeaponSystem = Mech->GetWeaponSystem();
 }
 
 void UMRMechControlComponent::SetCombatMode(const bool Val)
@@ -61,4 +63,56 @@ void UMRMechControlComponent::AddArmRightPitch(const float Val) const
 void UMRMechControlComponent::AddArmRightYaw(const float Val) const
 {
 	Mech->AddArmRightRotator(FRotator(0.f, Val, 0.f));
+}
+
+void UMRMechControlComponent::PrimaryLeftWeaponStart() const
+{
+	if (WeaponSystem->CanFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Primary))
+	{
+		WeaponSystem->StartWeaponFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Primary);
+	}
+}
+
+void UMRMechControlComponent::PrimaryLeftWeaponFinish() const
+{
+	WeaponSystem->StopWeaponFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Primary);
+}
+
+void UMRMechControlComponent::PrimaryRightWeaponStart() const
+{
+	if (WeaponSystem->CanFire(EMechPart::EMP_RightArm, EWeaponGroup::EWG_Primary))
+	{
+		WeaponSystem->StartWeaponFire(EMechPart::EMP_RightArm, EWeaponGroup::EWG_Primary);
+	}
+}
+
+void UMRMechControlComponent::PrimaryRightWeaponFinish() const
+{
+	WeaponSystem->StopWeaponFire(EMechPart::EMP_RightArm, EWeaponGroup::EWG_Primary);
+}
+
+void UMRMechControlComponent::SecondaryLeftWeaponStart() const
+{
+	if (WeaponSystem->CanFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Secondary))
+	{
+		WeaponSystem->StartWeaponFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Secondary);
+	}
+}
+
+void UMRMechControlComponent::SecondaryLeftWeaponFinish() const
+{
+	WeaponSystem->StopWeaponFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Secondary);
+}
+
+void UMRMechControlComponent::SecondaryRightWeaponStart() const
+{
+	if (WeaponSystem->CanFire(EMechPart::EMP_RightArm, EWeaponGroup::EWG_Secondary))
+	{
+		WeaponSystem->StartWeaponFire(EMechPart::EMP_RightArm, EWeaponGroup::EWG_Secondary);
+	}
+}
+
+void UMRMechControlComponent::SecondaryRightWeaponFinish() const
+{
+	WeaponSystem->StopWeaponFire(EMechPart::EMP_RightArm, EWeaponGroup::EWG_Secondary);
 }

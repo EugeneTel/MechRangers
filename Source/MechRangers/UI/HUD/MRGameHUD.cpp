@@ -1,7 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
-
-#include "GameBaseHUD.h"
+#include "MRGameHUD.h"
 #include "Engine/Canvas.h"
 #include "Engine/Texture2D.h"
 #include "MechRangers/Core/MechRangersGameMode.h"
@@ -10,14 +9,14 @@
 #include "MechRangers/Gameplay/Mechs/BaseMech.h"
 #include "Log.h"
 
-AGameBaseHUD::AGameBaseHUD()
+AMRGameHUD::AMRGameHUD()
 {   
     // Set the crosshair texture
     static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("Texture2D'/Game/MechRangers/UI/HUD/Textures/Crosshair-blue.Crosshair-blue'"));
     CrosshairTex = CrosshairTexObj.Object;
 }
 
-void AGameBaseHUD::BeginPlay()
+void AMRGameHUD::BeginPlay()
 {
     UWorld* World = GetWorld();
     if (World)
@@ -28,7 +27,7 @@ void AGameBaseHUD::BeginPlay()
     }
 }
 
-void AGameBaseHUD::DrawHUD()
+void AMRGameHUD::DrawHUD()
 {
     Super::DrawHUD();
 
@@ -38,7 +37,7 @@ void AGameBaseHUD::DrawHUD()
    // DrawLimbsCrosshairs();
 }
 
-void AGameBaseHUD::DrawCrosshairFlat(FVector CrosshairLocation, ELimbCrosshairType CrosshairType)
+void AMRGameHUD::DrawCrosshairFlat(FVector CrosshairLocation, ELimbCrosshairType CrosshairType)
 {
     if (CrosshairType == ELimbCrosshairType::ELCT_None)
         return;
@@ -62,7 +61,7 @@ void AGameBaseHUD::DrawCrosshairFlat(FVector CrosshairLocation, ELimbCrosshairTy
     Canvas->DrawItem( TileItem );
 }
 
-void AGameBaseHUD::DrawLimbsCrosshairs()
+void AMRGameHUD::DrawLimbsCrosshairs()
 {  
     APilotCharacter* PilotCharacter = Cast<APilotCharacter>(GetOwningPawn());
     if (!PilotCharacter || !PilotCharacter->GetController())

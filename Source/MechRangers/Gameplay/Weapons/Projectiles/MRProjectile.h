@@ -1,24 +1,24 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MechRangers/Effects/ExplosionEffect.h"
-#include "MechRangers/Gameplay/Weapons/WeaponProjectile.h"
+#include "MechRangers/Gameplay/Weapons/MRWeaponProjectile.h"
 
-#include "ProjectileBase.generated.h"
+#include "MRProjectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
 
 UCLASS(Abstract, Blueprintable)
-class MECHRANGERS_API AProjectileBase : public AActor
+class MECHRANGERS_API AMRProjectile : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AProjectileBase();
+	AMRProjectile();
 	
 	/** initial setup */
 	virtual void PostInitializeComponents() override;

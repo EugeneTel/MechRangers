@@ -1,23 +1,23 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
-
-#include "WeaponBase.h"
+#include "MRWeapon.h"
 #include "DrawDebugHelpers.h"
+#include "Log.h"
 #include "Kismet/GameplayStatics.h"
 #include "MechRangers/MechRangers.h"
-#include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "MechRangers/Gameplay/Mech/MRMechAim.h"
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
 
 // Sets default values
-AWeaponBase::AWeaponBase()
+AMRWeapon::AMRWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// create components
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(GetRootComponent());
 
 	bDebug = false;
@@ -40,29 +40,32 @@ AWeaponBase::AWeaponBase()
 }
 
 // Called when the game starts or when spawned
-void AWeaponBase::BeginPlay()
+void AMRWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AWeaponBase::Tick(float DeltaTime)
+void AMRWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void AWeaponBase::SetOwnedLimb(ABaseLimb* NewLimb)
+void AMRWeapon::SetMech(AMRMech* InMech)
 {
-	if (OwnedLimb != NewLimb)
+	if (Mech == nullptr || Mech != InMech)
 	{
-		OwnedLimb = NewLimb;
-		SetOwner(NewLimb);
-
-		// Set Owned Mech as Instigator... need to think about it...
-		SetInstigator(NewLimb->GetOwnedMech());
+		Mech = InMech;
+		SetOwner(InMech);
+		SetInstigator(InMech);
 	}
+}
+
+void AMRWeapon::SetAimSystem(AMRMechAim* InAimSystem)
+{
+	AimSystem = InAimSystem;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -70,7 +73,7 @@ void AWeaponBase::SetOwnedLimb(ABaseLimb* NewLimb)
 //----------------------------------------------------------------------------------------------------------------------
 #pragma region Input
 
-void AWeaponBase::StartFire()
+void AMRWeapon::StartFire()
 {
 	// @TODO: Implement server firing
 	
@@ -81,7 +84,7 @@ void AWeaponBase::StartFire()
 	}
 }
 
-void AWeaponBase::StopFire()
+void AMRWeapon::StopFire()
 {
 	// TODO: Server side implementation
 	
@@ -92,7 +95,7 @@ void AWeaponBase::StopFire()
 	}
 }
 
-bool AWeaponBase::CanFire() const
+bool AMRWeapon::CanFire() const
 {
 	// @TODO: Add checking for Mech and Pilot
 
@@ -111,7 +114,7 @@ bool AWeaponBase::CanFire() const
 //----------------------------------------------------------------------------------------------------------------------
 #pragma region WeaponUsage
 
-void AWeaponBase::HandleFiring()
+void AMRWeapon::HandleFiring()
 {
 	if ((CurrentAmmoInClip > 0 || HasInfiniteClip() || HasInfiniteAmmo()) && CanFire())
 	{
@@ -137,14 +140,14 @@ void AWeaponBase::HandleFiring()
 	bRefiring = (CurrentState == EWeaponState::EWS_Firing && WeaponConfig.TimeBetweenShots > 0.0f);
 	if (bRefiring)
 	{
-		GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &AWeaponBase::HandleReFiring, FMath::Max<float>(WeaponConfig.TimeBetweenShots + TimerIntervalAdjustment, SMALL_NUMBER), false);
+		GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &AMRWeapon::HandleReFiring, FMath::Max<float>(WeaponConfig.TimeBetweenShots + TimerIntervalAdjustment, SMALL_NUMBER), false);
 		TimerIntervalAdjustment = 0.f;
 	}
 
 	LastFireTime = GetWorld()->GetTimeSeconds();
 }
 
-void AWeaponBase::HandleReFiring()
+void AMRWeapon::HandleReFiring()
 {
 	// Update TimerIntervalAdjustment
 	UWorld* MyWorld = GetWorld();
@@ -159,7 +162,7 @@ void AWeaponBase::HandleReFiring()
 	HandleFiring();
 }
 
-void AWeaponBase::SetWeaponState(EWeaponState NewState)
+void AMRWeapon::SetWeaponState(EWeaponState NewState)
 {
 	const EWeaponState PrevState = CurrentState;
 
@@ -178,7 +181,7 @@ void AWeaponBase::SetWeaponState(EWeaponState NewState)
 	}
 }
 
-void AWeaponBase::DetermineWeaponState()
+void AMRWeapon::DetermineWeaponState()
 {
 	EWeaponState NewState = EWeaponState::EWS_Idle;
 
@@ -197,14 +200,14 @@ void AWeaponBase::DetermineWeaponState()
 	SetWeaponState(NewState);
 }
 
-void AWeaponBase::OnBurstStarted()
+void AMRWeapon::OnBurstStarted()
 {
 	// start firing, can be delayed to satisfy TimeBetweenShots
 	const float GameTime = GetWorld()->GetTimeSeconds();
 	if (LastFireTime > 0 && WeaponConfig.TimeBetweenShots > 0.0f &&
         LastFireTime + WeaponConfig.TimeBetweenShots > GameTime)
 	{
-		GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &AWeaponBase::HandleFiring, LastFireTime + WeaponConfig.TimeBetweenShots - GameTime, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &AMRWeapon::HandleFiring, LastFireTime + WeaponConfig.TimeBetweenShots - GameTime, false);
 	}
 	else
 	{
@@ -212,7 +215,7 @@ void AWeaponBase::OnBurstStarted()
 	}	
 }
 
-void AWeaponBase::OnBurstFinished()
+void AMRWeapon::OnBurstFinished()
 {
 	// @TODO: Local checking
 	
@@ -225,22 +228,18 @@ void AWeaponBase::OnBurstFinished()
 	TimerIntervalAdjustment = 0.0f;
 }
 
-void AWeaponBase::AttachMeshToLimb(const ELimbSocket Socket) const
+void AMRWeapon::AttachMesh(const FName SocketName) const
 {
-	if (!OwnedLimb)
+	if (!Mech)
 		return;
 
 	// Remove and hide mesh
-	DetachMeshFromLimb();
-
-	const FName AttachPoint = OwnedLimb->GetWeaponAttachPoint(Socket);
+	DetachMesh();
 	MeshComp->SetHiddenInGame(false);
-	MeshComp->AttachToComponent(OwnedLimb->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
-
-	// TODO: Remote controller implementation
+	MeshComp->AttachToComponent(Mech->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 }
 
-void AWeaponBase::DetachMeshFromLimb() const
+void AMRWeapon::DetachMesh() const
 {
 	MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 	MeshComp->SetHiddenInGame(true);
@@ -251,12 +250,12 @@ void AWeaponBase::DetachMeshFromLimb() const
 //----------------------------------------------------------------------------------------------------------------------
 // Inventory
 //----------------------------------------------------------------------------------------------------------------------
-void AWeaponBase::OnEnterInventory(ABaseLimb* NewOwner)
+void AMRWeapon::OnEnterInventory(AMRMech* NewOwner)
 {
-	SetOwnedLimb(NewOwner);
+	SetMech(NewOwner);
 }
 
-void AWeaponBase::OnLeaveInventory()
+void AMRWeapon::OnLeaveInventory()
 {
 	if (IsAttachedToPawn())
 	{
@@ -265,11 +264,11 @@ void AWeaponBase::OnLeaveInventory()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		SetOwnedLimb(nullptr);
+		SetMech(nullptr);
 	}
 }
 
-bool AWeaponBase::IsAttachedToPawn() const
+bool AMRWeapon::IsAttachedToPawn() const
 {
 	// TODO: Pending Equip if needed
 	return bEquipped; /*|| bPendingEquip;*/
@@ -280,17 +279,17 @@ bool AWeaponBase::IsAttachedToPawn() const
 //----------------------------------------------------------------------------------------------------------------------
 #pragma region Ammo
 
-bool AWeaponBase::HasInfiniteAmmo() const
+bool AMRWeapon::HasInfiniteAmmo() const
 {
 	return WeaponConfig.bInfiniteAmmo;
 }
 
-bool AWeaponBase::HasInfiniteClip() const
+bool AMRWeapon::HasInfiniteClip() const
 {
 	return WeaponConfig.bInfiniteClip;
 }
 
-void AWeaponBase::GiveAmmo(int AddAmount)
+void AMRWeapon::GiveAmmo(int AddAmount)
 {
 	const int32 MissingAmmo = FMath::Max(0, WeaponConfig.MaxAmmo - CurrentAmmo);
 	AddAmount = FMath::Min(AddAmount, MissingAmmo);
@@ -301,7 +300,7 @@ void AWeaponBase::GiveAmmo(int AddAmount)
 	// @TODO: Auto reloading
 }
 
-void AWeaponBase::UseAmmo()
+void AMRWeapon::UseAmmo()
 {
 	if (!HasInfiniteAmmo())
 	{
@@ -318,21 +317,21 @@ void AWeaponBase::UseAmmo()
 	// @TODO: Player stats record
 }
 
-void AWeaponBase::OnEquip(const ELimbSocket Socket, AWeaponBase* LastWeapon)
+void AMRWeapon::OnEquip(const FWeaponSpawnData& WeaponSpawnData)
 {
-	AttachMeshToLimb(Socket);
+	AttachMesh(WeaponSpawnData.SocketName);
 	
 	bEquipped = true;
 	
 	// TODO: Implement
 }
 
-void AWeaponBase::OnEquipFinished()
+void AMRWeapon::OnEquipFinished()
 {
 	// TODO: Implement
 }
 
-void AWeaponBase::OnUnEquip()
+void AMRWeapon::OnUnEquip()
 {
 	bEquipped = false;
 	
@@ -345,7 +344,7 @@ void AWeaponBase::OnUnEquip()
 // Effects
 //----------------------------------------------------------------------------------------------------------------------
 
-void AWeaponBase::SimulateWeaponFire()
+void AMRWeapon::SimulateWeaponFire()
 {
 	if (GetLocalRole() == ROLE_Authority && CurrentState != EWeaponState::EWS_Firing)
 		return;
@@ -358,7 +357,11 @@ void AWeaponBase::SimulateWeaponFire()
 		}
 	}
 
-	// @TODO: Weapon Animation
+	if (!bLoopedFireAnim || !bPlayingFireAnim)
+	{
+		PlayWeaponAnimation(FireAnim, bLoopedFireAnim);
+		bPlayingFireAnim = true;
+	}
 
 	if (bLoopedFireSound)
 	{
@@ -375,7 +378,7 @@ void AWeaponBase::SimulateWeaponFire()
 	// @TODO: Camera Shake
 }
 
-void AWeaponBase::StopSimulatingWeaponFire()
+void AMRWeapon::StopSimulatingWeaponFire()
 {
 	if (bLoopedMuzzleFX )
 	{
@@ -399,19 +402,50 @@ void AWeaponBase::StopSimulatingWeaponFire()
 		PlayWeaponSound(FireFinishSound);
 	}
 
-	// @TODO: Stop Weapon Animation
+	if (bLoopedFireAnim && bPlayingFireAnim)
+	{
+		StopWeaponAnimation(FireAnim);
+		bPlayingFireAnim = false;
+	}
 }
+
+void AMRWeapon::PlayWeaponAnimation(UAnimationAsset* Animation, const bool bIsLoopedAnim)
+{
+	if (MeshComp && Animation)
+	{
+		MeshComp->PlayAnimation(Animation, bIsLoopedAnim);
+	} else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AMRWeapon::PlayWeaponAnimation - Animation is not set!"));
+	}
+}
+
+void AMRWeapon::StopWeaponAnimation(const UAnimationAsset* Animation)
+{
+	MeshComp->Stop();
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // Weapon Helpers
 //----------------------------------------------------------------------------------------------------------------------
 
-FVector AWeaponBase::GetAdjustedAim() const
+
+
+FVector AMRWeapon::GetAdjustedAim()
 {
-	return OwnedLimb->GetActorForwardVector();
+	if (AimSystem)
+	{
+		return AimSystem->GetActorForwardVector();
+	} else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMRWeapon::GetAdjustedAim - AimSystem is not set!"))
+		return GetActorForwardVector();
+	}
+
 }
 
-FVector AWeaponBase::GetDamageStartLocation(const FVector& AimDir) const
+FVector AMRWeapon::GetDamageStartLocation(const FVector& AimDir) const
 {
 	// @TODO: Bots functionality
 
@@ -420,17 +454,17 @@ FVector AWeaponBase::GetDamageStartLocation(const FVector& AimDir) const
 	return GetMuzzleLocation();
 }
 
-FVector AWeaponBase::GetMuzzleLocation() const
+FVector AMRWeapon::GetMuzzleLocation() const
 {
 	return MeshComp->GetSocketLocation(MuzzleAttachPoint);
 }
 
-FVector AWeaponBase::GetMuzzleDirection() const
+FVector AMRWeapon::GetMuzzleDirection() const
 {
 	return MeshComp->GetSocketRotation(MuzzleAttachPoint).Vector();
 }
 
-FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const
+FHitResult AMRWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const
 {
 	// Perform trace to retrieve hit info
 	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), true, this);
@@ -454,12 +488,12 @@ FHitResult AWeaponBase::WeaponTrace(const FVector& TraceFrom, const FVector& Tra
 	return Hit;
 }
 
-UAudioComponent* AWeaponBase::PlayWeaponSound(USoundCue* Sound)
+UAudioComponent* AMRWeapon::PlayWeaponSound(USoundCue* Sound) const
 {
 	UAudioComponent* AC = nullptr;
-	if (Sound && OwnedLimb)
+	if (Sound && Mech)
 	{
-		AC = UGameplayStatics::SpawnSoundAttached(Sound, OwnedLimb->GetRootComponent());
+		AC = UGameplayStatics::SpawnSoundAttached(Sound, Mech->GetRootComponent());
 	}
 
 	return AC;

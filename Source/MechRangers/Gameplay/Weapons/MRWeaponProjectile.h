@@ -1,14 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MechRangers/Gameplay/Weapons/WeaponBase.h"
-#include "WeaponProjectile.generated.h"
+#include "MechRangers/Gameplay/Weapons/MRWeapon.h"
+#include "MRWeaponProjectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
-class AProjectileBase;
+class AMRProjectile;
 
 
 USTRUCT()
@@ -18,7 +18,7 @@ struct FProjectileWeaponData
 
     /** projectile class */
     UPROPERTY(EditDefaultsOnly, Category=Projectile)
-	TSubclassOf<AProjectileBase> ProjectileClass;
+	TSubclassOf<AMRProjectile> ProjectileClass;
 
 	/** life time */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
@@ -48,7 +48,7 @@ struct FProjectileWeaponData
 };
 
 UCLASS(Abstract, Blueprintable)
-class MECHRANGERS_API AWeaponProjectile : public AWeaponBase
+class MECHRANGERS_API AMRWeaponProjectile : public AMRWeapon
 {
 	GENERATED_BODY()
 

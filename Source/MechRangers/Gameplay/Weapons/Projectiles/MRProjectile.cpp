@@ -1,6 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
-#include "ProjectileBase.h"
+#include "MRProjectile.h"
 #include "MechRangers/MechRangers.h"
 #include "Components/SphereComponent.h"
 #include "Components/AudioComponent.h"
@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
-AProjectileBase::AProjectileBase()
+AMRProjectile::AMRProjectile()
 {
     CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
     CollisionComp->InitSphereRadius(5.0f);
@@ -43,13 +43,13 @@ AProjectileBase::AProjectileBase()
     SetReplicatingMovement(true);
 }
 
-void AProjectileBase::PostInitializeComponents()
+void AMRProjectile::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
-    MovementComp->OnProjectileStop.AddDynamic(this, &AProjectileBase::OnImpact);
+    MovementComp->OnProjectileStop.AddDynamic(this, &AMRProjectile::OnImpact);
     CollisionComp->MoveIgnoreActors.Add(GetInstigator());
 
-    AWeaponProjectile* OwnerWeapon = Cast<AWeaponProjectile>(GetOwner());
+    AMRWeaponProjectile* OwnerWeapon = Cast<AMRWeaponProjectile>(GetOwner());
     if (OwnerWeapon)
     {
         OwnerWeapon->ApplyWeaponConfig(WeaponConfig);
@@ -59,7 +59,7 @@ void AProjectileBase::PostInitializeComponents()
     MyController = GetInstigatorController();
 }
 
-void AProjectileBase::InitVelocity(FVector& ShootDirection)
+void AMRProjectile::InitVelocity(FVector& ShootDirection)
 {
     if (MovementComp)
     {
@@ -67,7 +67,7 @@ void AProjectileBase::InitVelocity(FVector& ShootDirection)
     }
 }
 
-void AProjectileBase::OnImpact(const FHitResult& HitResult)
+void AMRProjectile::OnImpact(const FHitResult& HitResult)
 {
     if (GetLocalRole() == ROLE_Authority && !bExploded)
     {
@@ -76,7 +76,7 @@ void AProjectileBase::OnImpact(const FHitResult& HitResult)
     }
 }
 
-void AProjectileBase::Explode(const FHitResult& Impact)
+void AMRProjectile::Explode(const FHitResult& Impact)
 {
     if (ParticleComp)
     {
@@ -105,7 +105,7 @@ void AProjectileBase::Explode(const FHitResult& Impact)
     bExploded = true;
 }
 
-void AProjectileBase::DisableAndDestroy()
+void AMRProjectile::DisableAndDestroy()
 {
     UAudioComponent* ProjAudioComp = FindComponentByClass<UAudioComponent>();
     if (ProjAudioComp && ProjAudioComp->IsPlaying())
@@ -119,7 +119,7 @@ void AProjectileBase::DisableAndDestroy()
     SetLifeSpan( 2.0f );
 }
 
-void AProjectileBase::PostNetReceiveVelocity(const FVector& NewVelocity)
+void AMRProjectile::PostNetReceiveVelocity(const FVector& NewVelocity)
 {
     if (MovementComp)
     {

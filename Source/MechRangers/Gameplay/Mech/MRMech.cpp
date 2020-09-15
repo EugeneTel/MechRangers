@@ -6,6 +6,7 @@
 #include "MechComponents/MRMechLivingComponent.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
+#include "MechDataAssets/MRMechHardpointDataAsset.h"
 #include "MRMechAnimInstance.h"
 #include "MRMechCockpit.h"
 #include "Log.h"
@@ -19,6 +20,7 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 
 	// Create Defaults
 	LivingComponent = CreateDefaultSubobject<UMRMechLivingComponent>(TEXT("LivingComponent"));
+	WeaponSystem = CreateDefaultSubobject<UMRWeaponSystemComponent>(TEXT("WeaponSystem"));
 
 	// Setup Mech
 	bUseControllerRotationYaw = false;
@@ -52,6 +54,11 @@ void AMRMech::Tick(float DeltaTime)
 
 }
 
+UMRWeaponSystemComponent* AMRMech::GetWeaponSystem() const
+{
+	return WeaponSystem;
+}
+
 void AMRMech::SetLoadout(FMechLoadout NewLoadout)
 {
 	MechLoadout = NewLoadout;
@@ -82,6 +89,22 @@ void AMRMech::ConstructMech()
 
 	// Setup Cockpit
 	Cockpit = SpawnCockpit(MechModelData.VRCockpit);
+
+	const auto WeaponHardpointAsset = MechModelData.WeaponHardpointAsset;
+	if (!WeaponHardpointAsset)
+	{
+		UE_LOG(LogTemp, Error, TEXT("WeaponHardpointAsset is not set in MechModelData"));
+		return;
+	}
+
+	if (MechLoadout.WeaponLoadouts.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("WeaponLoadouts is not set in MechLoadout"));
+		return;
+	}
+
+	// Setup Weapons System
+	WeaponSystem->Setup(this, MechLoadout.WeaponLoadouts, MechModelData.WeaponHardpointAsset->MechHardpoints.WeaponSlots, MechModelData.MechAimConfig);
 }
 
 AMRMechCockpit* AMRMech::SpawnCockpit(const FMechCockpit CockpitData)

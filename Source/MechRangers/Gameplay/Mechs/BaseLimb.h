@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "BaseLimb.generated.h"
 
-class ACrosshairBase;
+class AMRCrosshair;
 class ABaseMech;
-class AWeaponBase;
+class AMRWeapon;
 
 /** Limb Type */
 UENUM(BlueprintType)
@@ -45,7 +45,7 @@ struct FLimbSocketData
 
 	/** Default Weapon will be spawned and attached */
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AWeaponBase> DefaultWeapon;
+	TSubclassOf<AMRWeapon> DefaultWeapon;
 
 	/** defaults */
 	FLimbSocketData()
@@ -97,12 +97,12 @@ protected:
 	/** weapons in inventory */
 	// @TODO: Replication
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
-	TMap<ELimbSocket, AWeaponBase*> Inventory;
+	TMap<ELimbSocket, AMRWeapon*> Inventory;
 
 	/** currently equipped weapons at limb */
 	// @TODO: Replication
 	UPROPERTY(Transient/*, ReplicatedUsing = OnRep_CurrentWeapon*/)
-	TMap<ELimbSocket, AWeaponBase*> CurrentWeapons;
+	TMap<ELimbSocket, AMRWeapon*> CurrentWeapons;
 
 	/** Saved Trace End Point from the last Trace */
 	UPROPERTY(BlueprintReadWrite)
@@ -110,7 +110,7 @@ protected:
 
 	/** Crosshair instance for the current limb */
 	UPROPERTY(BlueprintReadWrite)
-	ACrosshairBase* Crosshair;
+	AMRCrosshair* Crosshair;
 
 	/** Crosshair Type of the Limb */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -118,7 +118,7 @@ protected:
 
 	/** Crosshair actor class with widget */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TSubclassOf<ACrosshairBase> CrosshairClass;
+	TSubclassOf<AMRCrosshair> CrosshairClass;
 
 	/** Controlling speed (rotate, move etc.) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -169,7 +169,7 @@ protected:
 	
 	/** updates current weapon for selected socket in limb */
 	UFUNCTION(BlueprintCallable)
-    void SetCurrentWeapon(ELimbSocket Socket, AWeaponBase* NewWeapon, AWeaponBase* LastWeapon = nullptr);
+    void SetCurrentWeapon(ELimbSocket Socket, AMRWeapon* NewWeapon, AMRWeapon* LastWeapon = nullptr);
 	
 	/** [server] spawns default inventory */
 	void SpawnDefaultInventory();
@@ -178,7 +178,7 @@ protected:
 	void DestroyInventory();
 
 	/** [server] add weapon to inventory */
-	void InventoryAdd(ELimbSocket Socket, AWeaponBase* Weapon);
+	void InventoryAdd(ELimbSocket Socket, AMRWeapon* Weapon);
 
 	/** [server + local] equips weapon from inventory */
 	void EquipWeapon(ELimbSocket Socket);

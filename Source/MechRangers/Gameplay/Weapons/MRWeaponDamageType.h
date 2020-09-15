@@ -1,17 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/Canvas.h"
 #include "GameFramework/DamageType.h"
-#include "WeaponDamageType.generated.h"
+#include "MRWeaponDamageType.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MECHRANGERS_API UWeaponDamageType : public UDamageType
+class MECHRANGERS_API UMRWeaponDamageType : public UDamageType
 {
 	GENERATED_BODY()
 

@@ -6,13 +6,13 @@
 
 #include "Engine/DataAsset.h"
 #include "MechRangers/Gameplay/Weapons/MRWeaponTypes.h"
-
 #include "MRMechHardpointDataAsset.generated.h"
 
-class UMRSlotTypeDataAsset;
-
+/**
+* Array of weapon slots
+*/
 USTRUCT(BlueprintType)
-struct FMechHardpoint
+struct FMechHardpoints
 {
     GENERATED_BODY()
 
@@ -33,6 +33,6 @@ class MECHRANGERS_API UMRMechHardpointDataAsset : public UDataAsset
 public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    FMechHardpoint MechHardpoints;
+    FMechHardpoints MechHardpoints;
 
 };
