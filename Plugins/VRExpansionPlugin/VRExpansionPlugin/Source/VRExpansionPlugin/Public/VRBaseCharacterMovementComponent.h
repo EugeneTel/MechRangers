@@ -574,7 +574,7 @@ public:
 		if (!FMath::IsNearlyEqual(LFDiff.Z, nMove->LFDiff.Z))
 			return false;
 
-		if (!LFDiff.IsZero() && !nMove->LFDiff.IsZero() && !FVector::Coincident(LFDiff.GetSafeNormal2D(), nMove->LFDiff.GetSafeNormal2D(), AccelDotThresholdCombine))
+		if (!FVector2D(LFDiff.X, LFDiff.Y).IsZero() && !FVector2D(nMove->LFDiff.X, nMove->LFDiff.Y).IsZero() && !FVector::Coincident(LFDiff.GetSafeNormal2D(), nMove->LFDiff.GetSafeNormal2D(), AccelDotThresholdCombine))
 			return false;
 
 		return FSavedMove_Character::CanCombineWith(NewMove, Character, MaxDelta);
@@ -685,6 +685,10 @@ public:
 	// on the next tick as a movement input..
 	UFUNCTION(BlueprintCallable, Category = "BaseVRCharacterMovementComponent|VRLocations")
 		void AddCustomReplicatedMovement(FVector Movement);
+
+	// Clears the custom replicated movement, can be used to cancel movements if the mode changes
+	UFUNCTION(BlueprintCallable, Category = "BaseVRCharacterMovementComponent|VRLocations")
+		void ClearCustomReplicatedMovement();
 
 	// Called to check if the server is performing a move action on a non controlled character
 	// If so then we just run the logic right away as it can't be inlined and won't be replicated
