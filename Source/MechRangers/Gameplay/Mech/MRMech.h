@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MechComponents/MRMechLivingComponent.h"
 #include "GameFramework/Character.h"
+#include "MechComponents/MRMechHitReactionComponent.h"
 #include "MechComponents/MRWeaponSystemComponent.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
@@ -29,6 +30,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	/** a Mech takes a Damage */
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+
+protected:
+	virtual float InternalTakePointDamage(float Damage, FPointDamageEvent const& PointDamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+public:
 	/** Setup Mech from Loadout Asset */
 	UFUNCTION(BlueprintCallable)
 	void ConstructMech();
@@ -50,6 +59,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRMechLivingComponent* LivingComponent;
 
+	/** Component responsible for all hit reactions */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMRMechHitReactionComponent* HitReactionComponent;
+
 	/** Component responsible for all manipulations with weapons */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRWeaponSystemComponent* WeaponSystem;
@@ -70,7 +83,6 @@ protected:
 	/** Active Mech model data structure */
 	UPROPERTY(Category=MRMech, BlueprintReadWrite, VisibleInstanceOnly)
 	FMechModelData MechModelData;
-
 	
 	/** Is Combat mode or Movement mode. */
 	UPROPERTY(Category=MRMech, VisibleInstanceOnly, BlueprintReadWrite)

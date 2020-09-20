@@ -8,7 +8,7 @@
 
 #include "PilotCharacter.generated.h"
 
-class ABaseMech;
+class AMRMech;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGripDropped, UGripMotionControllerComponent*, GripController, UObject*, DroppedObject);
 
@@ -39,7 +39,7 @@ protected:
 
     /** A Mech owned by current pilot */
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    ABaseMech* OwningMech;
+    AMRMech* OwningMech;
 
 public:
     APilotCharacter();
@@ -58,7 +58,7 @@ public:
 
     /** Returns a Mech owned by current OwnedPilot */
     UFUNCTION(BlueprintPure, BlueprintCallable)
-    ABaseMech* GetOwningMech() const;
+    AMRMech* GetOwningMech() const;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Input

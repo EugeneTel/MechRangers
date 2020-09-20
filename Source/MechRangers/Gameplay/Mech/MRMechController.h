@@ -13,5 +13,16 @@ UCLASS()
 class MECHRANGERS_API AMRMechController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
+
+	/** god mode cheat */
+	UPROPERTY(Transient)
+	bool bGodMode;
+
+public:
+	
+	/** get gode mode cheat */
+	bool HasGodMode() const;
 	
 };

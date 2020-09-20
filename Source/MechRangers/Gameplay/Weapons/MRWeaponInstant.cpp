@@ -2,9 +2,9 @@
 
 #include "MRWeaponInstant.h"
 #include "Kismet/GameplayStatics.h"
-#include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "MechRangers/Effects/WeaponImpactEffect.h"
+#include "MechRangers/Effects/MRWeaponImpactEffect.h"
 
 void AMRWeaponInstant::FireWeapon()
 {
@@ -128,7 +128,7 @@ void AMRWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
         }
 
         FTransform const SpawnTransform(Impact.ImpactNormal.Rotation(), Impact.ImpactPoint);
-        AWeaponImpactEffect* EffectActor = GetWorld()->SpawnActorDeferred<AWeaponImpactEffect>(ImpactTemplate, SpawnTransform);
+        AMRWeaponImpactEffect* EffectActor = GetWorld()->SpawnActorDeferred<AMRWeaponImpactEffect>(ImpactTemplate, SpawnTransform);
         if (EffectActor)
         {
             EffectActor->SurfaceHit = UseImpact;

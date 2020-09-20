@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MechRangers/Effects/ExplosionEffect.h"
+#include "MechRangers/Effects/MRExplosionEffect.h"
 #include "MechRangers/Gameplay/Weapons/MRWeaponProjectile.h"
 
 #include "MRProjectile.generated.h"
@@ -46,7 +46,7 @@ protected:
 
 	/** effects for explosion */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
-	TSubclassOf<AExplosionEffect> ExplosionTemplate;
+	TSubclassOf<AMRExplosionEffect> ExplosionTemplate;
 
 	/** controller that fired me (cache for damage calculations) */
 	TWeakObjectPtr<AController> MyController;

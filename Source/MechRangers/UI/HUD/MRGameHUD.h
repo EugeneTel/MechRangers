@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "MechRangers/Gameplay/Mechs/BaseLimb.h"
 
 #include "MRGameHUD.generated.h"
 
@@ -33,12 +32,4 @@ public:
 	void BeginPlay() override;
 	
 	virtual void DrawHUD() override;
-
-	/** Draw Crosshair for Flat game mode on the screen */
-	UFUNCTION(BlueprintCallable)
-	void DrawCrosshairFlat(FVector CrosshairLocation, ELimbCrosshairType CrosshairType);
-
-	/** Draw crosshair for each mech limb */
-	UFUNCTION(BlueprintCallable)
-	void DrawLimbsCrosshairs();
 };

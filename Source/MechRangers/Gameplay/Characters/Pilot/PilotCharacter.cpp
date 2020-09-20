@@ -7,7 +7,7 @@
 #include "Components/SphereComponent.h"
 #include "MechRangers/Core/MechRangersGameMode.h"
 #include "MechRangers/Gameplay/Characters/Animations/HandAnimInstance.h"
-#include "MechRangers/Gameplay/Mechs/BaseMech.h"
+#include "MechRangers/Gameplay/Mech/MRMech.h"
 
 APilotCharacter::APilotCharacter()
 {
@@ -46,7 +46,8 @@ void APilotCharacter::BeginPlay()
     // Set OwnedPilot to Mech
     if (OwningMech)
     {
-        OwningMech->PilotSitDown(this);
+        // Old implementation
+       // OwningMech->PilotSitDown(this);
     }
 
     UWorld* World = GetWorld();
@@ -90,7 +91,7 @@ void APilotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
     PlayerInputComponent->BindAction("GripRight", IE_Released, this, &APilotCharacter::GripRightReleased);
 }
 
-ABaseMech* APilotCharacter::GetOwningMech() const
+AMRMech* APilotCharacter::GetOwningMech() const
 {
     return OwningMech;
 }

@@ -20,11 +20,13 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 
 	// Create Defaults
 	LivingComponent = CreateDefaultSubobject<UMRMechLivingComponent>(TEXT("LivingComponent"));
+	HitReactionComponent = CreateDefaultSubobject<UMRMechHitReactionComponent>(TEXT("HitReactionComponent"));
 	WeaponSystem = CreateDefaultSubobject<UMRWeaponSystemComponent>(TEXT("WeaponSystem"));
 
 	// Setup Mech
 	bUseControllerRotationYaw = false;
 	AutoPossessAI = EAutoPossessAI::Disabled;
+	GetCapsuleComponent()->SetCollisionProfileName(FName("MechPawn"));
 
 	// Setup Defaults
 	bIsCombatMode = false;
@@ -52,6 +54,35 @@ void AMRMech::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+float AMRMech::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	if (ActualDamage > 0.f)
+	{
+		//ULog::Success("Mech Takes Damage", LO_Both);
+
+		//LivingComponent->TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+		//HitReactionComponent->PlayHit(Damage, DamageEvent, EventInstigator ? EventInstigator->GetPawn() : nullptr, DamageCauser);
+	}
+
+	return ActualDamage;
+}
+
+float AMRMech::InternalTakePointDamage(float Damage, FPointDamageEvent const& PointDamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	const float ActualDamage = Super::InternalTakePointDamage(Damage, PointDamageEvent, EventInstigator, DamageCauser);
+	if (ActualDamage > 0.f)
+	{
+		if (LivingComponent)
+		{
+			LivingComponent->TakePointDamage(Damage, PointDamageEvent, EventInstigator, DamageCauser);	
+		}
+	}
+
+	return ActualDamage;
+	
 }
 
 UMRWeaponSystemComponent* AMRMech::GetWeaponSystem() const
@@ -174,7 +205,7 @@ void AMRMech::TurnAtRate(float Val)
 
 void AMRMech::AddArmRotator(FRotator& ArmRotator, const FRotator& AddRot)
 {
-	const float BaseRotRate = 2.f;
+	const float BaseRotRate = 0.5f;
 	ArmRotator += AddRot * (BaseRotRate * GetWorld()->GetDeltaSeconds());
 
 	const float RotateLimit = 1.f;

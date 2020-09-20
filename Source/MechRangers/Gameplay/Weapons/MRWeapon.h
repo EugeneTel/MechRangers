@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MechRangers/Gameplay/Mech/MRMech.h"
-#include "MechRangers/Gameplay/Mechs/BaseLimb.h"
 
 #include "MRWeapon.generated.h"
 

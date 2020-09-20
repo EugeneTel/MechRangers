@@ -6,7 +6,7 @@
 #include "MechRangers/Gameplay/Weapons/MRWeapon.h"
 #include "MRWeaponInstant.generated.h"
 
-class AWeaponImpactEffect;
+class AMRWeaponImpactEffect;
 
 /**
  * Instant Weapon Data Structure
@@ -124,7 +124,7 @@ protected:
 
     /** impact effects */
     UPROPERTY(EditDefaultsOnly, Category=Effects)
-    TSubclassOf<AWeaponImpactEffect> ImpactTemplate;
+    TSubclassOf<AMRWeaponImpactEffect> ImpactTemplate;
 
     /** smoke trail */
     UPROPERTY(EditDefaultsOnly, Category=Effects)

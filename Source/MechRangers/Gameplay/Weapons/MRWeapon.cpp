@@ -472,7 +472,7 @@ FHitResult AMRWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& Trace
 	TraceParams.bDebugQuery = true;
 
 	FHitResult Hit(ForceInit);
-	GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON_TRACE, TraceParams);
 
 	// Draw debug line
 	if (bDebug)

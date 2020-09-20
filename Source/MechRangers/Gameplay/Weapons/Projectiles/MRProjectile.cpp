@@ -16,12 +16,13 @@ AMRProjectile::AMRProjectile()
     CollisionComp->AlwaysLoadOnClient = true;
     CollisionComp->AlwaysLoadOnServer = true;
     CollisionComp->bTraceComplexOnMove = true;
-    CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    CollisionComp->SetCollisionObjectType(COLLISION_PROJECTILE);
-    CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-    CollisionComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-    CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
-    CollisionComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+    CollisionComp->SetCollisionProfileName(FName("Projectile"));
+    // CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    // CollisionComp->SetCollisionObjectType(COLLISION_PROJECTILE);
+    // CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
+    // CollisionComp->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+    // CollisionComp->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
+    // CollisionComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
     RootComponent = CollisionComp;
 
     ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComp"));
@@ -94,7 +95,7 @@ void AMRProjectile::Explode(const FHitResult& Impact)
     if (ExplosionTemplate)
     {
         FTransform const SpawnTransform(Impact.ImpactNormal.Rotation(), NudgedImpactLocation);
-        AExplosionEffect* const EffectActor = GetWorld()->SpawnActorDeferred<AExplosionEffect>(ExplosionTemplate, SpawnTransform);
+        AMRExplosionEffect* const EffectActor = GetWorld()->SpawnActorDeferred<AMRExplosionEffect>(ExplosionTemplate, SpawnTransform);
         if (EffectActor)
         {
             EffectActor->SurfaceHit = Impact;
