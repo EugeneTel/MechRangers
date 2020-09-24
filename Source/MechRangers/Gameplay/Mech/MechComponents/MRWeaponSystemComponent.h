@@ -37,6 +37,12 @@ struct FMechArmedPart
 
 		return nullptr;
 	}
+
+	FMechArmedPart()
+	{
+		MechPart = EMechPart::EMP_Invalid;
+		AimSystem = nullptr;
+	}
 	
 };
 

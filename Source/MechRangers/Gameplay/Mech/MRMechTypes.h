@@ -26,12 +26,12 @@ enum class EMechPart : uint8
 * Mech's Part Health State
 */
 UENUM(BlueprintType)
-enum class EPartHealth : uint8
+enum class EPartHealthState : uint8
 {
-    EPH_Healthy UMETA(DisplayName = "Healthy"),
-    EPH_Damaged UMETA(DisplayName = "Damaged"),
-    EPH_Destroyed UMETA(DisplayName = "Destroyed"),
-    EPH_Invalid UMETA(DisplayName = "Invalid")
+    PHS_Healthy UMETA(DisplayName = "Healthy"),
+    PHS_Damaged UMETA(DisplayName = "Damaged"),
+    PHS_Destroyed UMETA(DisplayName = "Destroyed"),
+    PHS_Invalid UMETA(DisplayName = "Invalid")
 };
 
 /**

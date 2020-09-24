@@ -5,19 +5,20 @@
 #include "CoreMinimal.h"
 #include "VRCharacter.h"
 #include "MechRangers/MechRangersTypes.h"
+#include "MRPilotHandsVR.h"
 
 #include "PilotCharacter.generated.h"
 
 class AMRMech;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGripDropped, UGripMotionControllerComponent*, GripController, UObject*, DroppedObject);
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGripDropped, UGripMotionControllerComponent*, GripController, UObject*, DroppedObject);
 
-UENUM(BlueprintType)
-enum class EGripHand : uint8
-{
-    EGH_Left UMETA(DisplayName = "Left"),
-    EGH_Right UMETA(DisplayName = "Right")
-};
+// UENUM(BlueprintType)
+// enum class EGripHand : uint8
+// {
+//     EGH_Left UMETA(DisplayName = "Left"),
+//     EGH_Right UMETA(DisplayName = "Right")
+// };
 
 /**
  * 

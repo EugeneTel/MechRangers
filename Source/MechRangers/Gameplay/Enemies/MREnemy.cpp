@@ -94,10 +94,7 @@ void AMREnemy::MoveToPoint(FVector& Point)
 
 	if (RequestResult != EPathFollowingRequestResult::RequestSuccessful)
 	{
-		ULog::Error("Enemy Path Request Error!!!");
-	} else
-	{
-		ULog::Success("Enemy Path Successfully Set!!!");
+		UE_LOG(LogTemp, Error, TEXT("Enemy Path request error!"));
 	}
 }
 
@@ -216,7 +213,6 @@ bool AMREnemy::Alive()
 
 void AMREnemy::AttackTarget(AActor* Target)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AEnemy::AttackTarget:Start"));
 	if (!CombatMontage || !AnimInstance || !Alive())
 		return;
 

@@ -48,7 +48,7 @@ public:
 
 	/** Setup Cockpit for mech from Mech Model Data */
 	UFUNCTION(BlueprintCallable)
-	AMRMechCockpit* SpawnCockpit(FMechCockpit CockpitData);
+	AMRMechCockpit* SpawnCockpit(FMechCockpit& CockpitData);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Components

@@ -3,67 +3,157 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VRBaseCharacter.h"
+
 #include "MRPilotInterface.h"
-#include "PilotComponents/MRMechControlComponent.h"
+#include "VRCharacter.h"
+#include "MechRangers/MechRangersTypes.h"
 
 #include "MRPilotVR.generated.h"
 
-//class UMRMechControlComponent;
+class AMRMech;
+class UMRMechControlComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGripDropped, UGripMotionControllerComponent*, GripController, UObject*, DroppedObject);
+
+UENUM(BlueprintType)
+enum class EGripHand : uint8
+{
+    EGH_Left UMETA(DisplayName = "Left"),
+    EGH_Right UMETA(DisplayName = "Right")
+};
 
 /**
  * 
  */
 UCLASS()
-class MECHRANGERS_API AMRPilotVR : public AVRBaseCharacter, public IMRPilotInterface
+class MECHRANGERS_API AMRPilotVR : public AVRCharacter, public IMRPilotInterface
 {
 	GENERATED_BODY()
 
-public:
+protected:
 
-	// Sets default values for this character's properties
-	AMRPilotVR();
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-//----------------------------------------------------------------------------------------------------------------------
-// Components
-//----------------------------------------------------------------------------------------------------------------------
-private:
-
-	UPROPERTY(Category=MRPilot, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	UMRMechControlComponent* MechControl;
 
 public:
+    AMRPilotVR();
+    
+    void BeginPlay() override;
 
-	/** Get Mech Control Component */
-	UFUNCTION(Category=MRPilot, BlueprintCallable)
-    UMRMechControlComponent* GetMechControlComponent() const;
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
 
-	//----------------------------------------------------------------------------------------------------------------------
-	// Mech
-	//----------------------------------------------------------------------------------------------------------------------
-private:
+    // Called to bind functionality to input
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/** A Mech owned by the Pilot */
-	UPROPERTY(Category=MRPilot, VisibleInstanceOnly, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	AMRMech* Mech;
-	
-	protected:
+//----------------------------------------------------------------------------------------------------------------------
+// Mech
+//----------------------------------------------------------------------------------------------------------------------
+protected:
 
-	/** Sit Pilot Into Mech. Interface method implementation */
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+    /** A Mech owned by current pilot */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    AMRMech* Mech;
+
+    UPROPERTY(Category=MRPilot, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+    UMRMechControlComponent* MechControl;
+
+    /** Sit Pilot Into Mech. Inteface method implementation */
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
     void SitIntoMech(AMRMech* NewMech);
 
-	/** Input Mech Move Forward */
-	UFUNCTION(Category=MRPilot, BlueprintCallable)
+public:
+
+    /** Returns a Mech owned by current OwnedPilot */
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+    AMRMech* GetMech() const;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Input
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+    
+    UFUNCTION(BlueprintCallable)
+    void GripLeftPressed();
+
+    UFUNCTION(BlueprintCallable)
+    void GripRightPressed();
+
+    UFUNCTION(BlueprintCallable)
+    void GripLeftReleased();
+
+    UFUNCTION(BlueprintCallable)
+    void GripRightReleased();
+
+    /** Input Mech Move Forward */
     void MechMoveForward(float Val);
 
-	/** Input Mech Turn Rate */
-	UFUNCTION(Category=MRPilot, BlueprintCallable)
+    /** Input Mech Turn Rate */
     void MechTurnAtRate(float Val);
 
+//----------------------------------------------------------------------------------------------------------------------
+// Hands
+//----------------------------------------------------------------------------------------------------------------------
+
+protected:
+
+    UPROPERTY(Category=Hands, EditDefaultsOnly, BlueprintReadWrite)
+    class USphereComponent* GrabSphereRight;
+
+    UPROPERTY(Category=Hands, EditDefaultsOnly, BlueprintReadWrite)
+    class USphereComponent* GrabSphereLeft;
+
+    UPROPERTY(Category=Hands, EditDefaultsOnly, BlueprintReadWrite)
+    class USkeletalMeshComponent* HandMeshLeft;
+
+    UPROPERTY(Category=Hands, EditDefaultsOnly, BlueprintReadWrite)
+    class USkeletalMeshComponent* HandMeshRight;
+
+    UFUNCTION(BlueprintCallable)
+    bool TraceFromController(UGripMotionControllerComponent* CallingController, FHitResult& OutHitResult) const;
+
+    // Get Nearest overlapping object by tag
+    UFUNCTION(BlueprintCallable)
+    UPrimitiveComponent* GetNearestOverlappingObject(UPrimitiveComponent* OverlapComponent, FName Tag = "");
+
+//----------------------------------------------------------------------------------------------------------------------
+// Gripping
+//----------------------------------------------------------------------------------------------------------------------
+
+protected:
+
+    UPROPERTY()
+    FOnGripDropped OnGripDropped;
 	
+    UPROPERTY(BlueprintReadWrite)
+    bool bGripPressedLeft;
+
+    UPROPERTY(BlueprintReadWrite)
+    bool bGripPressedRight;
+
+    UPROPERTY(BlueprintReadWrite)
+    EGripState GripStateLeft;
+
+    UPROPERTY(BlueprintReadWrite)
+    EGripState GripStateRight;
+
 	
+    UFUNCTION(BlueprintCallable)
+    void CheckAndHandleGrip(UPrimitiveComponent* GrabSphere, UGripMotionControllerComponent* CallingController);
+
+    UFUNCTION(BlueprintCallable)
+    void DropAllGrips(UGripMotionControllerComponent* CallingController) const;
+
+    UFUNCTION()
+    void GripDropped(UGripMotionControllerComponent* GripController, UObject* DroppedObject);
+
+    UFUNCTION(BlueprintCallable)
+    void CheckAndHandleGripAnimations();
+
+    // Set Grip Controller Animation property
+    UFUNCTION(BlueprintCallable)
+    void CheckAndHandleGripControllerAnimations(UPrimitiveComponent* GrabSphere, UGripMotionControllerComponent* CallingController, bool bGripPressed, EGripState& GripState);
+
+    // Check is a Component valid for grip collision
+    UFUNCTION(BlueprintCallable)
+    static bool HasValidGripCollision(UPrimitiveComponent* Component);
 };

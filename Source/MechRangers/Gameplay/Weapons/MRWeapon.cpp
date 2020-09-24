@@ -18,7 +18,8 @@ AMRWeapon::AMRWeapon()
 
 	// create components
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	MeshComp->SetupAttachment(GetRootComponent());
+	//MeshComp->SetupAttachment(GetRootComponent());
+	SetRootComponent(MeshComp);
 
 	bDebug = false;
 	bLoopedMuzzleFX = false;

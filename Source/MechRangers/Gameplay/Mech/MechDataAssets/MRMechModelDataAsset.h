@@ -67,6 +67,10 @@ struct FMechModelData
 	/** Cockpit for VR players */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMechCockpit VRCockpit;
+	
+	/** Cockpit for First Person players */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FMechCockpit FPCockpit;
 };
 
 /**

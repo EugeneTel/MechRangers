@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../MRMechTypes.h"
 #include "MRMechHealthComponent.generated.h"
 
 
@@ -40,6 +41,14 @@ protected:
 	UPROPERTY(Category=Stats, EditDefaultsOnly, BlueprintReadWrite)
 	float CurrentArmor;
 
+	/** When the Health state changes to Damaged. In percent from 0.f to 1.f */
+	UPROPERTY(Category=Stats, EditDefaultsOnly, BlueprintReadWrite)
+	float DamagedStateRatio;
+
+	/** Current Health State */
+	UPROPERTY(Category=Stats, EditDefaultsOnly, BlueprintReadWrite)
+	EPartHealthState HealthState;
+
 public:
 
 	UFUNCTION(BlueprintCallable)
@@ -54,12 +63,31 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentArmor() const { return CurrentArmor; }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE EPartHealthState GetHealthState() const { return HealthState; }
+
+	/** Get current health ratio from 0.f to 1.f */
+	UFUNCTION(BlueprintCallable)
+	float GetHealthRatio() const;
+
+	/** Is the Mech Part still Alive? */
+	UFUNCTION(BlueprintCallable)
+	bool Alive() const;
+
 //----------------------------------------------------------------------------------------------------------------------
 // Logic
 //----------------------------------------------------------------------------------------------------------------------
 public:
 
-	/** Take damage to a Mech's part */
+	/** Take damage to a Mech's part. Return taken damage */
 	UFUNCTION(BlueprintCallable)
-	void TakeDamage(float Value);
+	float TakeDamage(float Value);
+
+	/** Set Damaged state and all related functionality to this state */
+	UFUNCTION(BlueprintCallable)
+	void Damaged();
+
+	/** Set Destroyed state and all related functionality to this state */
+	UFUNCTION(BlueprintCallable)
+	void Destroyed();
 };

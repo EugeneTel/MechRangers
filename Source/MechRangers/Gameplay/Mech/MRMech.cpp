@@ -9,6 +9,7 @@
 #include "MechDataAssets/MRMechHardpointDataAsset.h"
 #include "MRMechAnimInstance.h"
 #include "MRMechCockpit.h"
+#include "MechRangers/Modes/MRGameMode.h"
 #include "Log.h"
 
 // Sets default values
@@ -119,7 +120,8 @@ void AMRMech::ConstructMech()
 	GetCharacterMovement()->SetWalkableFloorAngle(CapsuleDataAsset->WalkableFloorAngle);
 
 	// Setup Cockpit
-	Cockpit = SpawnCockpit(MechModelData.VRCockpit);
+	FMechCockpit& CurrentCockpit = Cast<AMRGameMode>(GetWorld()->GetAuthGameMode())->IsVR() ? MechModelData.VRCockpit : MechModelData.FPCockpit;
+	Cockpit = SpawnCockpit(CurrentCockpit);
 
 	const auto WeaponHardpointAsset = MechModelData.WeaponHardpointAsset;
 	if (!WeaponHardpointAsset)
@@ -138,7 +140,7 @@ void AMRMech::ConstructMech()
 	WeaponSystem->Setup(this, MechLoadout.WeaponLoadouts, MechModelData.WeaponHardpointAsset->MechHardpoints.WeaponSlots, MechModelData.MechAimConfig);
 }
 
-AMRMechCockpit* AMRMech::SpawnCockpit(const FMechCockpit CockpitData)
+AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)
 {
 	if (!CockpitData.CockpitClass)
 	{
@@ -177,7 +179,7 @@ void AMRMech::SetCombatMode(bool const Val)
 	bIsCombatMode = Val;
 }
 
-void AMRMech::MoveForward(float Val)
+void AMRMech::MoveForward(const float Val)
 {
 	if (Controller && Val != 0.f)
 	{
@@ -189,7 +191,7 @@ void AMRMech::MoveForward(float Val)
 	}
 }
 
-void AMRMech::TurnAtRate(float Val)
+void AMRMech::TurnAtRate(const float Val)
 {
 	if (Val == 0)
 		return;
