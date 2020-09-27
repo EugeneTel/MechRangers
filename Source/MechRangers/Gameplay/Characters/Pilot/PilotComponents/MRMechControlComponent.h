@@ -70,6 +70,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddArmRightYaw(const float Val) const;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsManipulatorLeftHeld() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsManipulatorRightHeld() const;
+
 //----------------------------------------------------------------------------------------------------------------------
 // WeaponControls
 //----------------------------------------------------------------------------------------------------------------------

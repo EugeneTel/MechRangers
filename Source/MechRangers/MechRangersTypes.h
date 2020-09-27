@@ -69,3 +69,15 @@ enum class EGripState : uint8
 
     EGS_Max UMETA(Hidden)
 };
+
+/**
+* Health State
+*/
+UENUM(BlueprintType)
+enum class EHealthState : uint8
+{
+	EHS_Healthy UMETA(DisplayName = "Healthy"),
+    EHS_Damaged UMETA(DisplayName = "Damaged"),
+    EHS_Destroyed UMETA(DisplayName = "Destroyed"),
+    EHS_Invalid UMETA(DisplayName = "Invalid")
+};

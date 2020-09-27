@@ -65,6 +65,16 @@ void UMRMechControlComponent::AddArmRightYaw(const float Val) const
 	Mech->AddArmRightRotator(FRotator(0.f, Val, 0.f));
 }
 
+bool UMRMechControlComponent::IsManipulatorLeftHeld() const
+{
+	return Mech->IsManipulatorLeftHeld();
+}
+
+bool UMRMechControlComponent::IsManipulatorRightHeld() const
+{
+	return Mech->IsManipulatorRightHeld();
+}
+
 void UMRMechControlComponent::PrimaryLeftWeaponStart() const
 {
 	if (WeaponSystem->CanFire(EMechPart::EMP_LeftArm, EWeaponGroup::EWG_Primary))

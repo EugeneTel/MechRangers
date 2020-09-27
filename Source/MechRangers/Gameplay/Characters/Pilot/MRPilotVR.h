@@ -71,24 +71,34 @@ public:
 // Input
 //----------------------------------------------------------------------------------------------------------------------
 protected:
-    
-    UFUNCTION(BlueprintCallable)
-    void GripLeftPressed();
 
-    UFUNCTION(BlueprintCallable)
-    void GripRightPressed();
+    /** Grip Actions */
+    void OnGripLeftPressed();
+    void OnGripRightPressed();
+    void OnGripLeftReleased();
+    void OnGripRightReleased();
 
-    UFUNCTION(BlueprintCallable)
-    void GripLeftReleased();
+    /** Primary Actions */
+    void OnPrimaryLeftActionPressed();
+    void OnPrimaryLeftActionReleased();
+    void OnPrimaryRightActionPressed();
+    void OnPrimaryRightActionReleased();
 
-    UFUNCTION(BlueprintCallable)
-    void GripRightReleased();
+    /** Secondary Actions */
+    void OnSecondaryLeftActionPressed();
+    void OnSecondaryLeftActionReleased();
+    void OnSecondaryRightActionPressed();
+    void OnSecondaryRightActionReleased();
+
+    /** Grip Axis */
+    void OnGripLeftAxis(float Val);
+    void OnGripRightAxis(float Val);
 
     /** Input Mech Move Forward */
-    void MechMoveForward(float Val);
+    void OnMechMoveForward(float Val);
 
     /** Input Mech Turn Rate */
-    void MechTurnAtRate(float Val);
+    void OnMechTurnAtRate(float Val);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Hands
@@ -129,6 +139,12 @@ protected:
 
     UPROPERTY(BlueprintReadWrite)
     bool bGripPressedRight;
+
+    UPROPERTY(BlueprintReadOnly)
+    float GripRightAxis;
+    
+    UPROPERTY(BlueprintReadOnly)
+    float GripLeftAxis;
 
     UPROPERTY(BlueprintReadWrite)
     EGripState GripStateLeft;

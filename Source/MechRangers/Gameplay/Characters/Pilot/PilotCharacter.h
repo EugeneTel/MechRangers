@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "VRCharacter.h"
 #include "MechRangers/MechRangersTypes.h"
-#include "MRPilotHandsVR.h"
+#include "MRPilotVR.h"
 
 #include "PilotCharacter.generated.h"
 

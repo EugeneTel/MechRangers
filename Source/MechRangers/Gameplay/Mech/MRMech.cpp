@@ -10,6 +10,7 @@
 #include "MRMechAnimInstance.h"
 #include "MRMechCockpit.h"
 #include "MechRangers/Modes/MRGameMode.h"
+#include "Engine/World.h"
 #include "Log.h"
 
 // Sets default values
@@ -31,6 +32,8 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 
 	// Setup Defaults
 	bIsCombatMode = false;
+	bManipulatorLeftHeld = false;
+	bManipulatorRightHeld = false;
 }
 
 // Called when the game starts or when spawned
@@ -154,7 +157,8 @@ AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)
 		return nullptr;
 	}
 
-	const FActorSpawnParameters SpawnParams;
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
 	AMRMechCockpit* NewMechCockpit = GetWorld()->SpawnActor<AMRMechCockpit>(CockpitData.CockpitClass, SpawnParams);
 
 	if (NewMechCockpit)
@@ -222,6 +226,28 @@ void AMRMech::AddArmRotator(FRotator& ArmRotator, const FRotator& AddRot)
 	}
 }
 
+void AMRMech::SetManipulatorHeld(const EMechPart MechPart, const bool IsHeld)
+{
+	if (MechPart == EMechPart::EMP_LeftArm)
+	{
+		bManipulatorLeftHeld = IsHeld;
+	} else if (MechPart == EMechPart::EMP_RightArm)
+	{
+		bManipulatorRightHeld = IsHeld;
+	} else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AMRMech::SetManipulatorHeld - MechPart is not supported."));
+	}
+
+	if (bManipulatorRightHeld == true || bManipulatorLeftHeld == true)
+	{
+		bIsCombatMode = true;
+	} else
+	{
+		bIsCombatMode = false;
+	}
+}
+
 void AMRMech::AddArmLeftRotator(const FRotator& Rot)
 {
 	AddArmRotator(ArmLeftRotator, Rot);
@@ -230,4 +256,18 @@ void AMRMech::AddArmLeftRotator(const FRotator& Rot)
 void AMRMech::AddArmRightRotator(const FRotator& Rot)
 {
 	AddArmRotator(ArmRightRotator, Rot);
+}
+
+void AMRMech::SetMechPartRotator(const EMechPart MechPart, const FRotator& Rot)
+{
+	if (MechPart == EMechPart::EMP_LeftArm)
+	{
+		ArmLeftRotator = Rot;
+	} else if (MechPart == EMechPart::EMP_RightArm)
+	{
+		ArmRightRotator = Rot;
+	} else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetMechPartRotator - MechPart is not supported!"));
+	}
 }

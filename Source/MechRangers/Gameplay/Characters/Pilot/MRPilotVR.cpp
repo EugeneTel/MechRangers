@@ -70,14 +70,26 @@ void AMRPilotVR::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
     check(PlayerInputComponent);
 
     // Input Axis
-    PlayerInputComponent->BindAxis("MoveForward", this, &AMRPilotVR::MechMoveForward);
-    PlayerInputComponent->BindAxis("TurnRate", this, &AMRPilotVR::MechTurnAtRate);
+    PlayerInputComponent->BindAxis("MoveForward", this, &AMRPilotVR::OnMechMoveForward);
+    PlayerInputComponent->BindAxis("TurnRate", this, &AMRPilotVR::OnMechTurnAtRate);
+    PlayerInputComponent->BindAxis("GripLeftAxis", this, &AMRPilotVR::OnGripLeftAxis);
+    PlayerInputComponent->BindAxis("GripRightAxis", this, &AMRPilotVR::OnGripRightAxis);
 
     // Grip Actions
-    PlayerInputComponent->BindAction("GripLeft", IE_Pressed, this, &AMRPilotVR::GripLeftPressed);
-    PlayerInputComponent->BindAction("GripLeft", IE_Released, this, &AMRPilotVR::GripLeftReleased);
-    PlayerInputComponent->BindAction("GripRight", IE_Pressed, this, &AMRPilotVR::GripRightPressed);
-    PlayerInputComponent->BindAction("GripRight", IE_Released, this, &AMRPilotVR::GripRightReleased);
+    PlayerInputComponent->BindAction("GripLeft", IE_Pressed, this, &AMRPilotVR::OnGripLeftPressed);
+    PlayerInputComponent->BindAction("GripLeft", IE_Released, this, &AMRPilotVR::OnGripLeftReleased);
+    PlayerInputComponent->BindAction("GripRight", IE_Pressed, this, &AMRPilotVR::OnGripRightPressed);
+    PlayerInputComponent->BindAction("GripRight", IE_Released, this, &AMRPilotVR::OnGripRightReleased);
+    
+    PlayerInputComponent->BindAction("PrimaryLeftAction", EInputEvent::IE_Pressed, this, &AMRPilotVR::OnPrimaryLeftActionPressed);
+    PlayerInputComponent->BindAction("PrimaryLeftAction", EInputEvent::IE_Released, this, &AMRPilotVR::OnPrimaryLeftActionReleased);
+    PlayerInputComponent->BindAction("PrimaryRightAction", EInputEvent::IE_Pressed, this, &AMRPilotVR::OnPrimaryRightActionPressed);
+    PlayerInputComponent->BindAction("PrimaryRightAction", EInputEvent::IE_Released, this,  &AMRPilotVR::OnPrimaryRightActionReleased);
+    
+    PlayerInputComponent->BindAction("SecondaryLeftAction", EInputEvent::IE_Pressed, this, &AMRPilotVR::OnSecondaryLeftActionPressed);
+    PlayerInputComponent->BindAction("SecondaryLeftAction", EInputEvent::IE_Released, this, &AMRPilotVR::OnSecondaryLeftActionReleased);
+    PlayerInputComponent->BindAction("SecondaryRightAction", EInputEvent::IE_Pressed, this, &AMRPilotVR::OnSecondaryRightActionPressed);
+    PlayerInputComponent->BindAction("SecondaryRightAction", EInputEvent::IE_Released, this, &AMRPilotVR::OnSecondaryRightActionReleased);
 }
 
 void AMRPilotVR::SitIntoMech_Implementation(AMRMech* NewMech)
@@ -104,35 +116,110 @@ AMRMech* AMRPilotVR::GetMech() const
     return Mech;
 }
 
-void AMRPilotVR::GripLeftPressed()
+void AMRPilotVR::OnGripLeftPressed()
 {
     bGripPressedLeft = true;
 
     CheckAndHandleGrip(GrabSphereLeft, LeftMotionController);
 }
 
-void AMRPilotVR::GripRightPressed()
+void AMRPilotVR::OnGripRightPressed()
 {
     bGripPressedRight = true;
 
     CheckAndHandleGrip(GrabSphereRight, RightMotionController);
 }
 
-void AMRPilotVR::GripLeftReleased()
+void AMRPilotVR::OnGripLeftReleased()
 {
     bGripPressedLeft = false;
 
     DropAllGrips(LeftMotionController);
 }
 
-void AMRPilotVR::GripRightReleased()
+void AMRPilotVR::OnGripRightReleased()
 {
     bGripPressedRight = false;
 
     DropAllGrips(RightMotionController);
 }
 
-void AMRPilotVR::MechMoveForward(const float Val)
+void AMRPilotVR::OnPrimaryLeftActionPressed()
+{
+    if (MechControl->IsManipulatorLeftHeld())
+    {
+        MechControl->PrimaryLeftWeaponStart();
+    }
+}
+
+void AMRPilotVR::OnPrimaryLeftActionReleased()
+{
+    if (MechControl->IsManipulatorLeftHeld())
+    {
+        MechControl->PrimaryLeftWeaponFinish();
+    }
+}
+
+void AMRPilotVR::OnPrimaryRightActionPressed()
+{
+    if (MechControl->IsManipulatorRightHeld())
+    {
+        MechControl->PrimaryRightWeaponStart();
+    }
+}
+
+void AMRPilotVR::OnPrimaryRightActionReleased()
+{
+    if (MechControl->IsManipulatorRightHeld())
+    {
+        MechControl->PrimaryRightWeaponFinish();
+    }
+}
+
+void AMRPilotVR::OnSecondaryLeftActionPressed()
+{
+    if (MechControl->IsManipulatorLeftHeld())
+    {
+        MechControl->SecondaryLeftWeaponStart();
+    }
+}
+
+void AMRPilotVR::OnSecondaryLeftActionReleased()
+{
+    if (MechControl->IsManipulatorLeftHeld())
+    {
+        MechControl->SecondaryLeftWeaponFinish();
+    }
+}
+
+void AMRPilotVR::OnSecondaryRightActionPressed()
+{
+    if (MechControl->IsManipulatorRightHeld())
+    {
+        MechControl->SecondaryRightWeaponStart();
+    }
+}
+
+void AMRPilotVR::OnSecondaryRightActionReleased()
+{
+    if (MechControl->IsManipulatorRightHeld())
+    {
+        MechControl->SecondaryRightWeaponFinish();
+    }
+}
+
+void AMRPilotVR::OnGripLeftAxis(const float Val)
+{
+
+    GripLeftAxis = Val;
+}
+
+void AMRPilotVR::OnGripRightAxis(const float Val)
+{
+    GripRightAxis = Val;
+}
+
+void AMRPilotVR::OnMechMoveForward(const float Val)
 {
     if (Val != 0)
     {
@@ -140,7 +227,7 @@ void AMRPilotVR::MechMoveForward(const float Val)
     }
 }
 
-void AMRPilotVR::MechTurnAtRate(const float Val)
+void AMRPilotVR::OnMechTurnAtRate(const float Val)
 {
     if (Val != 0)
     {
@@ -215,7 +302,7 @@ UPrimitiveComponent* AMRPilotVR::GetNearestOverlappingObject(UPrimitiveComponent
 
 void AMRPilotVR::CheckAndHandleGrip(UPrimitiveComponent* GrabSphere, UGripMotionControllerComponent* CallingController)
 {
-    UPrimitiveComponent* NearestObject = GetNearestOverlappingObject(GrabSphere);
+    UPrimitiveComponent* NearestObject = GetNearestOverlappingObject(GrabSphere, FName("Grippable"));
 
     if (!IsValid(NearestObject))
         return;
@@ -297,7 +384,7 @@ void AMRPilotVR::CheckAndHandleGripControllerAnimations(UPrimitiveComponent* Gra
         GripState = EGripState::EGS_Grab;
     } else
     {
-        UPrimitiveComponent* NearestObject = GetNearestOverlappingObject(GrabSphere);
+        UPrimitiveComponent* NearestObject = GetNearestOverlappingObject(GrabSphere, FName("Grippable"));
 
         if (IsValid(NearestObject))
         {

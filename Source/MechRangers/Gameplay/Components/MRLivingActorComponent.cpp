@@ -1,34 +1,51 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-
 #include "MRLivingActorComponent.h"
+#include "MRHealthComponent.h"
 
-// Sets default values for this component's properties
+#include "Log.h"
+
 UMRLivingActorComponent::UMRLivingActorComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
+	UMRLivingActorComponent::CreateHealthContainers();
 }
-
 
 // Called when the game starts
 void UMRLivingActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
-
-// Called every frame
-void UMRLivingActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+float UMRLivingActorComponent::TakeDamage(const float TakenDamage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	ULog::Success("Object Takes Damage!!!");
+	return TakenDamage;
 }
 
+float UMRLivingActorComponent::TakePointDamage(const float TakenDamage, FPointDamageEvent const& PointDamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	UMRHealthComponent* DamageContainer = FindHealthContainer(FName("default"));
+	if (DamageContainer)
+	{
+		DamageContainer->TakeDamage(TakenDamage);
+		return TakenDamage;
+	}
+
+	return 0.f;
+}
+
+UMRHealthComponent* UMRLivingActorComponent::FindHealthContainer(const FName SearchName)
+{
+	if (HealthContainers.Contains(SearchName))
+		return HealthContainers[SearchName];
+
+	return nullptr;
+}
+
+void UMRLivingActorComponent::CreateHealthContainers()
+{
+	// create default HealthContainer
+	HealthContainers.Add(FName("default"), CreateDefaultSubobject<UMRHealthComponent>(TEXT("HealthContainer")));	
+}

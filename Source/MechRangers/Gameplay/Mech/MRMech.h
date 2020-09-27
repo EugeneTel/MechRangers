@@ -126,6 +126,14 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	FRotator ArmRightRotator;
 
+	/** Is Left VR Manipulator Held by player */ 
+	UPROPERTY(BlueprintReadWrite)
+	bool bManipulatorLeftHeld;
+	
+	/** Is Right VR Manipulator Held by player */ 
+	UPROPERTY(BlueprintReadWrite)
+	bool bManipulatorRightHeld;
+
 	/** Add rotation to arms with limitation */
 	void AddArmRotator(FRotator& ArmRotator, const FRotator& AddRot);
 	
@@ -134,11 +142,22 @@ public:
 	FORCEINLINE FRotator GetArmLeftRotator() const { return ArmLeftRotator; }
 	FORCEINLINE FRotator GetArmRightRotator() const { return ArmRightRotator; }
 
+	FORCEINLINE bool IsManipulatorLeftHeld() const { return bManipulatorLeftHeld; }
+	FORCEINLINE bool IsManipulatorRightHeld() const { return bManipulatorRightHeld; }
+
+	/** Set VR Manipulator Held state for Mech Part */
+	UFUNCTION(BlueprintCallable)
+	void SetManipulatorHeld(EMechPart MechPart, bool IsHeld);
+
 	/** Add Left Arm Rotation */
 	void AddArmLeftRotator(const FRotator& Rot);
 
 	/** Add Right Arm Rotation */
 	void AddArmRightRotator(const FRotator& Rot);
+
+	/** Set Rotator for mech part */
+	UFUNCTION(BlueprintCallable)
+	void SetMechPartRotator(const EMechPart MechPart, const FRotator& Rot);
 
 	
 };

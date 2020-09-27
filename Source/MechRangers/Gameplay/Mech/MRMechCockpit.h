@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "MRMech.h"
 #include "GameFramework/Actor.h"
 #include "MRMechCockpit.generated.h"
 
