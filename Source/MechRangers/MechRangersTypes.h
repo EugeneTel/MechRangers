@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include "UObject/ObjectMacros.h"
+#include "UObject/ObjectMacros.h"
+#include "UObject/ObjectMacros.h"
 #include "MechRangersTypes.generated.h"
 
 class UMaterial;
@@ -80,4 +83,23 @@ enum class EHealthState : uint8
     EHS_Damaged UMETA(DisplayName = "Damaged"),
     EHS_Destroyed UMETA(DisplayName = "Destroyed"),
     EHS_Invalid UMETA(DisplayName = "Invalid")
+};
+
+USTRUCT(BlueprintType)
+struct FDamageInfo
+{
+	GENERATED_USTRUCT_BODY()
+};
+
+
+USTRUCT(BlueprintType)
+struct FDamageTakenData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* DamageDealer;
+
+	UPROPERTY(BlueprintReadWrite)
+	FDamageInfo DamageInfo;
 };

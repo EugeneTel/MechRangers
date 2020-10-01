@@ -16,21 +16,16 @@ UMRLivingActorComponent::UMRLivingActorComponent()
 void UMRLivingActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Subscribe on Delegates
 }
 
 float UMRLivingActorComponent::TakeDamage(const float TakenDamage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	ULog::Success("Object Takes Damage!!!");
-	return TakenDamage;
-}
-
-float UMRLivingActorComponent::TakePointDamage(const float TakenDamage, FPointDamageEvent const& PointDamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
 	UMRHealthComponent* DamageContainer = FindHealthContainer(FName("default"));
 	if (DamageContainer)
 	{
-		DamageContainer->TakeDamage(TakenDamage);
-		return TakenDamage;
+		//return DamageContainer->TakeDamage(TakenDamage);
 	}
 
 	return 0.f;
@@ -48,4 +43,17 @@ void UMRLivingActorComponent::CreateHealthContainers()
 {
 	// create default HealthContainer
 	HealthContainers.Add(FName("default"), CreateDefaultSubobject<UMRHealthComponent>(TEXT("HealthContainer")));	
+}
+
+void UMRLivingActorComponent::SubscribeOnDelegates()
+{
+	for (auto HealthContainer : HealthContainers)
+	{
+		HealthContainer.Value->OnHealthStateChangedDelegate.BindUFunction(this, "OnHealthContainerStateChanged");
+	}
+}
+
+void UMRLivingActorComponent::OnHealthContainerStateChanged(UMRHealthComponent* HealthContainer, EHealthState HealthState)
+{
+	ULog::Success("Health state changed!!!");
 }

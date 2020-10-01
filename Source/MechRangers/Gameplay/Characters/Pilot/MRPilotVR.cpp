@@ -55,6 +55,9 @@ void AMRPilotVR::BeginPlay()
     
     // Set Tracking to Floor. Without it in Oculus Rift is under floor.
     UHeadMountedDisplayFunctionLibrary::SetTrackingOrigin(EHMDTrackingOrigin::Floor);
+
+    // Reset VR orientation and position
+    UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition(0, EOrientPositionSelector::OrientationAndPosition);
 }
 
 void AMRPilotVR::Tick(float DeltaTime)
@@ -102,6 +105,7 @@ void AMRPilotVR::SitIntoMech_Implementation(AMRMech* NewMech)
         SetSeatedMode(NewMech->Cockpit->GetPilotAttachmentPoint(), true, RelativeTransformToSeat, VRReplicatedCamera->GetRelativeTransform());
         MechControl->SitPilotIntoMech(NewMech);
         NewMech->SetOwner(this);
+        Mech = NewMech;
     }
     else
     {

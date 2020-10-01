@@ -10,7 +10,7 @@ UMRHealthComponent::UMRHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// Setup Defaults
-	DamagedStateRatio = 0.3f;
+	DamagedPercentage = 0.3f;
 	CurrentHealth = 20.f;
 	MaxHealth = 20.f;
 }
@@ -24,20 +24,22 @@ void UMRHealthComponent::BeginPlay()
 void UMRHealthComponent::SetDamaged()
 {
 	HealthState = EHealthState::EHS_Damaged;
-	
-	// TODO: Implement event for Damaged state
-	ULog::Number(CurrentHealth, TEXT("Object Damaged. Health: "), GetNameSafe(this), LO_Both);
+
+	OnHealthStateChangedDelegate.ExecuteIfBound(this, HealthState);
+
+	//ULog::Number(CurrentHealth, TEXT("Object Damaged. Health: "), GetNameSafe(this), LO_Both);
 }
 
 void UMRHealthComponent::SetDestroyed()
 {
 	HealthState = EHealthState::EHS_Destroyed;
 	
-	// TODO: Implement event for Destroyed state
-	ULog::Number(CurrentHealth, TEXT("Object Destroyed. Health: "), GetNameSafe(this), LO_Both);
+	OnHealthStateChangedDelegate.ExecuteIfBound(this, HealthState);
+	
+	// ULog::Number(CurrentHealth, TEXT("Object Destroyed. Health: "), GetNameSafe(this), LO_Both);
 }
 
-float UMRHealthComponent::GetHealthRatio() const
+float UMRHealthComponent::GetHealthPercentage() const
 {
 	return CurrentHealth / MaxHealth;
 }
@@ -47,7 +49,7 @@ bool UMRHealthComponent::Alive() const
 	return (HealthState == EHealthState::EHS_Healthy ||  HealthState == EHealthState::EHS_Damaged);
 }
 
-float UMRHealthComponent::TakeDamage(const float Value)
+float UMRHealthComponent::TakeDamage(const float Damage, FDamageTakenData const& DamageTakenData)
 {
 	float TakenDamage = 0.f;
 
@@ -55,16 +57,16 @@ float UMRHealthComponent::TakeDamage(const float Value)
 		return TakenDamage;
 
 	// Calculate applied damage and current health
-	CurrentHealth -= Value;
+	CurrentHealth -= Damage;
 
 	if (CurrentHealth < 0.f)
 	{
-		TakenDamage = Value - FMath::Abs(CurrentHealth);
+		TakenDamage = Damage - FMath::Abs(CurrentHealth);
 		CurrentHealth = 0.f;
 	}
 	else
 	{
-		TakenDamage = Value;
+		TakenDamage = Damage;
 	}
 
 	// Set new health state if needed
@@ -72,7 +74,7 @@ float UMRHealthComponent::TakeDamage(const float Value)
 	{
 		SetDestroyed();
 	}
-	else if (GetHealthRatio() < DamagedStateRatio && HealthState != EHealthState::EHS_Damaged)
+	else if (GetHealthPercentage() < DamagedPercentage && HealthState != EHealthState::EHS_Damaged)
 	{
 		SetDamaged();
 	}

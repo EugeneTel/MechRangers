@@ -37,3 +37,8 @@ USceneComponent* AMRMechCockpit::GetPilotAttachmentPoint() const
 {
 	return PilotAttachmentPoint;
 }
+
+USphereComponent* AMRMechCockpit::GetHeadZoneVisualizer() const
+{
+	return HeadZoneVisualizer;
+}

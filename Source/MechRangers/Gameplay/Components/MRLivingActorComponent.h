@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 
 #include "Components/ActorComponent.h"
+#include "MechRangers/MechRangersTypes.h"
+
 #include "MRLivingActorComponent.generated.h"
 
 class UMRHealthComponent;
@@ -28,6 +30,12 @@ protected:
 	/** Create all health containers. Must be executed in Constructor */
 	virtual void CreateHealthContainers();
 
+	/** Subscribe on all delegates for the component */
+	virtual void SubscribeOnDelegates();
+
+	/** Subscribed to the Health Component Health State Changed Delegate */
+	virtual void OnHealthContainerStateChanged(UMRHealthComponent* HealthContainer, EHealthState HealthState);
+
 public:
 	// Sets default values for this component's properties
 	UMRLivingActorComponent();
@@ -37,8 +45,8 @@ public:
     virtual float TakeDamage(float TakenDamage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 	/** Apply Point damage to Health Components */
-	UFUNCTION(BlueprintCallable)
-    virtual float TakePointDamage(float TakenDamage, FPointDamageEvent const& PointDamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	//UFUNCTION(BlueprintCallable)
+  //  virtual float TakePointDamage(float TakenDamage, FPointDamageEvent const& PointDamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 		
 };

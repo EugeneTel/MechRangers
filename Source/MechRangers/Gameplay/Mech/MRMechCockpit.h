@@ -44,4 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	USceneComponent* GetPilotAttachmentPoint() const;
+
+	UFUNCTION(BlueprintCallable)
+	USphereComponent* GetHeadZoneVisualizer() const;
 };
