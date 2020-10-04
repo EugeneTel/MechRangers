@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "MREnemyAIController.h"
 #include "GameFramework/Character.h"
+#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+
 #include "MREnemy.generated.h"
 
 class USphereComponent;
@@ -22,13 +24,9 @@ enum class EEnemyMovementStatus : uint8
 };
 
 UCLASS()
-class MECHRANGERS_API AMREnemy : public ACharacter
+class MECHRANGERS_API AMREnemy : public ACharacter, public IMRDamageTakerInterface
 {
 	GENERATED_BODY()
-
-public:
-	// Sets default values for this pawn's properties
-	AMREnemy();
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,6 +37,29 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	UAnimInstance* AnimInstance;
+
+public:
+	// Sets default values for this pawn's properties
+	AMREnemy();
+	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Configs
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+	
+	/** Gameplay team (on which side an enemy) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGameplayTeam GameplayTeam;
+
+	/**  A chance that attacker will attack a current object (if has other agro object). From 0.0 (will not attack) to 1.0 (attack) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AgroChance;
 
 	/** Set debug mode */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -56,17 +77,16 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	float CurrentHealth;
 
-	/** Take Enemy Health and check death */
-	UFUNCTION(BlueprintCallable)
-	void TakeHealth(float Damage);
+public:
+	
+	virtual EGameplayTeam GetGameplayTeam() const override;
 
-	/** Enemy Death implementation */
-	UFUNCTION(BlueprintCallable)
-	void Death();
+	virtual float GetAgroChance() const override;
 
-	/** Destroy Enemy actor */
-	UFUNCTION(BlueprintCallable)
-	void DestroyEnemy();
+//----------------------------------------------------------------------------------------------------------------------
+// Living system
+//----------------------------------------------------------------------------------------------------------------------
+protected:
 
 	/** Min and Max time when actor will be destroyed after Enemy Death */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -74,25 +94,41 @@ protected:
 
 	/** Timer for destroying enemy */
 	FTimerHandle TimerHandle_Destroy;
-	
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	/** Delegate on Enemy death */
+	FOnDeath OnDeathEvent;
+		
+	/** Take Enemy Health and check death */
+	UFUNCTION(BlueprintCallable)
+    void TakeHealth(float Damage);
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	/** Enemy Death implementation */
+	UFUNCTION(BlueprintCallable)
+    void Death();
+
+	/** Destroy Enemy actor */
+	UFUNCTION(BlueprintCallable)
+    void DestroyEnemy();
+
+public:
 
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	/** Is Enemy IsAlive */
-	UFUNCTION(BlueprintPure, BlueprintCallable)
-	bool Alive();
+	UFUNCTION(BlueprintCallable)
+	virtual bool Alive() const override;
+
+	/** Delegate on Enemy death */
+	virtual FOnDeath& OnDeath() override;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Movement
 //----------------------------------------------------------------------------------------------------------------------
 protected:
+
+	/** Main target for an enemy. */
+	UPROPERTY(Category=Movement, EditAnywhere, BlueprintReadWrite)
+	AActor* MainTarget;
 	
 	/** Random between min and max movement speed */
 	UPROPERTY(Category=Movement, EditAnywhere, BlueprintReadWrite)
@@ -120,6 +156,10 @@ protected:
 
 public:
 
+	/** Set main target actor which enemy should attack */
+	UFUNCTION(BlueprintCallable)
+	void SetMainTarget(AActor* NewActor);
+
 	/** Set actor where enemy should move to */
 	UFUNCTION(BlueprintCallable)
     void SetMoveToActor(AActor* NewActor);
@@ -139,6 +179,9 @@ public:
 	/** Get point for enemy movement */
 	UFUNCTION(BlueprintCallable)
     bool GetMovePoint(AActor* ToActor, FVector& OutResult);
+
+	/** Subscribed OnTargetDeath event */
+	void OnTargetDeath(AActor* DeadActor);
 		
 	UFUNCTION()
     virtual void AgroSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -189,6 +232,18 @@ protected:
 	/** Make damage to a Target */
 	UFUNCTION(BlueprintCallable)
 	void MakeDamage();
+	
+	/** Check is able to attack an actor */
+	UFUNCTION(BlueprintCallable)
+    bool IsAbleAttack(AActor* InActor) const;
+
+	/** Calculate agro chance for object according to current target (if exist) */
+	UFUNCTION(BlueprintCallable)
+    bool ShouldAttack(const AActor* NewTarget, const AActor* CurrentTarget) const;
+
+	/** Stop all activities of enemy */
+	UFUNCTION(BlueprintCallable)
+	void ClearActivities();
 
 	/** find a hit */
 	FHitResult AttackTrace(const FVector& TraceFrom, const FVector& TraceTo) const;

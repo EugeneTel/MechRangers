@@ -1,24 +1,22 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 #include "MREnemy.h"
+#include "Log.h"
+#include "DrawDebugHelpers.h"
 #include "MREnemyAIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
-#include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "MechRangers/MechRangers.h"
-
-// debug includes
-#include "DrawDebugHelpers.h"
-#include "Log.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AMREnemy::AMREnemy()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	// Setup components
 	AgroSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AgroSphere"));
@@ -39,6 +37,8 @@ AMREnemy::AMREnemy()
 	TimeBeforeDestroy = FVector2D(3, 5);
 	MovementSpeedRange = FVector2D(500.f, 600.f);
 	DamageRange = FVector2D(1.f, 2.f);
+	GameplayTeam = EGameplayTeam::EGT_Insect;
+	AgroChance = 0.5f;
 }
 
 // Called when the game starts or when spawned
@@ -68,6 +68,12 @@ void AMREnemy::BeginPlay()
 	StartMovement();
 }
 
+// Called every frame
+void AMREnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 bool AMREnemy::GetMovePoint(AActor* ToActor, FVector& OutResult)
 {
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
@@ -81,6 +87,13 @@ bool AMREnemy::GetMovePoint(AActor* ToActor, FVector& OutResult)
 	//Out
 	OutResult = Result.Location;
 	return bSuccess;
+}
+
+void AMREnemy::OnTargetDeath(AActor* DeadActor)
+{
+	ClearActivities();
+	SetMoveToActor(MainTarget);
+	StartMovement();
 }
 
 void AMREnemy::MoveToPoint(FVector& Point)
@@ -98,11 +111,24 @@ void AMREnemy::MoveToPoint(FVector& Point)
 	}
 }
 
-
-// Called every frame
-void AMREnemy::Tick(float DeltaTime)
+void AMREnemy::ClearActivities()
 {
-	Super::Tick(DeltaTime);
+	bAttacking = false;
+	bOverlappingAgroSphere = false;
+	bOverlappingCombatSphere = false;
+	AgroTarget = nullptr;
+	CombatTarget = nullptr;
+
+	if (AnimInstance)
+	{
+		AnimInstance->StopAllMontages(0.5f);
+	}
+
+	if (AIController)
+	{
+		AIController->StopMovement();
+	}
+
 }
 
 // Called to bind functionality to input
@@ -119,6 +145,16 @@ float AMREnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContr
 	}
 
 	return CurrentHealth;
+}
+
+EGameplayTeam AMREnemy::GetGameplayTeam() const
+{
+	return GameplayTeam;
+}
+
+float AMREnemy::GetAgroChance() const
+{
+	return AgroChance;
 }
 
 void AMREnemy::TakeHealth(const float Damage)
@@ -152,6 +188,34 @@ void AMREnemy::Death()
 void AMREnemy::DestroyEnemy()
 {
 	Destroy();
+}
+
+bool AMREnemy::IsAbleAttack(AActor* InActor) const
+{
+	if (!InActor->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+		return false;
+
+	IMRDamageTakerInterface* NewTarget = Cast<IMRDamageTakerInterface>(InActor);
+	if (!NewTarget)
+		return false;
+
+	/** Only actors which implements interface and from different gameplay team */
+	return NewTarget->Alive() && NewTarget->GetGameplayTeam() != GetGameplayTeam();
+}
+
+bool AMREnemy::ShouldAttack(const AActor* NewTarget, const AActor* CurrentTarget) const
+{
+	if (CurrentTarget == nullptr)
+		return true;
+
+	if (NewTarget->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+	{
+		// Calculate random ability based on agro chance
+		const float NewAgroChance = Cast<IMRDamageTakerInterface>(NewTarget)->GetAgroChance();
+		return FMath::RandRange(0.f, 1.f) <= NewAgroChance;
+	}
+
+	return false;
 }
 
 void AMREnemy::StartMovement()
@@ -201,14 +265,24 @@ void AMREnemy::MoveToTarget(AActor* Target)
 	}*/
 }
 
+void AMREnemy::SetMainTarget(AActor* NewActor)
+{
+	MainTarget = NewActor;
+}
+
 void AMREnemy::SetMoveToActor(AActor* NewActor)
 {
 	MoveToActor = NewActor;
 }
 
-bool AMREnemy::Alive()
+bool AMREnemy::Alive() const
 {
 	return bAlive;
+}
+
+IMRDamageTakerInterface::FOnDeath& AMREnemy::OnDeath()
+{
+	return OnDeathEvent;
 }
 
 void AMREnemy::AttackTarget(AActor* Target)
@@ -246,8 +320,8 @@ void AMREnemy::MakeDamage()
 	{
 		// @TODO: Check is target attackable and valid for attack
 		
-		AMRMech* AttackTarget = Cast<AMRMech>(HitResult.Actor);
-		if (AttackTarget)
+		AActor* AttackTarget = Cast<AActor>(HitResult.Actor);
+		if (IsAbleAttack(AttackTarget))
 		{
 			UGameplayStatics::ApplyPointDamage(AttackTarget, 3, GetActorForwardVector(), HitResult, AIController, this, DamageTypeClass);
 		}
@@ -270,7 +344,7 @@ FHitResult AMREnemy::AttackTrace(const FVector& TraceFrom, const FVector& TraceT
 	bool IsHit = GetWorld()->SweepSingleByChannel(Hit, TraceTo, TraceTo, FQuat::Identity, COLLISION_WEAPON_TRACE, ColSphere);
 
 	// Draw debug line
-	if (IsHit && bDebug)
+	if (bDebug)
 	{
 		DrawDebugLine(GetWorld(), TraceFrom, TraceTo, FColor::Green, false, 5, 0.f, 1.f);
 
@@ -288,21 +362,28 @@ FHitResult AMREnemy::AttackTrace(const FVector& TraceFrom, const FVector& TraceT
 
 void AMREnemy::AgroSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AMRMech* NewTarget = Cast<AMRMech>(OtherActor);
+	if (Cast<AMREnemy>(OtherActor) || !OtherActor->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+		return;
 
-	if (NewTarget && Alive())
+	IMRDamageTakerInterface* NewTarget = Cast<IMRDamageTakerInterface>(OtherActor);
+	if (!NewTarget)
+		return;
+	
+	if (IsAbleAttack(OtherActor) && ShouldAttack(OtherActor, AgroTarget) && Alive())
 	{
 		bOverlappingAgroSphere = true;
-		AgroTarget = NewTarget;
-		MoveToTarget(NewTarget);
+		AgroTarget = OtherActor;
+
+		// Subscribe on death
+		NewTarget->OnDeath().AddUObject(this, &AMREnemy::OnTargetDeath);
+		
+		MoveToTarget(OtherActor);
 	}
 }
 
 void AMREnemy::AgroSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AMRMech* NewTarget = Cast<AMRMech>(OtherActor);
-
-	if (NewTarget && Alive())
+	if (AgroTarget == OtherActor)
 	{
 		bOverlappingAgroSphere = false;
 		AgroTarget = nullptr;
@@ -311,21 +392,27 @@ void AMREnemy::AgroSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActo
 
 void AMREnemy::CombatSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AMRMech* NewTarget = Cast<AMRMech>(OtherActor);
+	if (Cast<AMREnemy>(OtherActor) || !OtherActor->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+		return;
 
-	if (NewTarget)
+	IMRDamageTakerInterface* NewTarget = Cast<IMRDamageTakerInterface>(OtherActor);
+	if (!NewTarget)
+		return;
+	
+	if (IsAbleAttack(OtherActor) && Alive())
 	{
 		bOverlappingCombatSphere = true;
-		AttackTarget(NewTarget);
+		AttackTarget(OtherActor);
+
+		// Subscribe on death
+		NewTarget->OnDeath().AddUObject(this, &AMREnemy::OnTargetDeath);
 	}
 
 }
 
 void AMREnemy::CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	AMRMech* NewTarget = Cast<AMRMech>(OtherActor);
-
-	if (NewTarget)
+	if (CombatTarget == OtherActor)
 	{
 		bOverlappingCombatSphere = false;
 		CombatTarget = nullptr;

@@ -25,7 +25,7 @@ void UMRHealthComponent::SetDamaged()
 {
 	HealthState = EHealthState::EHS_Damaged;
 
-	OnHealthStateChangedDelegate.ExecuteIfBound(this, HealthState);
+	OnHealthStateChanged.ExecuteIfBound(this, HealthState);
 
 	//ULog::Number(CurrentHealth, TEXT("Object Damaged. Health: "), GetNameSafe(this), LO_Both);
 }
@@ -34,7 +34,7 @@ void UMRHealthComponent::SetDestroyed()
 {
 	HealthState = EHealthState::EHS_Destroyed;
 	
-	OnHealthStateChangedDelegate.ExecuteIfBound(this, HealthState);
+	OnHealthStateChanged.ExecuteIfBound(this, HealthState);
 	
 	// ULog::Number(CurrentHealth, TEXT("Object Destroyed. Health: "), GetNameSafe(this), LO_Both);
 }
@@ -81,8 +81,8 @@ float UMRHealthComponent::TakeDamage(const float Damage, FDamageTakenData const&
 	else
 	{
 		// TODO: Implement event for Regular damage state
-		ULog::Number(TakenDamage, TEXT("Took damage: "), GetNameSafe(this));
-		ULog::Number(CurrentHealth, TEXT("Current health: "));
+		// ULog::Number(TakenDamage, TEXT("Took damage: "), GetNameSafe(this));
+		// ULog::Number(CurrentHealth, TEXT("Current health: "));
 	}
 	
 	return TakenDamage;

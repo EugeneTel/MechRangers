@@ -74,6 +74,17 @@ enum class EGripState : uint8
 };
 
 /**
+ * Gameplay Team
+ */
+UENUM(BlueprintType)
+enum class EGameplayTeam : uint8
+{
+	EGT_None UMETA(DisplayName = "None"),
+	EGT_Federation UMETA(DisplayName = "Federation"),
+	EGT_Insect UMETA(DisplayName = "Insect")
+};
+
+/**
 * Health State
 */
 UENUM(BlueprintType)

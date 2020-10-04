@@ -9,11 +9,12 @@
 #include "MechComponents/MRWeaponSystemComponent.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
+#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
 
 #include "MRMech.generated.h"
 
 UCLASS()
-class MECHRANGERS_API AMRMech : public ACharacter
+class MECHRANGERS_API AMRMech : public ACharacter, public IMRDamageTakerInterface
 {
 	GENERATED_BODY()
 
@@ -67,10 +68,28 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRWeaponSystemComponent* WeaponSystem;
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// Delegates
+//----------------------------------------------------------------------------------------------------------------------
+public:
+	/** On Death Delegate */
+	FOnDeath OnDeathEvent;
+	
+	virtual FOnDeath& OnDeath() override;
+
 //----------------------------------------------------------------------------------------------------------------------
 // Configs
 //----------------------------------------------------------------------------------------------------------------------
 protected:
+
+	/** Gameplay team (on which side a mech) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGameplayTeam GameplayTeam;
+
+	/**  A chance that attacker will attack a current object (if has other agro object). From 0.0 (will not attack) to 1.0 (attack) */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float AgroChance;
 
 	/** Loadout asset for the Mech. Every Mech must have it! */ 
 	UPROPERTY(Category=MRMech, BlueprintReadOnly, EditAnywhere)
@@ -87,7 +106,7 @@ protected:
 	/** Is Combat mode or Movement mode. */
 	UPROPERTY(Category=MRMech, VisibleInstanceOnly, BlueprintReadWrite)
 	bool bIsCombatMode;
-
+	
 public:
 
 	/** Set Mech loadout */
@@ -105,6 +124,12 @@ public:
 	/** Get Weapon System component */
 	UFUNCTION(BlueprintCallable)
 	UMRWeaponSystemComponent* GetWeaponSystem() const;
+
+	virtual EGameplayTeam GetGameplayTeam() const override;
+
+	virtual float GetAgroChance() const override;
+
+	virtual bool Alive() const override;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Movement controls

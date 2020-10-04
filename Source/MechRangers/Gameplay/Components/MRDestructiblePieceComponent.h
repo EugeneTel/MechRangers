@@ -90,11 +90,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRHealthComponent* HealthContainer;
 
-	UPROPERTY(BlueprintReadWrite)
-	UStaticMeshComponent* InitialMeshComponent;
-
-	UPROPERTY(BlueprintReadWrite)
-	UStaticMeshComponent* DamagedMeshComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* MeshComponent;
 	
 	// Called when the game starts
 	virtual void BeginPlay() override;

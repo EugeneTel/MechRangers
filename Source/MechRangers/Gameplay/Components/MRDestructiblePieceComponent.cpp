@@ -11,15 +11,10 @@ UMRDestructiblePieceComponent::UMRDestructiblePieceComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// Create components
-	HealthContainer = CreateDefaultSubobject<UMRHealthComponent>(TEXT("HealthComponent"));
-	InitialMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InitialMeshComponent"));
-	InitialMeshComponent->SetupAttachment(this);
-	InitialMeshComponent->SetCollisionProfileName(FName("BlockAll"));
-	
-	DamagedMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DamagedMeshComponent"));
-	DamagedMeshComponent->SetupAttachment(this);
-	DamagedMeshComponent->SetCollisionProfileName(FName("BlockAll"));
-	DamagedMeshComponent->SetHiddenInGame(true);
+	HealthContainer = CreateDefaultSubobject<UMRHealthComponent>(TEXT("DestructiblePieceHealthContainer"));
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent->SetupAttachment(this);
+	MeshComponent->SetCollisionProfileName(FName("Destructible"));
 }
 
 // Called when the game starts
@@ -28,7 +23,7 @@ void UMRDestructiblePieceComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// Subscribe on Delegates
-	HealthContainer->OnHealthStateChangedDelegate.BindUObject(this, &UMRDestructiblePieceComponent::OnHealthContainerStateChanged);
+	HealthContainer->OnHealthStateChanged.BindUObject(this, &UMRDestructiblePieceComponent::OnHealthContainerStateChanged);
 }
 
 void UMRDestructiblePieceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -42,7 +37,7 @@ void UMRDestructiblePieceComponent::PostEditChangeProperty(FPropertyChangedEvent
 	
 	if (InitialMesh)
 	{
-		InitialMeshComponent->SetStaticMesh(InitialMesh);
+		MeshComponent->SetStaticMesh(InitialMesh);
 	}
 }
 
@@ -53,7 +48,7 @@ void UMRDestructiblePieceComponent::PostEditComponentMove(bool bFinished)
 	// @TODO: Check do we really need it?
 	if (InitialMesh)
 	{
-		InitialMeshComponent->SetStaticMesh(InitialMesh);
+		MeshComponent->SetStaticMesh(InitialMesh);
 	}
 }
 
@@ -84,7 +79,7 @@ void UMRDestructiblePieceComponent::Damaged()
 {
 	if (DamagedPieceData.MeshAsset)
 	{
-		InitialMeshComponent->SetStaticMesh(DamagedPieceData.MeshAsset);
+		MeshComponent->SetStaticMesh(DamagedPieceData.MeshAsset);
 	}
 
 	if (DamagedPieceData.ParticleList.Num() > 0)
@@ -100,7 +95,7 @@ void UMRDestructiblePieceComponent::Destroyed()
 {
 	if (DestroyedPieceData.MeshAsset)
 	{
-		InitialMeshComponent->SetStaticMesh(DestroyedPieceData.MeshAsset);
+		MeshComponent->SetStaticMesh(DestroyedPieceData.MeshAsset);
 	}
 
 	if (DestroyedPieceData.ParticleList.Num() > 0)

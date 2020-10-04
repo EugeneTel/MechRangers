@@ -9,7 +9,7 @@
 
 #include "MRDestructibleObject.generated.h"
 
-class UMRLivingActorComponent;
+class UMRSimpleLivingActorComponent;
 
 UCLASS()
 class MECHRANGERS_API AMRDestructibleObject : public AActor, public IMRDamageTakerInterface
@@ -29,4 +29,47 @@ protected:
 public:	
 	// Sets default values for this actor's properties
 	AMRDestructibleObject();
+
+//----------------------------------------------------------------------------------------------------------------------
+// Components
+//----------------------------------------------------------------------------------------------------------------------
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMRSimpleLivingActorComponent* LivingActorComponent;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Configs
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+
+	/** Gameplay team (on which side an object) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EGameplayTeam GameplayTeam;
+
+	/**  A chance that attacker will attack a current object (if has other agro object). From 0.0 (will not attack) to 1.0 (attack) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AgroChance;
+
+public:
+	virtual float GetAgroChance() const override;
+
+	virtual EGameplayTeam GetGameplayTeam() const override;
+
+//----------------------------------------------------------------------------------------------------------------------
+// Living system
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+
+	/** Delegate on Enemy death */
+	FOnDeath OnDeathEvent;
+	
+public:
+
+	/** Subscribed to OnLivingActorDeath Delegate */
+	void OnLivingActorDeath(AActor* DeadActor);
+	
+	virtual bool Alive() const override;
+	
+	/** Delegate on Enemy death */
+	virtual FOnDeath& OnDeath() override;
 };

@@ -34,6 +34,8 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 	bIsCombatMode = false;
 	bManipulatorLeftHeld = false;
 	bManipulatorRightHeld = false;
+	GameplayTeam = EGameplayTeam::EGT_Federation;
+	AgroChance = 0.5;
 }
 
 // Called when the game starts or when spawned
@@ -92,6 +94,21 @@ float AMRMech::InternalTakePointDamage(float Damage, FPointDamageEvent const& Po
 UMRWeaponSystemComponent* AMRMech::GetWeaponSystem() const
 {
 	return WeaponSystem;
+}
+
+EGameplayTeam AMRMech::GetGameplayTeam() const
+{
+	return GameplayTeam;
+}
+
+float AMRMech::GetAgroChance() const
+{
+	return AgroChance;
+}
+
+bool AMRMech::Alive() const
+{
+	return true;
 }
 
 void AMRMech::SetLoadout(FMechLoadout NewLoadout)
@@ -172,6 +189,11 @@ AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)
 		UE_LOG(LogTemp, Error, TEXT("Can't spawn a Cockpit!"));
 		return nullptr;
 	}
+}
+
+IMRDamageTakerInterface::FOnDeath& AMRMech::OnDeath()
+{
+	return OnDeathEvent;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

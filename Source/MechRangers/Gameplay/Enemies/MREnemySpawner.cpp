@@ -107,7 +107,8 @@ bool AMREnemySpawner::SpawnEnemy(FVector& Location)
 	{
 		NewEnemy->SetInstigator(GetInstigator());
 		NewEnemy->SetOwner(this);
-		NewEnemy->SetMoveToActor(MoveToActor);
+		NewEnemy->SetMoveToActor(EnemyMainTarget);
+		NewEnemy->SetMainTarget(EnemyMainTarget);
 
 		UGameplayStatics::FinishSpawningActor(NewEnemy, SpawnTransform);
 	}

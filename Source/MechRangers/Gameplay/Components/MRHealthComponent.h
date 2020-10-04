@@ -23,7 +23,7 @@ protected:
 public:
 
 	/** Delegate fires when Health State Was changed */
-	FOnHealthStateChanged OnHealthStateChangedDelegate;
+	FOnHealthStateChanged OnHealthStateChanged;
 
 	// Sets default values for this component's properties
 	UMRHealthComponent();

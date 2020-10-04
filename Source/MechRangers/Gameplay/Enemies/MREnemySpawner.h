@@ -59,7 +59,7 @@ protected:
 
 	/** Enemy for spawn */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Spawn)
-	AActor* MoveToActor;
+	AActor* EnemyMainTarget;
 
 	/** Timer for the Next Spawn */
 	FTimerHandle TimerHandle_NextSpawn;
