@@ -23,7 +23,7 @@ void AMRDestructibleObject::BeginPlay()
 {
 	Super::BeginPlay();
 
-	LivingActorComponent->OnLivingActorDeath.BindUObject(this, &AMRDestructibleObject::OnLivingActorDeath);
+	LivingActorComponent->OnDeathDelegate.BindUObject(this, &AMRDestructibleObject::OnLivingActorDeath);
 }
 
 EGameplayTeam AMRDestructibleObject::GetGameplayTeam() const

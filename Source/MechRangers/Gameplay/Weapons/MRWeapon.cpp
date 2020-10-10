@@ -5,10 +5,11 @@
 #include "Log.h"
 #include "Kismet/GameplayStatics.h"
 #include "MechRangers/MechRangers.h"
-#include "MechRangers/Gameplay/Mech/MRMechAim.h"
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
+#include "MechRangers/Gameplay/Components/MRSimpleAimComponent.h"
+#include "MRWeaponTypes.h"
 
 // Sets default values
 AMRWeapon::AMRWeapon()
@@ -54,17 +55,17 @@ void AMRWeapon::Tick(float DeltaTime)
 
 }
 
-void AMRWeapon::SetMech(AMRMech* InMech)
+void AMRWeapon::SetOwningPawn(APawn* NewOwner)
 {
-	if (Mech == nullptr || Mech != InMech)
+	if (MyPawn == nullptr || MyPawn != NewOwner)
 	{
-		Mech = InMech;
-		SetOwner(InMech);
-		SetInstigator(InMech);
+		MyPawn = NewOwner;
+		SetOwner(NewOwner);
+		SetInstigator(NewOwner);
 	}
 }
 
-void AMRWeapon::SetAimSystem(AMRMechAim* InAimSystem)
+void AMRWeapon::SetAimSystem(UMRSimpleAimComponent* InAimSystem)
 {
 	AimSystem = InAimSystem;
 }
@@ -98,7 +99,7 @@ void AMRWeapon::StopFire()
 
 bool AMRWeapon::CanFire() const
 {
-	// @TODO: Add checking for Mech and Pilot
+	// @TODO: Add checking is Pawn able fire
 
 	// @TODO: Add checking for reloading
 
@@ -231,13 +232,15 @@ void AMRWeapon::OnBurstFinished()
 
 void AMRWeapon::AttachMesh(const FName SocketName) const
 {
-	if (!Mech)
+	if (!MyPawn)
 		return;
 
 	// Remove and hide mesh
 	DetachMesh();
 	MeshComp->SetHiddenInGame(false);
-	MeshComp->AttachToComponent(Mech->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+
+	// @TODO: Check do we need id?
+	//MeshComp->AttachToComponent(MyPawn->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 }
 
 void AMRWeapon::DetachMesh() const
@@ -251,9 +254,9 @@ void AMRWeapon::DetachMesh() const
 //----------------------------------------------------------------------------------------------------------------------
 // Inventory
 //----------------------------------------------------------------------------------------------------------------------
-void AMRWeapon::OnEnterInventory(AMRMech* NewOwner)
+void AMRWeapon::OnEnterInventory(APawn* NewOwner)
 {
-	SetMech(NewOwner);
+	SetOwningPawn(NewOwner);
 }
 
 void AMRWeapon::OnLeaveInventory()
@@ -265,7 +268,7 @@ void AMRWeapon::OnLeaveInventory()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		SetMech(nullptr);
+		SetOwningPawn(nullptr);
 	}
 }
 
@@ -273,6 +276,11 @@ bool AMRWeapon::IsAttachedToPawn() const
 {
 	// TODO: Pending Equip if needed
 	return bEquipped; /*|| bPendingEquip;*/
+}
+
+void AMRWeapon::SetEquipped(const bool InEquipped)
+{
+	bEquipped = InEquipped;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -437,7 +445,7 @@ FVector AMRWeapon::GetAdjustedAim()
 {
 	if (AimSystem)
 	{
-		return AimSystem->GetActorForwardVector();
+		return AimSystem->GetForwardVector();
 	} else
 	{
 		UE_LOG(LogTemp, Error, TEXT("AMRWeapon::GetAdjustedAim - AimSystem is not set!"))
@@ -453,6 +461,11 @@ FVector AMRWeapon::GetDamageStartLocation(const FVector& AimDir) const
 	// @TODO: Adjust trace if has blocker
 
 	return GetMuzzleLocation();
+}
+
+FVector AMRWeapon::GetDamageEndLocation() const
+{
+	return AimSystem->GetTraceEndPoint();
 }
 
 FVector AMRWeapon::GetMuzzleLocation() const
@@ -492,9 +505,9 @@ FHitResult AMRWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& Trace
 UAudioComponent* AMRWeapon::PlayWeaponSound(USoundCue* Sound) const
 {
 	UAudioComponent* AC = nullptr;
-	if (Sound && Mech)
+	if (Sound && MyPawn)
 	{
-		AC = UGameplayStatics::SpawnSoundAttached(Sound, Mech->GetRootComponent());
+		AC = UGameplayStatics::SpawnSoundAttached(Sound, MyPawn->GetRootComponent());
 	}
 
 	return AC;

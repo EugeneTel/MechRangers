@@ -2,7 +2,6 @@
 
 #include "MRWeaponInstant.h"
 #include "Kismet/GameplayStatics.h"
-#include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "MechRangers/Effects/MRWeaponImpactEffect.h"
 
@@ -95,15 +94,15 @@ void AMRWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& Shoot
     PointDmg.DamageTypeClass = InstantConfig.DamageType;
     PointDmg.HitInfo = Impact;
     PointDmg.ShotDirection = ShootDir;
-    PointDmg.Damage = InstantConfig.HitDamage;    
+    PointDmg.Damage = InstantConfig.HitDamage;   
 
-    if (Mech)
+    if (MyPawn)
     {
-        AController* MechController = Mech->GetController();
+        AController* PawnController = MyPawn->GetController();
 
-        if (MechController)
+        if (PawnController)
         {
-            Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, MechController, Mech);
+           Impact.GetActor()->TakeDamage(PointDmg.Damage, PointDmg, PawnController, MyPawn);
         }
     }
 }

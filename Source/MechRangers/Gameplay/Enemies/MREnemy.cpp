@@ -11,6 +11,7 @@
 #include "Components/SphereComponent.h"
 #include "MechRangers/MechRangers.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AMREnemy::AMREnemy()
@@ -30,6 +31,7 @@ AMREnemy::AMREnemy()
 	CombatSphere->SetCollisionProfileName(FName("Trigger"));
 
 	// Setup configs
+	// TODO: update collision
 	GetCapsuleComponent()->SetCollisionProfileName(FName("MechPawn"));
 	AIControllerClass = AMREnemyAIController::StaticClass();
 	MaxHealth = 50.f;
@@ -175,6 +177,11 @@ void AMREnemy::Death()
 	if (AIController)
 	{
 		AIController->StopMovement();
+	}
+
+	if (OnDeathEvent.IsBound())
+	{
+		OnDeathEvent.Broadcast(this);
 	}
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

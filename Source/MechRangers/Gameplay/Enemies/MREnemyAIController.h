@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VRAIController.h"
+#include "AIController.h"
 #include "MREnemyAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MECHRANGERS_API AMREnemyAIController : public AVRAIController
+class MECHRANGERS_API AMREnemyAIController : public AAIController
 {
 	GENERATED_BODY()
 	

@@ -13,8 +13,9 @@ UMRDestructiblePieceComponent::UMRDestructiblePieceComponent()
 	// Create components
 	HealthContainer = CreateDefaultSubobject<UMRHealthComponent>(TEXT("DestructiblePieceHealthContainer"));
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	MeshComponent->SetupAttachment(this);
-	MeshComponent->SetCollisionProfileName(FName("Destructible"));
+	//MeshComponent->SetupAttachment(this);
+	// @TODO: Fix collision profile name
+	MeshComponent->SetCollisionProfileName(FName("MechPawn"));
 }
 
 // Called when the game starts
@@ -41,17 +42,6 @@ void UMRDestructiblePieceComponent::PostEditChangeProperty(FPropertyChangedEvent
 	}
 }
 
-void UMRDestructiblePieceComponent::PostEditComponentMove(bool bFinished)
-{
-	Super::PostEditComponentMove(bFinished);
-
-	// @TODO: Check do we really need it?
-	if (InitialMesh)
-	{
-		MeshComponent->SetStaticMesh(InitialMesh);
-	}
-}
-
 float UMRDestructiblePieceComponent::TakeDamage(const float Damage, FDamageTakenData const& DamageTakenData)
 {
 	//ULog::Number(Damage, "DestructiblePieceComponent::TakeDamage ", GetNameSafe(this), LO_Both);
@@ -62,6 +52,11 @@ float UMRDestructiblePieceComponent::TakeDamage(const float Damage, FDamageTaken
 EHealthState UMRDestructiblePieceComponent::GetHealthState()
 {
 	return HealthContainer->GetHealthState();
+}
+
+UStaticMeshComponent* UMRDestructiblePieceComponent::GetMeshComponent() const
+{
+	return MeshComponent;
 }
 
 void UMRDestructiblePieceComponent::OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState)
@@ -77,6 +72,7 @@ void UMRDestructiblePieceComponent::OnHealthContainerStateChanged(UMRHealthCompo
 
 void UMRDestructiblePieceComponent::Damaged()
 {
+	ULog::Success("DAMAGED!!!!!!!!!!!!!!", LO_Both);
 	if (DamagedPieceData.MeshAsset)
 	{
 		MeshComponent->SetStaticMesh(DamagedPieceData.MeshAsset);

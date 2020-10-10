@@ -16,7 +16,10 @@ class MECHRANGERS_API UMRSimpleLivingActorComponent : public UActorComponent
 	GENERATED_BODY()
 
 	/** Delegate Fires on Actor Death */
-	DECLARE_DELEGATE_OneParam(FOnLivingActorDeath, AActor*);
+	DECLARE_DELEGATE_OneParam(FOnDeath, AActor*);
+	
+	/** Delegate Fires on Actor Changes Health State */
+	DECLARE_DELEGATE_TwoParams(FOnChangeHealthState, AActor*, EHealthState);
 
 protected:
 	// Called when the game starts
@@ -33,7 +36,11 @@ protected:
 	virtual void Death();
 
 public:
-	FOnLivingActorDeath OnLivingActorDeath;
+	/** Actor Death delegate */
+	FOnDeath OnDeathDelegate;
+	
+	/** Actor Change Health State */
+	FOnChangeHealthState OnChangeHealthStateDelegate;
 	
 	// Sets default values for this component's properties
 	UMRSimpleLivingActorComponent();
@@ -45,4 +52,12 @@ public:
 	/** Is Living Actor Component Alive */
 	UFUNCTION(BlueprintCallable)
 	bool Alive() const;
+
+	/** Get current component Health State */
+	UFUNCTION(BlueprintCallable)
+	EHealthState GetHealthState();
+
+	/** Kill an actor */
+	UFUNCTION(BlueprintCallable)
+	void Kill(FDamageTakenData& DamageTakenData);
 };

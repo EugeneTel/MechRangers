@@ -31,13 +31,6 @@ public:
 	AMRDestructibleObject();
 
 //----------------------------------------------------------------------------------------------------------------------
-// Components
-//----------------------------------------------------------------------------------------------------------------------
-public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UMRSimpleLivingActorComponent* LivingActorComponent;
-
-//----------------------------------------------------------------------------------------------------------------------
 // Configs
 //----------------------------------------------------------------------------------------------------------------------
 protected:
@@ -62,6 +55,9 @@ protected:
 
 	/** Delegate on Enemy death */
 	FOnDeath OnDeathEvent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMRSimpleLivingActorComponent* LivingActorComponent;
 	
 public:
 
@@ -70,6 +66,6 @@ public:
 	
 	virtual bool Alive() const override;
 	
-	/** Delegate on Enemy death */
+	/** Delegate on death */
 	virtual FOnDeath& OnDeath() override;
 };

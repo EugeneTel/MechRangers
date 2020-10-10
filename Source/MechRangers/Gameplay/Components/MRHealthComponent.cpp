@@ -10,9 +10,9 @@ UMRHealthComponent::UMRHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	// Setup Defaults
-	DamagedPercentage = 0.3f;
-	CurrentHealth = 20.f;
-	MaxHealth = 20.f;
+	DamagedPercentage = 0.5f;
+	CurrentHealth = 100.f;
+	MaxHealth = 100.f;
 }
 
 // Called when the game starts

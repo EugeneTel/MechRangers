@@ -10,7 +10,6 @@ class UProjectileMovementComponent;
 class USphereComponent;
 class AMRProjectile;
 
-
 USTRUCT()
 struct FProjectileWeaponData
 {

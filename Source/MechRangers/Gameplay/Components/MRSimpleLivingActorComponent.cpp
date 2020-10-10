@@ -31,16 +31,27 @@ bool UMRSimpleLivingActorComponent::Alive() const
 	return HealthContainer->Alive();
 }
 
+EHealthState UMRSimpleLivingActorComponent::GetHealthState()
+{
+	return HealthContainer->GetHealthState();
+}
+
+void UMRSimpleLivingActorComponent::Kill(FDamageTakenData& DamageTakenData)
+{
+	Death();
+}
+
 void UMRSimpleLivingActorComponent::OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState)
 {
 	if (InHealthState == EHealthState::EHS_Destroyed)
 	{
 		Death();
 	}
+
+	OnChangeHealthStateDelegate.ExecuteIfBound(GetOwner(), InHealthState);	
 }
 
 void UMRSimpleLivingActorComponent::Death()
 {
-	ULog::Success("UMRSimpleLivingActorComponent::Death");
-	OnLivingActorDeath.ExecuteIfBound(GetOwner());	
+	OnDeathDelegate.ExecuteIfBound(GetOwner());	
 }

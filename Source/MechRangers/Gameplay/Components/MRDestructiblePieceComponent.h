@@ -87,10 +87,10 @@ class MECHRANGERS_API UMRDestructiblePieceComponent : public USceneComponent
 
 protected:
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	UMRHealthComponent* HealthContainer;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	UStaticMeshComponent* MeshComponent;
 	
 	// Called when the game starts
@@ -101,16 +101,18 @@ public:
 	UMRDestructiblePieceComponent();
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	virtual void PostEditComponentMove(bool bFinished) override;
-	
+
 	UFUNCTION(BlueprintCallable)
 	float TakeDamage(float Damage, FDamageTakenData const& DamageTakenData);
 
 	/** Get health state of the current component */
 	UFUNCTION(BlueprintCallable)
 	EHealthState GetHealthState();
+
+	UFUNCTION(BlueprintCallable)
+	UStaticMeshComponent* GetMeshComponent() const;
 	
 protected:
 
@@ -133,6 +135,11 @@ protected:
 
 	/** Subscribed to the Health Component Health State Changed Delegate */
 	virtual void OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState);
+	
+	/** Spawn particle for destructible piece */
+	void SpawnParticle(FDestructibleParticleData& DestructibleParticleData);
+
+public:
 
 	/** Set destructible component state to Damaged */
 	UFUNCTION(BlueprintCallable)
@@ -142,6 +149,4 @@ protected:
 	UFUNCTION(BlueprintCallable)
     void Destroyed();
 
-	/** Spawn particle for destructible piece */
-	void SpawnParticle(FDestructibleParticleData& DestructibleParticleData);
 };

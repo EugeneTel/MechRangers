@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MechRangers/Gameplay/Mech/MRMech.h"
 
 #include "MRWeapon.generated.h"
 
+struct FWeaponSpawnData;
 class USoundCue;
-
+class UMRSimpleAimComponent;
+class APawn;
 
 USTRUCT()
 struct FWeaponData
@@ -94,25 +95,25 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* MeshComp;
 
-	/** Weapon owned by Mech */
+	/** Pawn owner */
 	UPROPERTY(BlueprintReadWrite)
-	AMRMech* Mech;
+	APawn* MyPawn;
 
 	/** name of bone/socket for muzzle in weapon mesh */
 	UPROPERTY(EditDefaultsOnly, Category=Effects)
 	FName MuzzleAttachPoint;
 
-	/** Mech Aim system */
+	/** Weapon Aim system */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
-	AMRMechAim* AimSystem;
+	UMRSimpleAimComponent* AimSystem;
 
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void SetMech(AMRMech* InMech);
+	void SetOwningPawn(APawn* NewOwner);
 
 	UFUNCTION(BlueprintCallable)
-	void SetAimSystem(AMRMechAim* InAimSystem);
+	void SetAimSystem(UMRSimpleAimComponent* InAimSystem);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Input
@@ -198,20 +199,22 @@ protected:
 
 public:
 
-	/** attaches weapon mesh to mech mesh */
+	/** attaches weapon mesh to owner mesh */
 	void AttachMesh(const FName SocketName) const;
 
-	/** detaches weapon mesh from mech */
+	/** detaches weapon mesh from owner */
 	void DetachMesh() const;
 	
 	/** [server] weapon was added to pawn's inventory */
-	virtual void OnEnterInventory(AMRMech* NewOwner);
+	virtual void OnEnterInventory(APawn* NewOwner);
 
 	/** [server] weapon was removed from pawn's inventory */
 	virtual void OnLeaveInventory();
 
 	/** check if mesh is already attached */
 	bool IsAttachedToPawn() const;
+
+	void SetEquipped(const bool InEquipped);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Ammo
@@ -364,6 +367,9 @@ protected:
 
 	/** get the originating location for start damage */
 	FVector GetDamageStartLocation(const FVector& AimDir) const;
+
+	/** get damage end location depends on aiming */
+	FVector GetDamageEndLocation() const;
 
 	/** get the muzzle location of the weapon */
 	FVector GetMuzzleLocation() const;
