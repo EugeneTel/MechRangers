@@ -31,9 +31,9 @@ void AMRTurret_Mechanic::Damaged()
     TurretBase->Damaged();
 }
 
-void AMRTurret_Mechanic::Destroyed()
+void AMRTurret_Mechanic::Death()
 {
-    Super::Destroyed();
+    Super::Death();
 
     // Destroy Turret
     TurretBase->Destroyed();

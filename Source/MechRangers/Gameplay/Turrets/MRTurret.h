@@ -63,6 +63,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual float GetAgroChance() const override;
 
+	void AimingActivate();
+
+	void AimingDeactivate();
+
 //----------------------------------------------------------------------------------------------------------------------
 // Living system
 //----------------------------------------------------------------------------------------------------------------------
@@ -90,7 +94,7 @@ public:
 	virtual void Damaged();
 
 	/** Turret Death implementation */
-	virtual void Destroyed();
+	virtual void Death();
 
 	/** Interface implementation */
 	virtual FOnDeath& OnDeath() override;
@@ -143,13 +147,25 @@ protected:
 
 	/** Target for Attacking */
 	UPROPERTY(Category=Combat, VisibleInstanceOnly, BlueprintReadWrite)
-	class AActor* CombatTarget;
+	AActor* CombatTarget;
+	
+	/** An actor was attacking a turret for the last time */
+	UPROPERTY(BlueprintReadWrite)
+	AActor* LastAttacker;
+
+	/** Handle for efficient management of HandleFiring timer */
+	FTimerHandle TimerHandle_HandleFiring;
+
+	/** Handle for looking better target timer */
+	FTimerHandle TimerHandle_HandleBetterTarget;
 
 	bool IsAbleAttack(AActor* InActor) const;
 	
 	void AttackTarget(AActor* Target);
 	
 	void AttackFinish();
+
+	void StopAttack();
 	
 	void OnTargetDeath(AActor* DeadActor);
 
@@ -159,9 +175,20 @@ protected:
 	/** Try to find a target in combat zone for attack */ 
 	AActor* FindTarget() const;
 
+	/** Start firing from all weapons */
 	virtual void StartWeaponFire();
-	
+
+	/** Stop firing all weapons */
 	virtual void StopWeaponFire();
+
+	/** Check should stop firing or not */
+	virtual void HandleStopFiring();
+
+	/** Check and attack better target if exist */
+	virtual void HandleBetterTarget();
+
+	/** Clear combat target (remove delegates etc.) */
+	virtual void ClearCombatTarget();
 
 //----------------------------------------------------------------------------------------------------------------------
 // Aiming

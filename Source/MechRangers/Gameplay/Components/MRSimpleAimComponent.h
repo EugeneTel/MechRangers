@@ -24,19 +24,10 @@ protected:
 
 public:
 	// Sets default values for this component's properties
-	UMRSimpleAimComponent(const class FObjectInitializer& ObjectInitializer);
+	UMRSimpleAimComponent();
 	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	
-
-// #if WITH_EDITOR
-//
-// 	/** Aim visualization */
-// 	UPROPERTY()
-// 	UArrowComponent* ArrowComponent;
-// #endif
 
 //----------------------------------------------------------------------------------------------------------------------
 // Aiming
@@ -44,11 +35,11 @@ public:
 protected:
 	
 	/** Is Debug mode */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bDebug;
 
 	/** Inform subscribers if Hit an Actor with DamageTakerInterface */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHitInform;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -65,6 +56,10 @@ public:
 	/** Get Saved Trace End Point from the last Trace */
 	UFUNCTION(BlueprintCallable)
     FORCEINLINE FVector& GetTraceEndPoint() { return TraceEndPoint; }
+
+	/** Set Trace Length for aiming */
+	UFUNCTION(BlueprintCallable)
+	void SetTraceLength(const float InLength) { TraceLength = InLength; }
 
 	/** Make a line trace for aiming */
 	UFUNCTION(BlueprintCallable)

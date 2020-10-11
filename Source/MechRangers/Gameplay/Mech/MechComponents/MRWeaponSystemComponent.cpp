@@ -110,7 +110,7 @@ AMRWeapon* UMRWeaponSystemComponent::SpawnWeapon(const FWeaponSpawnData& WeaponS
 void UMRWeaponSystemComponent::EquipWeapon(AMRWeapon* NewWeapon, const FWeaponSpawnData& WeaponSpawnData, FMechArmedPart& MechArmedPart)
 {
 	NewWeapon->SetOwningPawn(Mech);
-	NewWeapon->OnEquip(WeaponSpawnData);
+	NewWeapon->OnEquip(Mech->GetMesh(), WeaponSpawnData);
 	//NewWeapon->SetAimSystem(MechArmedPart.AimSystem);
 	MechArmedPart.Weapons.Add(WeaponSpawnData.Group, NewWeapon);
 }

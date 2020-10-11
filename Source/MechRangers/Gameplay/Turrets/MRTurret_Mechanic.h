@@ -42,7 +42,7 @@ public:
     virtual void Damaged() override;
 
     /** Turret Death implementation */
-    virtual void Destroyed() override;
+    virtual void Death() override;
 
 
     

@@ -200,7 +200,7 @@ protected:
 public:
 
 	/** attaches weapon mesh to owner mesh */
-	void AttachMesh(const FName SocketName) const;
+	void AttachMesh(USceneComponent* AttachToComponent, const FName SocketName) const;
 
 	/** detaches weapon mesh from owner */
 	void DetachMesh() const;
@@ -272,7 +272,7 @@ public:
 	FORCEINLINE bool IsEquipped() const { return bEquipped; }
 	
 	/** weapon is being equipped by owner */
-	virtual void OnEquip(const FWeaponSpawnData& WeaponSpawnData);
+	virtual void OnEquip(USceneComponent* AttachToComponent, const FWeaponSpawnData& WeaponSpawnData);
 
 	/** weapon is now equipped by owner */
 	virtual void OnEquipFinished();

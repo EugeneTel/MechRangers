@@ -52,6 +52,7 @@ void AMREnemy::BeginPlay()
 	AIController = Cast<AMREnemyAIController>(GetController());
 	AnimInstance = GetMesh()->GetAnimInstance();
 	CurrentHealth = MaxHealth;
+	AgroTarget = MainTarget;
 
 	// Setup overlaps
 	AgroSphere->OnComponentBeginOverlap.AddDynamic(this, &AMREnemy::AgroSphereOnOverlapBegin);
@@ -118,7 +119,7 @@ void AMREnemy::ClearActivities()
 	bAttacking = false;
 	bOverlappingAgroSphere = false;
 	bOverlappingCombatSphere = false;
-	AgroTarget = nullptr;
+	AgroTarget = MainTarget;
 	CombatTarget = nullptr;
 
 	if (AnimInstance)
@@ -179,6 +180,11 @@ void AMREnemy::Death()
 		AIController->StopMovement();
 	}
 
+	if (AnimInstance)
+	{
+		AnimInstance->StopAllMontages(0.5);
+	}
+
 	if (OnDeathEvent.IsBound())
 	{
 		OnDeathEvent.Broadcast(this);
@@ -214,12 +220,13 @@ bool AMREnemy::ShouldAttack(const AActor* NewTarget, const AActor* CurrentTarget
 {
 	if (CurrentTarget == nullptr)
 		return true;
-
-	if (NewTarget->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+	
+	if (CurrentTarget != NewTarget && NewTarget->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
 	{
 		// Calculate random ability based on agro chance
 		const float NewAgroChance = Cast<IMRDamageTakerInterface>(NewTarget)->GetAgroChance();
-		return FMath::RandRange(0.f, 1.f) <= NewAgroChance;
+		const float Chance = FMath::RandRange(0.f, 1.f);
+		return Chance <= NewAgroChance;
 	}
 
 	return false;
@@ -299,6 +306,10 @@ void AMREnemy::AttackTarget(AActor* Target)
 
 	bAttacking = true;
 	CombatTarget = Target;
+
+	// Rotate actor to target
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CombatTarget->GetActorLocation()));
+	
 	AnimInstance->Montage_Play(CombatMontage, 1.f);
 }
 

@@ -230,17 +230,15 @@ void AMRWeapon::OnBurstFinished()
 	TimerIntervalAdjustment = 0.0f;
 }
 
-void AMRWeapon::AttachMesh(const FName SocketName) const
+void AMRWeapon::AttachMesh(USceneComponent* AttachToComponent, const FName SocketName) const
 {
-	if (!MyPawn)
-		return;
 
 	// Remove and hide mesh
 	DetachMesh();
 	MeshComp->SetHiddenInGame(false);
 
 	// @TODO: Check do we need id?
-	//MeshComp->AttachToComponent(MyPawn->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+	MeshComp->AttachToComponent(AttachToComponent, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
 }
 
 void AMRWeapon::DetachMesh() const
@@ -326,9 +324,9 @@ void AMRWeapon::UseAmmo()
 	// @TODO: Player stats record
 }
 
-void AMRWeapon::OnEquip(const FWeaponSpawnData& WeaponSpawnData)
+void AMRWeapon::OnEquip(USceneComponent* AttachToComponent, const FWeaponSpawnData& WeaponSpawnData)
 {
-	AttachMesh(WeaponSpawnData.SocketName);
+	AttachMesh(AttachToComponent, WeaponSpawnData.SocketName);
 	
 	bEquipped = true;
 	

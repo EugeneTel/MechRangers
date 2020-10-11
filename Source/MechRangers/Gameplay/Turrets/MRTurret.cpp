@@ -13,7 +13,7 @@
 // Sets default values
 AMRTurret::AMRTurret(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-{
+{	
 	AIControllerClass = AMRTurretAIController::StaticClass();
 	
 	// Setup components
@@ -35,6 +35,8 @@ AMRTurret::AMRTurret(const FObjectInitializer& ObjectInitializer)
 
 	// must be attached in children actors
 	AimSystem = CreateDefaultSubobject<UMRSimpleAimComponent>(TEXT("AimSystem"));
+	AimSystem->SetTraceLength(2000.f);
+	// AimSystem
 	WeaponsAttachmentPoint = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponsAttachmentPoint"));
 
 	// Set defaults
@@ -42,6 +44,7 @@ AMRTurret::AMRTurret(const FObjectInitializer& ObjectInitializer)
 	AgroChance = 0.5f;
 	bAttacking = false;
 	bFiring = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
 // Called when the game starts or when spawned
@@ -80,28 +83,20 @@ void AMRTurret::CombatSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComp, 
 	if (bAttacking && CombatTarget)
 		return;
 	
-	if (Cast<AMRTurret>(OtherActor) || !OtherActor->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+	if (Cast<AMRTurret>(OtherActor))
 		return;
 
-	IMRDamageTakerInterface* NewTarget = Cast<IMRDamageTakerInterface>(OtherActor);
-	if (!NewTarget)
-		return;
-	
 	if (IsAbleAttack(OtherActor) && Alive())
 	{
 		bOverlappingCombatSphere = true;
 		AttackTarget(OtherActor);
-
-		// Subscribe on death
-		NewTarget->OnDeath().AddUObject(this, &AMRTurret::OnTargetDeath);
 	}
 }
 
 void AMRTurret::CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	bAttacking = false;
-	CombatTarget = nullptr;
-	StopWeaponFire();
+	StopAttack();
+	ClearCombatTarget();
 }
 
 EGameplayTeam AMRTurret::GetGameplayTeam() const
@@ -119,6 +114,24 @@ float AMRTurret::GetAgroChance() const
 	return AgroChance;
 }
 
+void AMRTurret::AimingActivate()
+{
+	SetActorTickEnabled(true);
+	if (AimSystem)
+	{
+		AimSystem->SetComponentTickEnabled(true);
+	}
+}
+
+void AMRTurret::AimingDeactivate()
+{
+	SetActorTickEnabled(false);
+	if (AimSystem)
+	{
+		AimSystem->SetComponentTickEnabled(false);
+	}
+}
+
 float AMRTurret::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	FDamageTakenData DamageTakenData = FDamageTakenData();
@@ -127,7 +140,7 @@ float AMRTurret::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACont
 	// Try to attack damage instigator
 	if (IsAbleAttack(EventInstigator->GetPawn()))
 	{
-		AttackTarget(EventInstigator->GetPawn());
+		LastAttacker = EventInstigator->GetPawn();
 	}
 
 	return LivingActorComponent->TakeDamage(Damage, DamageTakenData);
@@ -153,7 +166,7 @@ void AMRTurret::Damaged()
 {
 }
 
-void AMRTurret::Destroyed()
+void AMRTurret::Death()
 {
 	bAttacking = false;
 	CombatTarget = nullptr;
@@ -200,7 +213,6 @@ void AMRTurret::DestroyWeapons()
 			Weapon->StopFire();
 			Weapon->Destroy();
 		}
-
 	}
 }
 
@@ -224,19 +236,31 @@ bool AMRTurret::IsAbleAttack(AActor* InActor) const
 
 void AMRTurret::AttackTarget(AActor* Target)
 {
-	if (!Alive())
+	if (!Alive() || !IsValid(Target))
 		return;
+
+	if (Target->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+	{
+		// Subscribe on death
+		Cast<IMRDamageTakerInterface>(Target)->OnDeath().AddUObject(this, &AMRTurret::OnTargetDeath);
+	}
 
 	bAttacking = true;
 	CombatTarget = Target;
-	PrimaryActorTick.bCanEverTick = true;
+	AimingActivate();
+
+	// set timer for looking better target
+	if (TimerHandle_HandleBetterTarget.IsValid() == false)
+	{
+		GetWorldTimerManager().SetTimer(TimerHandle_HandleBetterTarget, this, &AMRTurret::HandleBetterTarget, 3.f, true);
+	}
+
 }
 
 void AMRTurret::AttackFinish()
 {
-	bAttacking = false;
-	CombatTarget = nullptr;
-	PrimaryActorTick.bCanEverTick = false;
+	StopAttack();
+	ClearCombatTarget();
 	
 	if (bOverlappingCombatSphere && CombatTarget)
 	{
@@ -244,23 +268,39 @@ void AMRTurret::AttackFinish()
 	}
 }
 
+void AMRTurret::StopAttack()
+{
+	bAttacking = false;
+	//StopWeaponFire();
+	AimingDeactivate();
+
+	if (TimerHandle_HandleBetterTarget.IsValid())
+	{
+		TimerHandle_HandleBetterTarget.Invalidate();
+	}
+}
+
 void AMRTurret::OnTargetDeath(AActor* DeadActor)
 {
-	ULog::Success("Try to find another target!", LO_Both);
+	// ULog::Success("Try to find another target!", LO_Both);
 
-	StopWeaponFire();
+	//StopAttack();
+	ClearCombatTarget();
 	
 	// Try to find another target
 	AActor* NewTarget = FindTarget();
 	if (NewTarget)
 	{
-		ULog::Success("Found another Target!", LO_Both);
+		// ULog::Success("Found another Target!", LO_Both);
 		AttackTarget(NewTarget);
 	}
 }
 
 AActor* AMRTurret::FindTarget() const
 {
+	if (!Alive())
+		return nullptr;
+	
 	TArray<AActor*> OverlappingActors;
 	CombatSphere->GetOverlappingActors(OverlappingActors);
 	if (OverlappingActors.Num() <= 0)
@@ -283,6 +323,9 @@ void AMRTurret::StartWeaponFire()
 		return;
 
 	bFiring = true;
+
+	// set timer for check stop firing
+	GetWorldTimerManager().SetTimer(TimerHandle_HandleFiring, this, &AMRTurret::HandleStopFiring, 1.5f, true);
 	
 	for (auto Weapon : Weapons)
 	{
@@ -305,8 +348,40 @@ void AMRTurret::StopWeaponFire()
 		{
 			Weapon->StopFire();
 		}
-
 	}
+
+	if (TimerHandle_HandleFiring.IsValid())
+	{
+		TimerHandle_HandleFiring.Invalidate();
+	}
+}
+
+void AMRTurret::HandleStopFiring()
+{
+	if (bFiring && !CombatTarget)
+	{
+		StopWeaponFire();
+	}
+}
+
+void AMRTurret::HandleBetterTarget()
+{
+	// Try to attack damage causer first
+	if (LastAttacker && IsValid(LastAttacker) && LastAttacker != CombatTarget)
+	{
+		AttackTarget(LastAttacker);
+	}
+
+	LastAttacker = nullptr;
+}
+
+void AMRTurret::ClearCombatTarget()
+{
+	if (IsValid(CombatTarget) && CombatTarget->GetClass()->ImplementsInterface(UMRDamageTakerInterface::StaticClass()))
+	{
+		Cast<IMRDamageTakerInterface>(CombatTarget)->OnDeath().RemoveAll(this);
+	}
+	CombatTarget = nullptr;
 }
 
 void AMRTurret::OnAimSystemDamageTakerHit(FHitResult& HitResult)

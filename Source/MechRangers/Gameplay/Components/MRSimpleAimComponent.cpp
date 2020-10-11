@@ -5,46 +5,21 @@
 #include "DrawDebugHelpers.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
 
-// Sets default values for this component's properties
-/*UMRSimpleAimComponent::UMRSimpleAimComponent()
+UMRSimpleAimComponent::UMRSimpleAimComponent()
 {
-	
-	PrimaryComponentTick.bCanEverTick = false;
-	SetActiveFlag(false);
-
-#if WITH_EDITOR
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
-	ArrowComponent->AttachToComponent(this, FAttachmentTransformRules::SnapToTargetIncludingScale);
-#endif
-}*/
-
-UMRSimpleAimComponent::UMRSimpleAimComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-	PrimaryComponentTick.bCanEverTick = true;
-// #if WITH_EDITOR
-// 	ArrowComponent = ObjectInitializer.CreateDefaultSubobject<UArrowComponent>(this, TEXT("ArrowComponent"));
-// 	ArrowComponent->SetupAttachment(GetOwner()->GetRootComponent());
-// #endif
-
 	// Configs
 	bDebug = false;
+	bHitInform = true;
+	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bStartWithTickEnabled = false;
+	PrimaryComponentTick.TickInterval = 0.1f;
 }
-
 
 // Called when the game starts
 void UMRSimpleAimComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	PrimaryComponentTick.bCanEverTick = false;
-	SetActiveFlag(true);
-	SetComponentTickEnabled(true);
-	
 }
-
-
-
 
 // Called every frame
 void UMRSimpleAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
