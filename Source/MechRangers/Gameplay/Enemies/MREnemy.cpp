@@ -12,23 +12,28 @@
 #include "MechRangers/MechRangers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "MechRangers/Gameplay/Components/MRSimpleAimComponent.h"
+#include "MechRangers/Gameplay/Weapons/MRWeaponTypes.h"
 
 // Sets default values
 AMREnemy::AMREnemy()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Setup components
 	AgroSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AgroSphere"));
-	AgroSphere->SetupAttachment(GetRootComponent());
+	AgroSphere->SetupAttachment(RootComponent);
 	AgroSphere->SetSphereRadius(600.f);
 	AgroSphere->SetCollisionProfileName(FName("Trigger"));
 
 	CombatSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CombatSphere"));
-	CombatSphere->SetupAttachment(GetRootComponent());
+	CombatSphere->SetupAttachment(RootComponent);
 	CombatSphere->SetSphereRadius(90.f);
 	CombatSphere->SetCollisionProfileName(FName("Trigger"));
+
+	AimSystem = CreateDefaultSubobject<UMRSimpleAimComponent>(TEXT("AimSystem"));
+	AimSystem->SetupAttachment(RootComponent);
 
 	// Setup configs
 	// TODO: update collision
@@ -41,6 +46,8 @@ AMREnemy::AMREnemy()
 	DamageRange = FVector2D(1.f, 2.f);
 	GameplayTeam = EGameplayTeam::EGT_Insect;
 	AgroChance = 0.5f;
+	AttackType = EEnemyAttackType::EAT_Melee;
+	TimeBetweenAttack = 0.5f;
 }
 
 // Called when the game starts or when spawned
@@ -60,6 +67,12 @@ void AMREnemy::BeginPlay()
 
 	CombatSphere->OnComponentBeginOverlap.AddDynamic(this, &AMREnemy::CombatSphereOnOverlapBegin);
 	CombatSphere->OnComponentEndOverlap.AddDynamic(this, &AMREnemy::CombatSphereOnOverlapEnd);
+
+	if (AttackType == EEnemyAttackType::EAT_Ranged)
+	{
+		AimSystem->SetComponentTickEnabled(true);
+		InitWeapons();
+	}
 
 	// Setup movement
 	UCharacterMovementComponent* MovementComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
@@ -315,12 +328,22 @@ void AMREnemy::AttackTarget(AActor* Target)
 
 void AMREnemy::AttackFinish()
 {
+	GetWorldTimerManager().SetTimer(TimerHandle_CheckAction, this, &AMREnemy::CheckAction, TimeBetweenAttack, true);
+	RangedDamageEnd();
+}
+
+void AMREnemy::CheckAction()
+{
 	if (bOverlappingCombatSphere && CombatTarget)
 	{
 		AttackTarget(CombatTarget);
 	} else if (bOverlappingAgroSphere && AgroTarget)
 	{
 		MoveToTarget(AgroTarget);
+	} else
+	{
+		SetMoveToActor(MainTarget);
+		StartMovement();
 	}
 }
 
@@ -329,6 +352,17 @@ void AMREnemy::MakeDamage()
 	if (!Alive())
 		return;
 	
+	if (AttackType == EEnemyAttackType::EAT_Melee)
+	{
+		MeleeDamageStart();
+	} else if (AttackType == EEnemyAttackType::EAT_Ranged)
+	{
+		RangedDamageStart();
+	}
+}
+
+void AMREnemy::MeleeDamageStart()
+{
 	const FVector StartTrace = GetActorLocation();
 	const FVector EndTrace = StartTrace + GetActorForwardVector() * 300;
 
@@ -344,6 +378,55 @@ void AMREnemy::MakeDamage()
 			UGameplayStatics::ApplyPointDamage(AttackTarget, 3, GetActorForwardVector(), HitResult, AIController, this, DamageTypeClass);
 		}
 	}	
+}
+
+void AMREnemy::InitWeapons()
+{
+	for (USceneComponent* const ChildScene : GetMesh()->GetAttachChildren())
+	{
+		UChildActorComponent* ActorComponent = Cast<UChildActorComponent>(ChildScene);
+		if (ActorComponent)
+		{
+			if (ActorComponent->GetChildActor())
+			{
+				AMRWeapon* ChildWeapon = Cast<AMRWeapon>(ActorComponent->GetChildActor());
+				if (ChildWeapon)
+				{					
+					ChildWeapon->SetAimSystem(AimSystem);
+					ChildWeapon->SetEquipped(true);
+					ChildWeapon->SetOwningPawn(this);
+					Weapons.Add(ChildWeapon);
+				}
+			}
+		}
+	}
+}
+
+void AMREnemy::RangedDamageStart()
+{
+	if (AIController)
+	{
+		AIController->StopMovement();
+	}
+	
+	for (auto Weapon : Weapons)
+	{
+		if (IsValid(Weapon))
+		{
+			Weapon->StartFire();
+		}
+	}
+}
+
+void AMREnemy::RangedDamageEnd()
+{
+	for (auto Weapon : Weapons)
+	{
+		if (IsValid(Weapon))
+		{
+			Weapon->StopFire();
+		}
+	}
 }
 
 FHitResult AMREnemy::AttackTrace(const FVector& TraceFrom, const FVector& TraceTo) const

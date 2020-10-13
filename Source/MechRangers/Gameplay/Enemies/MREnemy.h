@@ -6,6 +6,8 @@
 #include "MREnemyAIController.h"
 #include "GameFramework/Character.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "MechRangers/Gameplay/Weapons/MRWeapon.h"
+
 
 #include "MREnemy.generated.h"
 
@@ -21,6 +23,16 @@ enum class EEnemyMovementStatus : uint8
     EMS_Dead UMETA(DisplayName = "Dead"),
 
     EMS_Invalid UMETA(DisplayName = "Invalid")
+};
+
+/** TODO: Refactor using Gameplay Ability System */
+UENUM(BlueprintType)
+enum class EEnemyAttackType : uint8
+{
+	EAT_Melee UMETA(DispayName = "Melee"),
+	EAT_Ranged UMETA(DisplayName = "Ranged"),
+
+	EAT_Invalid UMETA(DisplayName = "Invalid")
 };
 
 UCLASS()
@@ -181,7 +193,7 @@ public:
     bool GetMovePoint(AActor* ToActor, FVector& OutResult);
 
 	/** Subscribed OnTargetDeath event */
-	void OnTargetDeath(AActor* DeadActor);
+	virtual void OnTargetDeath(AActor* DeadActor);
 		
 	UFUNCTION()
     virtual void AgroSphereOnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -221,17 +233,46 @@ protected:
 	UPROPERTY(Category=Combat, EditDefaultsOnly, BlueprintReadWrite)
 	FVector2D DamageRange;
 
+	/** Time between enemy attacks in Seconds */
+	UPROPERTY(Category=Combat, EditDefaultsOnly, BlueprintReadWrite)
+	float TimeBetweenAttack;
+
+	UPROPERTY(Category=Combat, EditDefaultsOnly, BlueprintReadWrite)
+	EEnemyAttackType AttackType;
+
+	UPROPERTY()
+	TArray<AMRWeapon*> Weapons;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UMRSimpleAimComponent* AimSystem;
+
+	/** Timer for Check Action method */
+	FTimerHandle TimerHandle_CheckAction;
+
 	/** Attack a Target */
 	UFUNCTION(BlueprintCallable)
     void AttackTarget(AActor* Target);
 
-	/** Finish Attack a Target. Check for new Attack or follow */
+	/** AnimNotify. Finish Attack a Target. Check for new Attack or follow */
 	UFUNCTION(BlueprintCallable)
 	void AttackFinish();
 
-	/** Make damage to a Target */
+	/** Checks next action for the enemy */
+	UFUNCTION(BlueprintCallable)
+	void CheckAction();
+
+	/** AnimNotify. Make damage to a Target */
 	UFUNCTION(BlueprintCallable)
 	void MakeDamage();
+
+	/** Run melee attack */
+	void MeleeDamageStart();
+
+	void InitWeapons();
+
+	/** Run ranged attack */
+	void RangedDamageStart();
+	void RangedDamageEnd();
 	
 	/** Check is able to attack an actor */
 	UFUNCTION(BlueprintCallable)

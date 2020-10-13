@@ -36,7 +36,7 @@ AMRTurret::AMRTurret(const FObjectInitializer& ObjectInitializer)
 	// must be attached in children actors
 	AimSystem = CreateDefaultSubobject<UMRSimpleAimComponent>(TEXT("AimSystem"));
 	AimSystem->SetTraceLength(2000.f);
-	// AimSystem
+	
 	WeaponsAttachmentPoint = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponsAttachmentPoint"));
 
 	// Set defaults
@@ -153,7 +153,7 @@ void AMRTurret::OnLivingActorChangeHealthState(AActor* InActor, const EHealthSta
 		Damaged();
 	} else if (NewHealthState == EHealthState::EHS_Destroyed)
 	{
-		Destroyed();
+		Death();
 	}
 }
 

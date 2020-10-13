@@ -61,6 +61,7 @@ UStaticMeshComponent* UMRDestructiblePieceComponent::GetMeshComponent() const
 
 void UMRDestructiblePieceComponent::OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState)
 {
+	ULog::Success("CHANGE STATE!!!!!!!!!!!!!!");
 	if (InHealthState == EHealthState::EHS_Damaged)
 	{
 		Damaged();
@@ -72,7 +73,7 @@ void UMRDestructiblePieceComponent::OnHealthContainerStateChanged(UMRHealthCompo
 
 void UMRDestructiblePieceComponent::Damaged()
 {
-	ULog::Success("DAMAGED!!!!!!!!!!!!!!", LO_Both);
+	ULog::Success("DAMAGED!!!!!!!!!!!!!!");
 	if (DamagedPieceData.MeshAsset)
 	{
 		MeshComponent->SetStaticMesh(DamagedPieceData.MeshAsset);
@@ -89,6 +90,7 @@ void UMRDestructiblePieceComponent::Damaged()
 
 void UMRDestructiblePieceComponent::Destroyed()
 {
+	ULog::Success("DESTROYED!!!!!!!!!!!!!!");
 	if (DestroyedPieceData.MeshAsset)
 	{
 		MeshComponent->SetStaticMesh(DestroyedPieceData.MeshAsset);
