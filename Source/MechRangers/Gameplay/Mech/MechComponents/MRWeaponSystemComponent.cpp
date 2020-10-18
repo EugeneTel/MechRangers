@@ -137,6 +137,17 @@ void UMRWeaponSystemComponent::SpawnAimSystem(FMechAim& MechAimConfig, FMechArme
 	}
 }
 
+bool UMRWeaponSystemComponent::GetArmedPart(const EMechPart MechPart, FMechArmedPart& OutArmedPart)
+{
+	if (ArmedParts.Contains(MechPart))
+	{
+		OutArmedPart = ArmedParts[MechPart];
+		return true;
+	}
+
+	return false;
+}
+
 void UMRWeaponSystemComponent::StartWeaponFire(const EMechPart MechPart, const EWeaponGroup WeaponGroup)
 {
 	if (ArmedParts.Contains(MechPart))

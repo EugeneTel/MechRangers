@@ -91,6 +91,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnAimSystem(FMechAim& MechAimConfig, FMechArmedPart& MechArmedPart);
 
+	UFUNCTION(BlueprintCallable)
+	bool GetArmedPart(EMechPart MechPart, FMechArmedPart& OutArmedPart);
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // Weapon Usage

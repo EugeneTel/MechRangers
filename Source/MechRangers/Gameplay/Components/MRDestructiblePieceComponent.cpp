@@ -13,7 +13,7 @@ UMRDestructiblePieceComponent::UMRDestructiblePieceComponent()
 	// Create components
 	HealthContainer = CreateDefaultSubobject<UMRHealthComponent>(TEXT("DestructiblePieceHealthContainer"));
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	//MeshComponent->SetupAttachment(this);
+	// MeshComponent->SetupAttachment(this);
 	// @TODO: Fix collision profile name
 	MeshComponent->SetCollisionProfileName(FName("MechPawn"));
 }

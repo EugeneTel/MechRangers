@@ -44,7 +44,7 @@ AMREnemy::AMREnemy()
 	TimeBeforeDestroy = FVector2D(3, 5);
 	MovementSpeedRange = FVector2D(500.f, 600.f);
 	DamageRange = FVector2D(1.f, 2.f);
-	GameplayTeam = EGameplayTeam::EGT_Insect;
+	GameplayTeam = EGameplayTeam::Alien;
 	AgroChance = 0.5f;
 	AttackType = EEnemyAttackType::EAT_Melee;
 	TimeBetweenAttack = 0.5f;

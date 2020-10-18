@@ -81,7 +81,7 @@ struct FDestructiblePieceData
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class MECHRANGERS_API UMRDestructiblePieceComponent : public USceneComponent
+class MECHRANGERS_API UMRDestructiblePieceComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 

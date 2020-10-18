@@ -40,7 +40,7 @@ AMRTurret::AMRTurret(const FObjectInitializer& ObjectInitializer)
 	WeaponsAttachmentPoint = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponsAttachmentPoint"));
 
 	// Set defaults
-	GameplayTeam = EGameplayTeam::EGT_None;
+	GameplayTeam = EGameplayTeam::Neutral;
 	AgroChance = 0.5f;
 	bAttacking = false;
 	bFiring = false;
@@ -97,6 +97,13 @@ void AMRTurret::CombatSphereOnOverlapEnd(UPrimitiveComponent* OverlappedComp, AA
 {
 	StopAttack();
 	ClearCombatTarget();
+
+	// Try to find another target
+	AActor* NewTarget = FindTarget();
+	if (NewTarget)
+	{
+		AttackTarget(NewTarget);
+	}
 }
 
 EGameplayTeam AMRTurret::GetGameplayTeam() const

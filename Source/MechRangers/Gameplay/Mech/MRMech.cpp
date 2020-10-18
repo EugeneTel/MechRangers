@@ -22,8 +22,8 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 
 	// Create Defaults
 	LivingComponent = CreateDefaultSubobject<UMRMechLivingComponent>(TEXT("LivingComponent"));
+	WeaponSystemComponent = CreateDefaultSubobject<UMRWeaponSystemComponent>(TEXT("WeaponSystemComponent"));
 	HitReactionComponent = CreateDefaultSubobject<UMRMechHitReactionComponent>(TEXT("HitReactionComponent"));
-	WeaponSystem = CreateDefaultSubobject<UMRWeaponSystemComponent>(TEXT("WeaponSystem"));
 
 	// Setup Mech
 	bUseControllerRotationYaw = false;
@@ -34,7 +34,7 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 	bIsCombatMode = false;
 	bManipulatorLeftHeld = false;
 	bManipulatorRightHeld = false;
-	GameplayTeam = EGameplayTeam::EGT_Federation;
+	GameplayTeam = EGameplayTeam::Player;
 	AgroChance = 0.5;
 }
 
@@ -93,7 +93,7 @@ float AMRMech::InternalTakePointDamage(float Damage, FPointDamageEvent const& Po
 
 UMRWeaponSystemComponent* AMRMech::GetWeaponSystem() const
 {
-	return WeaponSystem;
+	return WeaponSystemComponent;
 }
 
 EGameplayTeam AMRMech::GetGameplayTeam() const
@@ -157,7 +157,11 @@ void AMRMech::ConstructMech()
 	}
 
 	// Setup Weapons System
-	WeaponSystem->Setup(this, MechLoadout.WeaponLoadouts, MechModelData.WeaponHardpointAsset->MechHardpoints.WeaponSlots, MechModelData.MechAimConfig);
+	if (IsValid(WeaponSystemComponent))
+	{
+		WeaponSystemComponent->Setup(this, MechLoadout.WeaponLoadouts, MechModelData.WeaponHardpointAsset->MechHardpoints.WeaponSlots, MechModelData.MechAimConfig);
+	}
+
 }
 
 AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)

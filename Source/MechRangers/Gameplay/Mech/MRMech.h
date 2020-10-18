@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRMechLivingComponent* LivingComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UMRWeaponSystemComponent* WeaponSystemComponent;
+
 	/** Component responsible for all hit reactions */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRMechHitReactionComponent* HitReactionComponent;

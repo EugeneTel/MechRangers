@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "MechRangers/Managers/MRUnitManagerComponent.h"
+#include "MechRangers/Gameplay/Managers/MRUnitManagerComponent.h"
 
 #include "MRGameMode.generated.h"
 

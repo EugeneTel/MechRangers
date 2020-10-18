@@ -14,7 +14,7 @@ AMRDestructibleObject::AMRDestructibleObject()
 	LivingActorComponent = CreateDefaultSubobject<UMRSimpleLivingActorComponent>(TEXT("LivingActorComponent"));
 
 	// Set defaults
-	GameplayTeam = EGameplayTeam::EGT_None;
+	GameplayTeam = EGameplayTeam::Neutral;
 	AgroChance = 0.5f;
 }
 
