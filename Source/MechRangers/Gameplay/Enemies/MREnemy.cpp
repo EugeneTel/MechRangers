@@ -321,7 +321,9 @@ void AMREnemy::AttackTarget(AActor* Target)
 	CombatTarget = Target;
 
 	// Rotate actor to target
-	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CombatTarget->GetActorLocation()));
+	FRotator LookAtTarget = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CombatTarget->GetActorLocation());
+	LookAtTarget.Pitch = GetActorRotation().Pitch;
+	SetActorRotation(LookAtTarget);
 	
 	AnimInstance->Montage_Play(CombatMontage, 1.f);
 }

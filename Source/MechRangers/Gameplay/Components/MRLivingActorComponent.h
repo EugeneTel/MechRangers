@@ -34,7 +34,8 @@ protected:
 	virtual void SubscribeOnDelegates();
 
 	/** Subscribed to the Health Component Health State Changed Delegate */
-	virtual void OnHealthContainerStateChanged(UMRHealthComponent* HealthContainer, EHealthState HealthState);
+	UFUNCTION()
+	void OnHealthContainerStateChanged(UMRHealthComponent* HealthContainer, EHealthState HealthState);
 
 public:
 	// Sets default values for this component's properties

@@ -88,7 +88,20 @@ float AMRMech::InternalTakePointDamage(float Damage, FPointDamageEvent const& Po
 	}
 
 	return ActualDamage;
-	
+}
+
+float AMRMech::InternalTakeRadialDamage(float Damage, FRadialDamageEvent const& RadialDamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	//const float ActualDamage = Super::InternalTakeRadialDamage(Damage, RadialDamageEvent, EventInstigator, DamageCauser);
+	if (Damage > 0.f)
+	{
+		if (LivingComponent)
+		{
+			return LivingComponent->TakeRadialDamage(Damage, RadialDamageEvent, EventInstigator, DamageCauser);	
+		}
+	}
+
+	return 0.f;
 }
 
 UMRWeaponSystemComponent* AMRMech::GetWeaponSystem() const

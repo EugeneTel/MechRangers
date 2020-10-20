@@ -24,7 +24,7 @@ void UMRDestructiblePieceComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// Subscribe on Delegates
-	HealthContainer->OnHealthStateChanged.BindUObject(this, &UMRDestructiblePieceComponent::OnHealthContainerStateChanged);
+	HealthContainer->OnHealthStateChanged.AddDynamic(this, &UMRDestructiblePieceComponent::OnHealthContainerStateChanged);
 }
 
 void UMRDestructiblePieceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -59,13 +59,12 @@ UStaticMeshComponent* UMRDestructiblePieceComponent::GetMeshComponent() const
 	return MeshComponent;
 }
 
-void UMRDestructiblePieceComponent::OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState)
+void UMRDestructiblePieceComponent::OnHealthContainerStateChanged(const FHealthStateChangedParams Params)
 {
-	ULog::Success("CHANGE STATE!!!!!!!!!!!!!!");
-	if (InHealthState == EHealthState::EHS_Damaged)
+	if (Params.CurrentState == EHealthState::EHS_Damaged)
 	{
 		Damaged();
-	} else if (InHealthState == EHealthState::EHS_Destroyed)
+	} else if (Params.CurrentState == EHealthState::EHS_Destroyed)
 	{
 		Destroyed();
 	}

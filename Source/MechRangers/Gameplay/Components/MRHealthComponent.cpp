@@ -23,20 +23,28 @@ void UMRHealthComponent::BeginPlay()
 
 void UMRHealthComponent::SetDamaged()
 {
-	HealthState = EHealthState::EHS_Damaged;
-
-	OnHealthStateChanged.ExecuteIfBound(this, HealthState);
-
-	//ULog::Number(CurrentHealth, TEXT("Object Damaged. Health: "), GetNameSafe(this), LO_Both);
+	SetHealthState(EHealthState::EHS_Damaged);
 }
 
 void UMRHealthComponent::SetDestroyed()
 {
-	HealthState = EHealthState::EHS_Destroyed;
+	SetHealthState(EHealthState::EHS_Destroyed);
+}
+
+void UMRHealthComponent::SetHealthState(const EHealthState NewHealthState)
+{
+	const EHealthState OldHealthState = HealthState;
+	HealthState = NewHealthState;
 	
-	OnHealthStateChanged.ExecuteIfBound(this, HealthState);
-	
-	// ULog::Number(CurrentHealth, TEXT("Object Destroyed. Health: "), GetNameSafe(this), LO_Both);
+	if (OnHealthStateChanged.IsBound())
+	{
+		const FHealthStateChangedParams HealthStateChangedParams {
+			this,
+			OldHealthState,
+			HealthState
+		};
+		OnHealthStateChanged.Broadcast(HealthStateChangedParams);
+	}
 }
 
 float UMRHealthComponent::GetHealthPercentage() const
@@ -57,6 +65,7 @@ float UMRHealthComponent::TakeDamage(const float Damage, FDamageTakenData const&
 		return TakenDamage;
 
 	// Calculate applied damage and current health
+	const float OldHealth = CurrentHealth;
 	CurrentHealth -= Damage;
 
 	if (CurrentHealth < 0.f)
@@ -83,6 +92,19 @@ float UMRHealthComponent::TakeDamage(const float Damage, FDamageTakenData const&
 		// TODO: Implement event for Regular damage state
 		// ULog::Number(TakenDamage, TEXT("Took damage: "), GetNameSafe(this));
 		// ULog::Number(CurrentHealth, TEXT("Current health: "));
+	}
+
+	if (OnHealthChanged.IsBound())
+	{
+		const FHealthChangedParams HealthChangedParams = {
+			this,
+			OldHealth,
+			CurrentHealth,
+			MaxHealth,
+			TakenDamage
+		};
+		
+		OnHealthChanged.Broadcast(HealthChangedParams);
 	}
 	
 	return TakenDamage;

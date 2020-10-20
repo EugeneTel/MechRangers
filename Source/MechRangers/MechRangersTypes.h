@@ -7,6 +7,7 @@
 #include "MechRangersTypes.generated.h"
 
 class UMaterial;
+class UMRHealthComponent;
 
 /** keep in sync with ShooterImpactEffect */
 UENUM()
@@ -113,4 +114,43 @@ struct FDamageTakenData
 
 	UPROPERTY(BlueprintReadWrite)
 	FDamageInfo DamageInfo;
+};
+
+/** Health Changed Parameters */
+USTRUCT(BlueprintType)
+struct FHealthChangedParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	UMRHealthComponent* HealthComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	float OldHealth;
+
+	UPROPERTY(BlueprintReadWrite)
+	float CurrentHealth;
+
+	UPROPERTY(BlueprintReadWrite)
+	float MaxHealth;
+
+	UPROPERTY(BlueprintReadWrite)
+	float DamageTaken;
+	
+};
+
+/** Health State Changed Parameters */
+USTRUCT(BlueprintType)
+struct FHealthStateChangedParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	UMRHealthComponent* HealthComponent;
+
+	UPROPERTY(BlueprintReadWrite)
+	EHealthState OldState;
+
+	UPROPERTY(BlueprintReadWrite)
+	EHealthState CurrentState;
 };

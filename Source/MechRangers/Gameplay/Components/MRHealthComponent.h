@@ -7,14 +7,21 @@
 #include "MechRangers/MechRangersTypes.h"
 #include "MRHealthComponent.generated.h"
 
+class UMRHealthComponent;
 
+/** On Health State Changed Delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthStateChanged, FHealthStateChangedParams, Params);
+
+/** On Health Changed Delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, FHealthChangedParams, Params);
+
+/**
+ *	Health Component
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MECHRANGERS_API UMRHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
-	/** On Health State Changed Delegate */
-	DECLARE_DELEGATE_TwoParams(FOnHealthStateChanged, UMRHealthComponent*, EHealthState);
 
 protected:
 	// Called when the game starts
@@ -22,13 +29,16 @@ protected:
 
 public:
 
-	/** Delegate fires when Health State Was changed */
-	FOnHealthStateChanged OnHealthStateChanged;
-
 	// Sets default values for this component's properties
 	UMRHealthComponent();
-	
-public:
+
+	/** Delegate fires when Health State Was changed */
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthStateChanged OnHealthStateChanged;
+
+	/** Delegate fires when Health Was changed */
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged OnHealthChanged;
 
 	/** Max Health of an Element */
 	UPROPERTY(Category=HealthComponent, EditAnywhere, BlueprintReadWrite)
@@ -53,6 +63,10 @@ public:
 	/** Set Destroyed state and all related functionality to this state */
 	UFUNCTION(BlueprintCallable)
     virtual void SetDestroyed();
+
+	/** */
+	UFUNCTION(BlueprintCallable)
+	void SetHealthState(EHealthState NewHealthState);
 
 public:
 

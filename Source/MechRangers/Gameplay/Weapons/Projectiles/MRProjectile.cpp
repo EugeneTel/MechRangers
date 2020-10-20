@@ -2,6 +2,7 @@
 
 #include "MRProjectile.h"
 #include "MechRangers/MechRangers.h"
+#include "DrawDebugHelpers.h"
 #include "Components/SphereComponent.h"
 #include "Components/AudioComponent.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -40,8 +41,8 @@ AMRProjectile::AMRProjectile()
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.TickGroup = TG_PrePhysics;
     SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
-    bReplicates = true;
-    SetReplicatingMovement(true);
+    bReplicates = false;
+    SetReplicatingMovement(false);
 }
 
 void AMRProjectile::PostInitializeComponents()
@@ -89,6 +90,7 @@ void AMRProjectile::Explode(const FHitResult& Impact)
 
     if (WeaponConfig.ExplosionDamage > 0 && WeaponConfig.ExplosionRadius > 0 && WeaponConfig.DamageType)
     {
+        //DrawDebugSphere(GetWorld(), NudgedImpactLocation, 50.f, 32, FColor::Orange, false, 5.f, 0, 1.f);
         UGameplayStatics::ApplyRadialDamage(this, WeaponConfig.ExplosionDamage, NudgedImpactLocation, WeaponConfig.ExplosionRadius, WeaponConfig.DamageType, TArray<AActor*>(), this, MyController.Get());
     }
 

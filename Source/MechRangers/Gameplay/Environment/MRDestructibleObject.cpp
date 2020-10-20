@@ -56,8 +56,6 @@ IMRDamageTakerInterface::FOnDeath& AMRDestructibleObject::OnDeath()
 
 float AMRDestructibleObject::InternalTakeRadialDamage(float Damage, FRadialDamageEvent const& RadialDamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	ULog::Number(Damage, "InternalTakeRadialDamage ", "", LO_Both);
-	
 	for (auto HitResult : RadialDamageEvent.ComponentHits)
 	{
 		if (HitResult.Component.IsValid())

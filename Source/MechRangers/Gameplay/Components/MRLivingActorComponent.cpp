@@ -49,7 +49,7 @@ void UMRLivingActorComponent::SubscribeOnDelegates()
 {
 	for (auto HealthContainer : HealthContainers)
 	{
-		HealthContainer.Value->OnHealthStateChanged.BindUFunction(this, "OnHealthContainerStateChanged");
+		//HealthContainer.Value->OnHealthStateChanged.AddDynamic(this, &UMRLivingActorComponent::OnHealthContainerStateChanged);
 	}
 }
 

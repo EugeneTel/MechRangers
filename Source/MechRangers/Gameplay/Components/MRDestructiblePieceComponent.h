@@ -134,7 +134,8 @@ protected:
 	bool bMechContact;
 
 	/** Subscribed to the Health Component Health State Changed Delegate */
-	virtual void OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState);
+	UFUNCTION()
+	void OnHealthContainerStateChanged(FHealthStateChangedParams Params);
 	
 	/** Spawn particle for destructible piece */
 	void SpawnParticle(FDestructibleParticleData& DestructibleParticleData);

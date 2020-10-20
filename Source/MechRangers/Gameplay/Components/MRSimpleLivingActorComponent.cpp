@@ -18,7 +18,7 @@ void UMRSimpleLivingActorComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// Subscribe on Delegates
-	HealthContainer->OnHealthStateChanged.BindUObject(this, &UMRSimpleLivingActorComponent::OnHealthContainerStateChanged);
+	//HealthContainer->OnHealthStateChanged.AddDynamic(this, &UMRSimpleLivingActorComponent::OnHealthContainerStateChanged);
 }
 
 float UMRSimpleLivingActorComponent::TakeDamage(const float TakenDamage, FDamageTakenData& DamageTakenData)
