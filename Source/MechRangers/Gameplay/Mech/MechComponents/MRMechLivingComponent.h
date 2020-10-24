@@ -76,6 +76,9 @@ protected:
     /** Find Damaged Health Container by Location */
     UFUNCTION(BlueprintCallable)
     UMRHealthComponent* FindHealthContainerByLocation(const FVector NearLocation);
+
+    UFUNCTION(BlueprintCallable)
+    EMechPart FindMechPartByHealthComponent(const UMRHealthComponent* HealthComponent);
     
     UFUNCTION(BlueprintCallable)
     UMRHealthComponent* GetHealthContainer(EMechPart InMechPart);

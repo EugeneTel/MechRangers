@@ -1,17 +1,21 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 #include "MRMech.h"
+#include "Log.h"
 #include "Components/CapsuleComponent.h"
 #include "MechComponents/MRMechMovementComponent.h"
 #include "MechComponents/MRMechLivingComponent.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
 #include "MechDataAssets/MRMechHardpointDataAsset.h"
+#include "MechDataAssets/MRMechCapsuleDataAsset.h"
 #include "MRMechAnimInstance.h"
 #include "MRMechCockpit.h"
 #include "MechRangers/Modes/MRGameMode.h"
 #include "Engine/World.h"
-#include "Log.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
@@ -124,7 +128,7 @@ bool AMRMech::Alive() const
 	return true;
 }
 
-void AMRMech::SetLoadout(FMechLoadout NewLoadout)
+void AMRMech::SetLoadout(const FMechLoadout& NewLoadout)
 {
 	MechLoadout = NewLoadout;
 	MechModelData = MechLoadout.MechModelAsset->GetModelData();
@@ -309,4 +313,154 @@ void AMRMech::SetMechPartRotator(const EMechPart MechPart, const FRotator& Rot)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SetMechPartRotator - MechPart is not supported!"));
 	}
+}
+
+void AMRMech::DestroyPart(const EMechPart MechPart, const EHealthState HealthState)
+{
+	FMechPartUpdateData MechPartUpdateData;
+	if (GetMechPartUpdateData(MechPart, HealthState, MechPartUpdateData))
+	{
+		// VFX
+		for (FMechParticleSpawnData& Effect : MechPartUpdateData.Effects)
+		{
+			SpawnParticle(Effect);
+		}
+
+		// SFX
+		for (FMechSoundSpawnData& Sound : MechPartUpdateData.AudioData)
+		{
+			SpawnSound(Sound);
+		}
+	}
+	
+	FMechBonesToHide BonesToHide;
+	if (GetBonesToHide(MechPart, HealthState, BonesToHide))
+	{
+		for(FName& BoneName : BonesToHide.BoneNames)
+		{
+			GetMesh()->HideBoneByName(BoneName, EPhysBodyOp::PBO_None);
+		}
+	}
+
+	WeaponSystemComponent->DestroyArmedPart(MechPart);
+}
+
+void AMRMech::ReplacePart(const EMechPart MechPart, const EHealthState HealthState)
+{
+	FMechPartUpdateData MechPartUpdateData;
+	if (GetMechPartUpdateData(MechPart, HealthState, MechPartUpdateData))
+	{
+		for(FMechReplacementMesh& PartReplacement : MechPartUpdateData.Meshes)
+		{
+			if(PartReplacement.BoneName.IsNone() || !PartReplacement.StaticMesh)
+				continue;
+
+			const USkeletalMeshSocket* SocketForAttachment = GetMesh()->GetSocketByName(PartReplacement.BoneName);
+
+			if (SocketForAttachment)
+			{
+				// TODO: Implement replacement
+				//SocketForAttachment->AttachActor(this, PartReplacement.StaticMesh);
+				//GetMesh()->AttachToComponent()
+			}
+		}
+	}
+}
+
+bool AMRMech::GetReplacementPart(const EMechPart MechPart, const EHealthState HealthState, FMechPartUpdateData& OutMechPartReplacements)
+{
+	if (HealthState == EHealthState::EHS_Damaged)
+	{
+		if (MechModelData.MechDestructibleState.DamageReplacements.Contains(MechPart))
+		{
+			OutMechPartReplacements = MechModelData.MechDestructibleState.DamageReplacements[MechPart];
+			return true;
+		}
+	} else if (HealthState == EHealthState::EHS_Destroyed)
+	{
+		if (MechModelData.MechDestructibleState.DestroyReplacements.Contains(MechPart))
+		{
+			OutMechPartReplacements = MechModelData.MechDestructibleState.DestroyReplacements[MechPart];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AMRMech::GetBonesToHide(const EMechPart MechPart, const EHealthState HealthState, FMechBonesToHide& OutMechBonesToHide)
+{
+	UMRMechDestructionHierarchyAsset* HierarchyAsset = MechModelData.MechDestructibleState.DestructionHierarchyAsset;
+	if (!HierarchyAsset)
+		return false;
+	
+	if (HealthState == EHealthState::EHS_Damaged)
+	{
+		if (HierarchyAsset->DamagedPartsToHide.Contains(MechPart))
+		{
+			OutMechBonesToHide = HierarchyAsset->DamagedPartsToHide[MechPart];
+			return true;
+		}
+	} else if (HealthState == EHealthState::EHS_Destroyed)
+	{
+		if (HierarchyAsset->DestroyedPartsToHide.Contains(MechPart))
+		{
+			OutMechBonesToHide = HierarchyAsset->DestroyedPartsToHide[MechPart];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AMRMech::GetMechPartUpdateData(const EMechPart MechPart, const EHealthState HealthState, FMechPartUpdateData& OutMechPartUpdateData)
+{
+	if (HealthState == EHealthState::EHS_Damaged)
+	{
+		if (MechModelData.MechDestructibleState.DamageReplacements.Contains(MechPart))
+		{
+			OutMechPartUpdateData = MechModelData.MechDestructibleState.DamageReplacements[MechPart];
+			return true;
+		}
+	} else if (HealthState == EHealthState::EHS_Destroyed)
+	{
+		if (MechModelData.MechDestructibleState.DestroyReplacements.Contains(MechPart))
+		{
+			OutMechPartUpdateData = MechModelData.MechDestructibleState.DestroyReplacements[MechPart];
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void AMRMech::SpawnParticle(FMechParticleSpawnData& ParticleData)
+{
+	if (ParticleData.ParticleSystem && !ParticleData.BoneName.IsNone())
+	{
+		UGameplayStatics::SpawnEmitterAttached(ParticleData.ParticleSystem, GetMesh(), ParticleData.BoneName);
+	}
+}
+
+void AMRMech::SpawnSound(FMechSoundSpawnData& SoundData)
+{
+	if (SoundData.Audio && !SoundData.BoneName.IsNone())
+	{
+		UGameplayStatics::SpawnSoundAttached(SoundData.Audio, GetMesh(), SoundData.BoneName);
+	}
+}
+
+void AMRMech::Death()
+{
+	
+}
+
+void AMRMech::DestroyPart(const EMechPart MechPart)
+{
+	DestroyPart(MechPart, EHealthState::EHS_Destroyed);
+}
+
+void AMRMech::DamagePart(const EMechPart MechPart)
+{
+	// TODO: Implement
 }

@@ -16,6 +16,10 @@ struct FMechArmedPart
 {
 	GENERATED_BODY()
 
+	/** Is Armed part active? */
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	bool bIsActive;
+
 	/** Armed Mech Part */ 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
 	EMechPart MechPart;
@@ -39,11 +43,11 @@ struct FMechArmedPart
 	}
 
 	FMechArmedPart()
+		: bIsActive(true),
+		  MechPart(EMechPart::EMP_Invalid),
+		  AimSystem(nullptr)
 	{
-		MechPart = EMechPart::EMP_Invalid;
-		AimSystem = nullptr;
 	}
-	
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -93,6 +97,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool GetArmedPart(EMechPart MechPart, FMechArmedPart& OutArmedPart);
+
+	UFUNCTION(BlueprintCallable)
+	void DestroyArmedPart(EMechPart MechPart);
 
 
 //----------------------------------------------------------------------------------------------------------------------

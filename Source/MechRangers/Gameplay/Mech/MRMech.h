@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "MechComponents/MRMechHitReactionComponent.h"
 #include "MechComponents/MRWeaponSystemComponent.h"
+#include "MechDataAssets/MRMechDestructionHierarchyAsset.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
@@ -69,10 +70,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UMRMechHitReactionComponent* HitReactionComponent;
 
-	/** Component responsible for all manipulations with weapons */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	UMRWeaponSystemComponent* WeaponSystem;
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // Delegates
@@ -97,15 +94,15 @@ protected:
 	float AgroChance;
 
 	/** Loadout asset for the Mech. Every Mech must have it! */ 
-	UPROPERTY(Category=MRMech, BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(Category=MechData, BlueprintReadOnly, EditAnywhere)
 	UMRMechLoadoutDataAsset* MechLoadoutAsset;
 
 	/** Active Loadout structure for the Mech */
-	UPROPERTY(Category=MRMech, BlueprintReadWrite, VisibleInstanceOnly)
+	UPROPERTY(Category=MechData, BlueprintReadOnly, VisibleInstanceOnly)
 	FMechLoadout MechLoadout;
 
 	/** Active Mech model data structure */
-	UPROPERTY(Category=MRMech, BlueprintReadWrite, VisibleInstanceOnly)
+	UPROPERTY(Category=MechData, BlueprintReadOnly, VisibleInstanceOnly)
 	FMechModelData MechModelData;
 	
 	/** Is Combat mode or Movement mode. */
@@ -116,7 +113,7 @@ public:
 
 	/** Set Mech loadout */
 	UFUNCTION(BlueprintCallable)
-	void SetLoadout(FMechLoadout NewLoadout);
+	void SetLoadout(const FMechLoadout& NewLoadout);
 	
 	/** Checks is Mech in combat mode */
 	UFUNCTION(BlueprintCallable)
@@ -189,5 +186,39 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMechPartRotator(const EMechPart MechPart, const FRotator& Rot);
 
+//----------------------------------------------------------------------------------------------------------------------
+// Mech
+//----------------------------------------------------------------------------------------------------------------------
+protected:
+	/** Hide Mech part by bone */
+	void DestroyPart(EMechPart MechPart, EHealthState HealthState);
+
+	/** Hide Mech part by bone */
+	void ReplacePart(EMechPart MechPart, EHealthState HealthState);
+
+	/** Get Mech replacement part for provided Mech Part and Health State */
+	bool GetReplacementPart(EMechPart MechPart, EHealthState HealthState, FMechPartUpdateData& OutMechPartReplacements);
+
+	/** Get Mech Bones to Hide for provided Mech Part and Health State */
+	bool GetBonesToHide(EMechPart MechPart, EHealthState HealthState, FMechBonesToHide& OutMechBonesToHide);
+
+	/** Get List of mech part replacements (list of bones with meshes) */
+	bool GetMechPartUpdateData(EMechPart MechPart, EHealthState HealthState, FMechPartUpdateData& OutMechPartUpdateData);
+
+	void SpawnParticle(FMechParticleSpawnData& ParticleData);
+
+	void SpawnSound(FMechSoundSpawnData& SoundData);
+
+	/** Mech Death Implementation */
+	UFUNCTION(BlueprintCallable)
+	void Death();
+	
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void DestroyPart(EMechPart MechPart);
+	
+	UFUNCTION(BlueprintCallable)
+    void DamagePart(EMechPart MechPart);
 	
 };

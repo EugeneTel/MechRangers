@@ -63,8 +63,8 @@ void UMRMechLivingComponent::BeginPlay()
         if (HealthComponent)
         {
             HealthComponent->OnHealthStateChanged.AddDynamic(this, &UMRMechLivingComponent::OnHealthContainerStateChanged);
-            HealthComponent->MaxHealth = 600.f;
-            HealthComponent->CurrentHealth = 600.f;
+            HealthComponent->MaxHealth = 300.f;
+            HealthComponent->CurrentHealth = 300.f;
         }
     }
 }
@@ -98,6 +98,8 @@ UMRHealthComponent* UMRMechLivingComponent::FindHealthContainerByLocation(const 
         FName& SocketName = Item.Get<0>();
         FVector SocketLocation = OwnerMech->GetMesh()->GetSocketLocation(SocketName);
 
+        // DrawDebugSphere(GetWorld(), SocketLocation, 96.f, 16, FColor::Red, false, 5.f, 0, 1.f);
+
         const float Distance = (SocketLocation - NearLocation).Size();
 
         ULog::Number(Distance, "Nearest bone check: ", SocketName.ToString());
@@ -121,6 +123,19 @@ UMRHealthComponent* UMRMechLivingComponent::FindHealthContainerByLocation(const 
     }
 
     return nullptr;
+}
+
+EMechPart UMRMechLivingComponent::FindMechPartByHealthComponent(const UMRHealthComponent* HealthComponent)
+{
+    for (auto HealthContainer : HealthContainerList)
+    {
+        if (HealthContainer.Get<1>() == HealthComponent)
+        {
+            return HealthContainer.Get<0>();
+        }
+    }
+
+    return EMechPart::EMP_Invalid;
 }
 
 float UMRMechLivingComponent::TakeDamage(const float TakenDamage, FDamageTakenData const& DamageTakenData)
@@ -149,7 +164,7 @@ float UMRMechLivingComponent::HealthContainerTakeDamage(float TakenDamage, FHitR
 {
     if (bDebug)
     {
-        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 32.f, 16, FColor::Purple, false, 5.f, 0, 1.f);
+        DrawDebugSphere(GetWorld(), DamageCauser->GetActorLocation(), 96.f, 16, FColor::Blue, false, 5.f, 0, 1.f);
     }
 
     // Try to find a DamageContainer
@@ -161,7 +176,7 @@ float UMRMechLivingComponent::HealthContainerTakeDamage(float TakenDamage, FHitR
 
     if (!DamageContainer)
     {
-        DamageContainer = FindHealthContainerByLocation(HitResult.ImpactPoint);
+        DamageContainer = FindHealthContainerByLocation(DamageCauser->GetActorLocation());
     }
 
     if (DamageContainer)
@@ -186,13 +201,23 @@ UMRHealthComponent* UMRMechLivingComponent::GetHealthContainer(const EMechPart I
 
 void UMRMechLivingComponent::OnHealthContainerStateChanged(const FHealthStateChangedParams Params)
 {
+    
     if (Params.CurrentState == EHealthState::EHS_Damaged)
     {
         ULog::Success("Mech Part Damaged!!!", LO_Both);
-
-        //OwnerMech->GetMesh()->HideBoneByName("Calf_Left", EPhysBodyOp::PBO_None);
+        const EMechPart MechPart = FindMechPartByHealthComponent(Params.HealthComponent);
+        if (MechPart != EMechPart::EMP_Invalid)
+        {
+            OwnerMech->DamagePart(MechPart);
+        }
     } else if (Params.CurrentState == EHealthState::EHS_Destroyed)
     {
         ULog::Success("Mech Part Destroyed!!!", LO_Both);
+        
+        const EMechPart MechPart = FindMechPartByHealthComponent(Params.HealthComponent);
+        if (MechPart != EMechPart::EMP_Invalid)
+        {
+            OwnerMech->DestroyPart(MechPart);
+        }
     }
 }

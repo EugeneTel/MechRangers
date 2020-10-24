@@ -139,13 +139,31 @@ void UMRWeaponSystemComponent::SpawnAimSystem(FMechAim& MechAimConfig, FMechArme
 
 bool UMRWeaponSystemComponent::GetArmedPart(const EMechPart MechPart, FMechArmedPart& OutArmedPart)
 {
-	if (ArmedParts.Contains(MechPart))
+	if (ArmedParts.Num() > 0 && ArmedParts.Contains(MechPart))
 	{
 		OutArmedPart = ArmedParts[MechPart];
 		return true;
 	}
 
 	return false;
+}
+
+void UMRWeaponSystemComponent::DestroyArmedPart(const EMechPart MechPart)
+{
+	if (ArmedParts.Contains(MechPart))
+	{
+		ArmedParts[MechPart].bIsActive = false;
+
+		// Destroy weapons
+		for(auto WeaponContainer : ArmedParts[MechPart].Weapons)
+		{
+			WeaponContainer.Get<1>()->StopFire();
+			WeaponContainer.Get<1>()->Destroy();
+		}
+
+		// Destroy Aim System
+		ArmedParts[MechPart].AimSystem->Destroy();
+	}
 }
 
 void UMRWeaponSystemComponent::StartWeaponFire(const EMechPart MechPart, const EWeaponGroup WeaponGroup)
@@ -179,7 +197,7 @@ bool UMRWeaponSystemComponent::CanFire(const EMechPart MechPart, const EWeaponGr
 {
 	// TODO: Check for alive etc.
 	
-	if (ArmedParts.Contains(MechPart))
+	if (ArmedParts.Contains(MechPart) && ArmedParts[MechPart].bIsActive)
 	{
 		AMRWeapon* FireWeapon = ArmedParts[MechPart].GetWeapon(WeaponGroup);
 

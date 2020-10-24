@@ -4,6 +4,7 @@
 #include "MRMechTypes.generated.h"
 
 class AMRMechAim;
+class USoundBase;
 
 /**
 * Mech Part types. Limbs and other devices must belongs to some part type
@@ -68,4 +69,31 @@ struct FMechAim
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     TSubclassOf<AMRMechAim> MechAimClass;
+};
+
+
+USTRUCT(BlueprintType)
+struct FMechParticleSpawnData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName BoneName;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    UParticleSystem* ParticleSystem = nullptr;
+};
+
+/** Mech sound data */
+USTRUCT(BlueprintType)
+struct FMechSoundSpawnData
+{
+    GENERATED_BODY()
+	
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName BoneName;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    USoundBase* Audio = nullptr;
+
 };

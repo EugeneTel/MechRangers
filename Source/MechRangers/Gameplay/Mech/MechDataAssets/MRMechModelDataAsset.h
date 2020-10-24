@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MRMechCapsuleDataAsset.h"
 #include "Engine/DataAsset.h"
 #include "MechRangers/Gameplay/Mech/MRMechTypes.h"
 #include "MRMechModelDataAsset.generated.h"
@@ -11,6 +10,54 @@
 class AMRMechCockpit;
 class UMRMechAnimInstance;
 class UMRMechHardpointDataAsset;
+class UMRMechDestructionHierarchyAsset;
+class UMRMechCapsuleDataAsset;
+
+USTRUCT(BlueprintType)
+struct FMechReplacementMesh
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName BoneName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UStaticMesh* StaticMesh;
+};
+
+USTRUCT(BlueprintType)
+struct FMechPartUpdateData
+{
+	GENERATED_BODY()
+
+	/** TODO: Implement mesh replacement */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FMechReplacementMesh> Meshes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FMechParticleSpawnData> Effects;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FMechSoundSpawnData> AudioData;
+};
+
+USTRUCT(BlueprintType)
+struct FMechDestructibleState
+{
+	GENERATED_BODY()
+
+	/** List of bones to hide */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UMRMechDestructionHierarchyAsset* DestructionHierarchyAsset;
+
+	/** List of replacement meshes for damaged state */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<EMechPart, FMechPartUpdateData> DamageReplacements;
+
+	/** List of replacement meshes for destroyed state */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TMap<EMechPart, FMechPartUpdateData> DestroyReplacements;
+};
 
 /**
  * Structure for Mech Cockpit
@@ -29,11 +76,8 @@ struct FMechCockpit
 	FName Socket;
 
 	FMechCockpit()
-	{
-		CockpitClass = nullptr;
-		Socket = FName("Cockpit");
-	}
-	
+		: Socket(FName("Cockpit"))
+	{}
 };
 
 /**
@@ -71,6 +115,9 @@ struct FMechModelData
 	/** Cockpit for First Person players */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMechCockpit FPCockpit;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FMechDestructibleState MechDestructibleState;
 };
 
 /**

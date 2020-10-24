@@ -19,24 +19,25 @@ UENUM(BlueprintType)
 enum class EPlacementPosition : uint8
 {
 	EPP_Center UMETA(DisplayName = "Center"),
-	EPP_Top UMETA(DisplayName = "Top"),
-	EPP_Bottom UMETA(DisplayName = "Bottom"),
-	EPP_Front UMETA(DisplayName = "Front"),
-	EPP_Back UMETA(DisplayName = "Back"),
-	EPP_Left UMETA(DisplayName = "Left"),
-	EPP_Right UMETA(DisplayName = "Right"),
-	EPP_Origin UMETA(DisplayName = "Origin")
+    EPP_Top UMETA(DisplayName = "Top"),
+    EPP_Bottom UMETA(DisplayName = "Bottom"),
+    EPP_Front UMETA(DisplayName = "Front"),
+    EPP_Back UMETA(DisplayName = "Back"),
+    EPP_Left UMETA(DisplayName = "Left"),
+    EPP_Right UMETA(DisplayName = "Right"),
+    EPP_Origin UMETA(DisplayName = "Origin")
 };
 
+/** Particle for destruction */
 USTRUCT(BlueprintType)
 struct FDestructibleParticleData
 {
 	GENERATED_BODY()
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	UParticleSystem* ParticleSystem;
+	UParticleSystem* ParticleSystem = nullptr;
 
-	/** Where particle will be placed according to the Translation field. Used for information only */
+	/** Where particle will be placed according to the Translation field. TODO: Implement functionality */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	EPlacementPosition RelativePlacement;
 
@@ -50,16 +51,13 @@ struct FDestructibleParticleData
 
 	/** Particle audio */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	USoundCue* Audio;
+	USoundCue* Audio = nullptr;
 
 	FDestructibleParticleData()
-	{
-		ParticleSystem = nullptr;
-		RelativePlacement = EPlacementPosition::EPP_Origin;
-		Translation = FVector::ZeroVector;
-		Rotation = FRotator::ZeroRotator;
-		Audio = nullptr;
-	}
+        : RelativePlacement(EPlacementPosition::EPP_Center),
+        Translation(FVector::ZeroVector),
+        Rotation(FRotator::ZeroRotator)
+	{}
 };
 
 USTRUCT(BlueprintType)
