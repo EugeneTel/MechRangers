@@ -114,6 +114,8 @@ public:
 	/** [local] stops weapon fire */
 	void StopWeaponFire(const EMechPart MechPart, const EWeaponGroup WeaponGroup);
 
+	void StopAllWeaponsFire();
+
 	/** check if pawn can fire weapon */
 	bool CanFire(const EMechPart MechPart, const EWeaponGroup WeaponGroup);
 		

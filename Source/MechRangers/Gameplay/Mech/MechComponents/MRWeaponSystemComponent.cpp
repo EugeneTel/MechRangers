@@ -193,6 +193,17 @@ void UMRWeaponSystemComponent::StopWeaponFire(const EMechPart MechPart, const EW
 	}
 }
 
+void UMRWeaponSystemComponent::StopAllWeaponsFire()
+{
+	for (auto ArmedPartContainer : ArmedParts)
+	{
+		for (auto FireWeaponContainer : ArmedPartContainer.Get<1>().Weapons)
+		{
+			FireWeaponContainer.Get<1>()->StopFire();
+		}
+	}
+}
+
 bool UMRWeaponSystemComponent::CanFire(const EMechPart MechPart, const EWeaponGroup WeaponGroup)
 {
 	// TODO: Check for alive etc.

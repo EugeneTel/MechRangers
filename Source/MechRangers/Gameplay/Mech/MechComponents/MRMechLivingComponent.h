@@ -40,11 +40,18 @@ public:
     UFUNCTION(BlueprintCallable)
     float HealthContainerTakeDamage(float TakenDamage, FHitResult const& HitResult, AController* EventInstigator, AActor* DamageCauser);
 
+    UFUNCTION(BlueprintCallable)
+    EHealthState GetHealthState();
+
 protected:
 
     /** */
-    UPROPERTY(EditDefaultsOnly, Category = Config)
+    UPROPERTY(EditAnywhere, Category = Config)
     bool bDebug;
+
+    /** Mech Health State */
+    UPROPERTY(EditDefaultsOnly, Category = Config)
+    EHealthState HealthState = EHealthState::EHS_Healthy;
 
     /** Minimum damage distance to bone used on impact calculation. If distance is less - then hit a bone and stop calculating. */
     UPROPERTY(EditDefaultsOnly, Category = Config)

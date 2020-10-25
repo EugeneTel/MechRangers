@@ -164,7 +164,7 @@ float UMRMechLivingComponent::HealthContainerTakeDamage(float TakenDamage, FHitR
 {
     if (bDebug)
     {
-        DrawDebugSphere(GetWorld(), DamageCauser->GetActorLocation(), 96.f, 16, FColor::Blue, false, 5.f, 0, 1.f);
+        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 96.f, 16, FColor::Blue, false, 5.f, 0, 1.f);
     }
 
     // Try to find a DamageContainer
@@ -176,7 +176,7 @@ float UMRMechLivingComponent::HealthContainerTakeDamage(float TakenDamage, FHitR
 
     if (!DamageContainer)
     {
-        DamageContainer = FindHealthContainerByLocation(DamageCauser->GetActorLocation());
+        DamageContainer = FindHealthContainerByLocation(HitResult.ImpactPoint);
     }
 
     if (DamageContainer)
@@ -187,6 +187,11 @@ float UMRMechLivingComponent::HealthContainerTakeDamage(float TakenDamage, FHitR
     }
 
     return 0.f;
+}
+
+EHealthState UMRMechLivingComponent::GetHealthState()
+{
+    return HealthState;
 }
 
 UMRHealthComponent* UMRMechLivingComponent::GetHealthContainer(const EMechPart InMechPart)
@@ -218,6 +223,13 @@ void UMRMechLivingComponent::OnHealthContainerStateChanged(const FHealthStateCha
         if (MechPart != EMechPart::EMP_Invalid)
         {
             OwnerMech->DestroyPart(MechPart);
+        }
+
+        // Death
+        if (MechPart == EMechPart::EMP_Torso || MechPart == EMechPart::EMP_Head)
+        {
+            HealthState = EHealthState::EHS_Destroyed;
+            OwnerMech->Death();           
         }
     }
 }

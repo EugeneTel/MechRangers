@@ -125,7 +125,7 @@ float AMRMech::GetAgroChance() const
 
 bool AMRMech::Alive() const
 {
-	return true;
+	return LivingComponent->GetHealthState() == EHealthState::EHS_Healthy || LivingComponent->GetHealthState() == EHealthState::EHS_Damaged;
 }
 
 void AMRMech::SetLoadout(const FMechLoadout& NewLoadout)
@@ -452,7 +452,11 @@ void AMRMech::SpawnSound(FMechSoundSpawnData& SoundData)
 
 void AMRMech::Death()
 {
-	
+	ULog::Success("AMRMech::Death", LO_Both);
+	WeaponSystemComponent->StopAllWeaponsFire();
+	GetMovementComponent()->StopMovementImmediately();
+	GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void AMRMech::DestroyPart(const EMechPart MechPart)

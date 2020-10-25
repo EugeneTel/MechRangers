@@ -208,10 +208,6 @@ protected:
 	void SpawnParticle(FMechParticleSpawnData& ParticleData);
 
 	void SpawnSound(FMechSoundSpawnData& SoundData);
-
-	/** Mech Death Implementation */
-	UFUNCTION(BlueprintCallable)
-	void Death();
 	
 public:
 
@@ -220,5 +216,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
     void DamagePart(EMechPart MechPart);
+
+	/** Mech Death Implementation */
+	UFUNCTION(BlueprintCallable)
+    void Death();
 	
 };
