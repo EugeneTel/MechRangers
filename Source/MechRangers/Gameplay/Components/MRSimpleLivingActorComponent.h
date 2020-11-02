@@ -31,7 +31,7 @@ protected:
 
 	/** Subscribed to the Health Component Health State Changed Delegate */
 	UFUNCTION()
-	void OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState);
+	void OnHealthContainerStateChanged(FHealthStateChangedParams Params);
 
 	/** Death implementation for the Living Actor and inform others */
 	virtual void Death();

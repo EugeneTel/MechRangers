@@ -10,6 +10,7 @@
 AMRGameMode::AMRGameMode()
 {
     UnitManager = CreateDefaultSubobject<UMRUnitManagerComponent>(TEXT("UnitManager"));
+    MissionManager = CreateDefaultSubobject<UMRMissionManagerComponent>(TEXT("MissionManager"));
 }
 
 APawn* AMRGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
@@ -40,4 +41,14 @@ APawn* AMRGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewP
     NewPlayer->Possess(NewMech);
 
     return NewPawn;
+}
+
+UMRUnitManagerComponent* AMRGameMode::GetUnitManager() const
+{
+    return UnitManager;
+}
+
+UMRMissionManagerComponent* AMRGameMode::GetMissionManager() const
+{
+    return MissionManager;
 }

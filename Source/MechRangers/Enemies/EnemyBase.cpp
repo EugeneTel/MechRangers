@@ -69,7 +69,6 @@ void AEnemyBase::MoveToPoint(FVector& Point)
 		{
 			ULog::Success("Enemy Path Successfully Set!!!");
 		}
-			
 	}
 }
 

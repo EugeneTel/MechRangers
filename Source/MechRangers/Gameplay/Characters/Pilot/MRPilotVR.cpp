@@ -6,7 +6,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/SphereComponent.h"
 #include "MechRangers/MechRangers.h"
-#include "MechRangers/Core/MechRangersGameMode.h"
+#include "MechRangers/Modes/MRGameMode.h"
 #include "MechRangers/Gameplay/Characters/Animations/HandAnimInstance.h"
 #include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "MechRangers/Gameplay/Mech/MRMechCockpit.h"
@@ -50,7 +50,7 @@ void AMRPilotVR::BeginPlay()
     UWorld* World = GetWorld();
     if (World)
     {
-        AMechRangersGameMode* GameMode = Cast<AMechRangersGameMode>(World->GetAuthGameMode());
+        AMRGameMode* GameMode = Cast<AMRGameMode>(World->GetAuthGameMode());
     }
     
     // Set Tracking to Floor. Without it in Oculus Rift is under floor.

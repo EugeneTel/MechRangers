@@ -18,7 +18,7 @@ void UMRSimpleLivingActorComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// Subscribe on Delegates
-	//HealthContainer->OnHealthStateChanged.AddDynamic(this, &UMRSimpleLivingActorComponent::OnHealthContainerStateChanged);
+	HealthContainer->OnHealthStateChanged.AddDynamic(this, &UMRSimpleLivingActorComponent::OnHealthContainerStateChanged);
 }
 
 float UMRSimpleLivingActorComponent::TakeDamage(const float TakenDamage, FDamageTakenData& DamageTakenData)
@@ -41,14 +41,14 @@ void UMRSimpleLivingActorComponent::Kill(FDamageTakenData& DamageTakenData)
 	Death();
 }
 
-void UMRSimpleLivingActorComponent::OnHealthContainerStateChanged(UMRHealthComponent* InHealthContainer, EHealthState InHealthState)
+void UMRSimpleLivingActorComponent::OnHealthContainerStateChanged(const FHealthStateChangedParams Params)
 {
-	if (InHealthState == EHealthState::EHS_Destroyed)
+	if (Params.CurrentState == EHealthState::EHS_Destroyed)
 	{
 		Death();
 	}
 
-	OnChangeHealthStateDelegate.ExecuteIfBound(GetOwner(), InHealthState);	
+	OnChangeHealthStateDelegate.ExecuteIfBound(GetOwner(), Params.CurrentState);	
 }
 
 void UMRSimpleLivingActorComponent::Death()

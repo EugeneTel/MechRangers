@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "MechRangers/Gameplay/Managers/MRUnitManagerComponent.h"
+#include "MechRangers/Gameplay/MissionSystem/MRMissionManagerComponent.h"
 
 #include "MRGameMode.generated.h"
 
@@ -25,6 +26,19 @@ public:
 
 	/** Override DefaultPawn spawn method for spawning a Mech at the same time */
 	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+
+	UFUNCTION(BlueprintCallable)
+	UMRUnitManagerComponent* GetUnitManager() const;
+
+	UFUNCTION(BlueprintCallable)
+	UMRMissionManagerComponent* GetMissionManager() const;
+
+	/** Return current game mode */
+	UFUNCTION(BlueprintCallable)
+    FORCEINLINE bool IsVR() const { return bVRMode; };
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UDataTable* GetMissionDataTable() const { return MissionDataTable; }
 private:
 
 	/** Is VR Mode */
@@ -42,11 +56,12 @@ private:
 	/** Manager responsible for spawn Units */
 	UPROPERTY(Category=MechRangers, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	UMRUnitManagerComponent* UnitManager;
+	
+	/** Manager responsible Missions and Targets */
+	UPROPERTY(Category=Missions, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UMRMissionManagerComponent* MissionManager;
 
-public:
-
-	/** Return current game mode */
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool IsVR() const { return bVRMode; };
+	UPROPERTY(Category=Missions, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UDataTable* MissionDataTable;
 
 };
