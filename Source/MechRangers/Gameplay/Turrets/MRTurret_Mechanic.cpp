@@ -48,6 +48,6 @@ void AMRTurret_Mechanic::FollowCombatTarget(float DeltaTime)
     {
         FVector Dir = (CombatTarget->GetActorLocation() - TurretPitch->GetComponentLocation());
         Dir.Normalize();
-        TurretPitch->SetWorldRotation(FMath::RInterpTo(TurretPitch->GetComponentRotation(), Dir.Rotation(), DeltaTime, 2.f));
+        TurretPitch->SetWorldRotation(FMath::RInterpTo(TurretPitch->GetComponentRotation(), Dir.Rotation(), DeltaTime, 3.f));
     }
 }

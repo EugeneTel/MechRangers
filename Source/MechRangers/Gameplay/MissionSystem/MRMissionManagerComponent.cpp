@@ -8,9 +8,8 @@ void UMRMissionManagerComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    InitMission();
-
-    StartSequence();
+    FTimerHandle TmpHandler;
+    GetWorld()->GetTimerManager().SetTimer(TmpHandler, this, &UMRMissionManagerComponent::InitMission, 1.f);
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -18,7 +17,7 @@ void UMRMissionManagerComponent::BeginPlay()
 //----------------------------------------------------------------------------------------------------------------------
 
 void UMRMissionManagerComponent::InitMission()
-{   
+{
     if (UWorld* World = GetWorld())
     {
         AMRGameMode* GameMode = Cast<AMRGameMode>(World->GetAuthGameMode());
@@ -47,6 +46,13 @@ void UMRMissionManagerComponent::InitMission()
 
     PopulateObjectives();
     PopulateTargets();
+
+    if (OnMissionInit.IsBound())
+    {
+        OnMissionInit.Broadcast(CurrentMission);
+    }
+
+    StartSequence();
 }
 
 void UMRMissionManagerComponent::StartSequence()
@@ -59,6 +65,11 @@ void UMRMissionManagerComponent::StartSequence()
 
     CurrentSequenceIndex = 0;
     bIsActiveMission = true;
+
+    if (OnSequenceStarted.IsBound())
+    {
+        OnSequenceStarted.Broadcast(CurrentSequenceIndex);
+    }
 }
 
 void UMRMissionManagerComponent::EnableMissionActors()
@@ -72,7 +83,10 @@ void UMRMissionManagerComponent::MissionFailed()
     if (bIsActiveMission == false)
         return;
 
-    // TODO: Inform display
+    if (OnMissionFailed.IsBound())
+    {
+        OnMissionFailed.Broadcast();
+    }
 
     // TODO: Clear Objective Markers
 
@@ -84,6 +98,11 @@ void UMRMissionManagerComponent::MissionFailed()
 void UMRMissionManagerComponent::MissionComplete()
 {
     ULog::Success("------------Mission Complete-------------", LO_Both);
+
+    if (OnMissionComplete.IsBound())
+    {
+        OnMissionComplete.Broadcast();
+    }
 
     ClearActiveMission();
 }
@@ -106,9 +125,14 @@ void UMRMissionManagerComponent::PopulateObjectives()
     if (!CurrentMission.Sequences.IsValidIndex(CurrentSequenceIndex))
         return;
 
+    int32 ObjectiveIndex = 0;
+
     for (FMissionObjective& Objective : CurrentMission.Sequences[CurrentSequenceIndex].Objectives)
     {
+        Objective.Index = ObjectiveIndex;
+        Objective.Status = EMissionStatus::InProgress;
         CurrentObjectives.Add(&Objective);
+        ObjectiveIndex++;
     }
 
     // TODO: Add Objective Markers
@@ -137,15 +161,11 @@ void UMRMissionManagerComponent::ObjectiveFailed()
     MissionFailed();
 }
 
-void UMRMissionManagerComponent::ObjectiveComplete()
-{
-    ULog::Success("------------Objective Complete-------------", LO_Both);
-
-    MissionComplete();
-}
-
 void UMRMissionManagerComponent::CheckAndHandleObjectiveComplete(FMissionObjective& Objective)
 {
+    if (Objective.Status != EMissionStatus::InProgress)
+        return;
+    
     // Go through all targets and checking if any of targets is not completed
     for (FMissionTarget& Target : Objective.Targets)
     {
@@ -155,14 +175,42 @@ void UMRMissionManagerComponent::CheckAndHandleObjectiveComplete(FMissionObjecti
         }
     }
 
-    ObjectiveComplete();
+    // If all Targets are complete then Objective is complete
+    Objective.Status = EMissionStatus::Completed;
+
+    if (OnObjectiveCompleted.IsBound())
+    {
+        OnObjectiveCompleted.Broadcast(Objective.Index);
+    }
+
+    CheckAndHandleSequenceComplete();    
+}
+
+void UMRMissionManagerComponent::CheckAndHandleSequenceComplete()
+{
+    FMissionSequence* Sequence = GetCurrentSequence();
+    if (!Sequence)
+        return;
+
+    for (const auto Objective : Sequence->Objectives)
+    {
+        if (Objective.Status != EMissionStatus::Completed)
+        {
+            return;
+        }
+    }
+
+    // If all Objectives are complete then Sequence is complete
+    // TODO: Implement next sequence functionality
+
+    MissionComplete();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 // Targets
 //----------------------------------------------------------------------------------------------------------------------
 
-void UMRMissionManagerComponent::UpdateTargetProgress(FMissionTargetInfo& TargetInfo, EMissionTargetAction const TargetAction)
+void UMRMissionManagerComponent::UpdateTargetProgress(const FMissionTargetInfo TargetInfo, EMissionTargetAction const TargetAction)
 {
     if (!bIsActiveMission)
         return;
@@ -183,24 +231,50 @@ void UMRMissionManagerComponent::UpdateTargetProgress(FMissionTargetInfo& Target
     }
 }
 
+FMissionSequence* UMRMissionManagerComponent::GetCurrentSequence()
+{
+    if (CurrentMission.Sequences.IsValidIndex(CurrentSequenceIndex))
+    {
+        return &CurrentMission.Sequences[CurrentSequenceIndex];
+    }
+
+    return nullptr;
+}
+
 void UMRMissionManagerComponent::PopulateTargets()
 {
+    // Add objective targets
     for (FMissionObjective* Objective : CurrentObjectives)
     {
         if (Objective->Targets.Num() > 0)
         {
             for (FMissionTarget& Target : Objective->Targets)
             {
+                Target.Status = EMissionStatus::InProgress;
                 CurrentTargets.Add(&Target);
             }
         }
     }
+
+    // Add global targets
+    if (CurrentMission.GlobalTargets.Num() > 0)
+    {
+        for (FMissionTarget& Target : CurrentMission.GlobalTargets)
+        {
+            Target.Status = EMissionStatus::InProgress;
+            CurrentTargets.Add(&Target);
+        }
+    }
+
 }
 
 FMissionTarget* UMRMissionManagerComponent::FindTargetByInfo(const FMissionTargetInfo& TargetInfo)
 {
     for (FMissionTarget* CurrentTarget : CurrentTargets)
     {
+        if (CurrentTarget->Status != EMissionStatus::InProgress)
+            continue;
+        
         if (CurrentTarget->bTargetIDMatters && CurrentTarget->TargetID == TargetInfo.TargetID)
         {
             // if ID and Class requires
@@ -218,40 +292,50 @@ FMissionTarget* UMRMissionManagerComponent::FindTargetByInfo(const FMissionTarge
 
 void UMRMissionManagerComponent::TargetProgressFailed(FMissionTarget& Target, const FMissionTargetInfo& TargetInfo)
 {
-    TargetFailed(Target, TargetInfo);
+    Target.Status = EMissionStatus::Failed;
 
-    // TODO: Implement additional functionality
+    if (Target.bMandatory)
+    {
+        MissionFailed();
+    }
+
+    // TODO: Implement Objective failing
 }
 
 void UMRMissionManagerComponent::TargetProgressSucceed(FMissionTarget& Target, const FMissionTargetInfo& TargetInfo)
 {
-    ULog::Success("------------Target Progress Succeed-------------", LO_Both);
+    if (Target.Status != EMissionStatus::InProgress)
+        return;
+
+    const int32 OldAmount = Target.Amount;
+    const EMissionStatus OldStatus = Target.Status;
     
     Target.CurrentAmount += 1;
 
+    // Target Complete
     if (Target.CurrentAmount >= Target.Amount)
     {
-        TargetComplete(Target, TargetInfo);
+        Target.Status = EMissionStatus::Completed;
     }
 
-    // TODO: Notify target progress succeed
-}
-
-void UMRMissionManagerComponent::TargetComplete(FMissionTarget& Target, const FMissionTargetInfo& TargetInfo)
-{
-    ULog::Success("------------Target Complete-------------", LO_Both);
-    
-    Target.Status = EMissionStatus::Completed;
-
-    if (FMissionObjective* Objective = FindObjectiveByTarget(Target))
+    // Notify subscribers
+    if (OnTargetUpdated.IsBound())
     {
-        CheckAndHandleObjectiveComplete(*Objective);
+        const FMissionTargetUpdatedParams TargetUpdatedParams {
+            Target,
+            OldStatus,
+            OldAmount
+        };
+        
+        OnTargetUpdated.Broadcast(TargetUpdatedParams);
     }
-}
 
-void UMRMissionManagerComponent::TargetFailed(FMissionTarget& Target, const FMissionTargetInfo& TargetInfo)
-{
-    Target.Status = EMissionStatus::Failed;
-
-    ObjectiveFailed();
+    // Check is objective completed
+    if (Target.Status == EMissionStatus::Completed)
+    {
+        if (FMissionObjective* Objective = FindObjectiveByTarget(Target))
+        {
+            CheckAndHandleObjectiveComplete(*Objective);
+        }
+    }
 }

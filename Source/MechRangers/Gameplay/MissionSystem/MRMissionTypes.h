@@ -109,10 +109,10 @@ struct FMissionTargetData
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     AActor* ActorReference;
 
-    UPROPERTY(EditAnywhere);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite);
     FVector Location;
 
     FMissionTargetData(): ActorReference(nullptr)
@@ -125,16 +125,16 @@ struct FMissionTargetInfo
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite);
     FName TargetID;
 
-    UPROPERTY(VisibleAnywhere);
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite);
     TSubclassOf<AActor> ActorClass;
 
-    UPROPERTY(EditAnywhere);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite);
     EMissionTargetType Type;
 
-    UPROPERTY(EditAnywhere);
+    UPROPERTY(EditAnywhere, BlueprintReadWrite);
     FMissionTargetData TargetData;
 
     FMissionTargetInfo() : Type(EMissionTargetType::Collectable), TargetData()
@@ -147,7 +147,7 @@ struct FMissionObjectiveInfo
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     bool bTest; 
 
     // TODO: Main target parameters
@@ -158,15 +158,18 @@ struct FMissionObjectiveLayout
 {
     GENERATED_BODY();
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     bool bDisplay;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
+    bool bDisplayProgress;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     FText Title;
 
     // TODO: Add hints
 
-    FMissionObjectiveLayout() : bDisplay(false)
+    FMissionObjectiveLayout() : bDisplay(false), bDisplayProgress(false)
     {
     }
 };
@@ -176,22 +179,27 @@ struct FMissionObjective
 {
     GENERATED_BODY();
 
-    UPROPERTY(EditDefaultsOnly);
+    /** Index in current mission progress */
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite);
+    int32 Index;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     EMissionObjectiveType Type;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     EMissionStatus Status;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     FMissionObjectiveLayout Layout;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     TArray<FMissionTarget> Targets;
 
     FMissionObjective()
-        : Type(EMissionObjectiveType::SingleTarget),
-        Status(EMissionStatus::Pending)
-    {}
+        : Index(0), Type(EMissionObjectiveType::SingleTarget),
+          Status(EMissionStatus::Pending)
+    {
+    }
 };
 
 USTRUCT(BlueprintType)
@@ -199,13 +207,13 @@ struct FMissionSequence
 {
     GENERATED_BODY();
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     FText Title;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     FText Description;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     TArray<FMissionObjective> Objectives;
 
     FMissionSequence()
@@ -217,10 +225,10 @@ struct FMissionOnFinished
 {
     GENERATED_BODY();
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     bool bStartNextMission;
 
-    UPROPERTY(EditDefaultsOnly);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     FName NextMissionName;
 
     FMissionOnFinished(): bStartNextMission(false)
@@ -242,9 +250,9 @@ struct FMissionMaster : public FTableRowBase
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     TArray<FMissionSequence> Sequences;
 
-    /** List of targets which will be mandatory for the mission */
+    /** List of targets which will be global for the mission. */
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
-    TArray<FMissionTarget> MandatoryTargets;
+    TArray<FMissionTarget> GlobalTargets;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite);
     FMissionOnFinished OnMissionFinished;
@@ -252,4 +260,19 @@ struct FMissionMaster : public FTableRowBase
     FMissionMaster(): Type(EMissionType::All), MainInfo()
     {
     }
-};    
+};
+
+USTRUCT(BlueprintType)
+struct FMissionTargetUpdatedParams
+{
+    GENERATED_BODY();
+
+    UPROPERTY(BlueprintReadWrite);
+    FMissionTarget Target;
+    
+    UPROPERTY(BlueprintReadWrite);
+    EMissionStatus OldStatus;
+
+    UPROPERTY(BlueprintReadWrite);
+    int32 OldAmount; 
+};

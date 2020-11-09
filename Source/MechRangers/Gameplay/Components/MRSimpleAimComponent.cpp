@@ -3,6 +3,7 @@
 #include "MRSimpleAimComponent.h"
 #include "Log.h"
 #include "DrawDebugHelpers.h"
+#include "MechRangers/MechRangers.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
 
 UMRSimpleAimComponent::UMRSimpleAimComponent()
@@ -38,7 +39,7 @@ void UMRSimpleAimComponent::Trace()
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(GetOwner());
 	QueryParams.bDebugQuery = true;
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECollisionChannel::ECC_Visibility, QueryParams))
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, COLLISION_WEAPON_TRACE, QueryParams))
 	{
 		EndPoint = HitResult.ImpactPoint;
 

@@ -145,7 +145,7 @@ float AMRTurret::TakeDamage(float Damage, FDamageEvent const& DamageEvent, ACont
 	DamageTakenData.DamageDealer = DamageCauser;
 
 	// Try to attack damage instigator
-	if (IsAbleAttack(EventInstigator->GetPawn()))
+	if (IsValid(EventInstigator) && IsAbleAttack(EventInstigator->GetPawn()))
 	{
 		LastAttacker = EventInstigator->GetPawn();
 	}
@@ -398,13 +398,13 @@ void AMRTurret::OnAimSystemDamageTakerHit(FHitResult& HitResult)
 		StartWeaponFire();
 
 		// Look weapons at hit
-		for (auto Weapon : Weapons)
-		{
-			if (IsValid(Weapon))
-			{
-				Weapon->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), HitResult.ImpactPoint));
-			}
-
-		}
+		// for (auto Weapon : Weapons)
+		// {
+		// 	if (IsValid(Weapon))
+		// 	{
+		// 		Weapon->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), HitResult.ImpactPoint));
+		// 	}
+		//
+		// }
 	}
 }
