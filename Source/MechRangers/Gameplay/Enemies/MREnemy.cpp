@@ -35,9 +35,11 @@ AMREnemy::AMREnemy()
 	AimSystem = CreateDefaultSubobject<UMRSimpleAimComponent>(TEXT("AimSystem"));
 	AimSystem->SetupAttachment(RootComponent);
 
+	GetMesh()->SetCollisionProfileName(FName("NoCollision"));
+
 	// Setup configs
 	// TODO: update collision
-	GetCapsuleComponent()->SetCollisionProfileName(FName("MechPawn"));
+	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyPawn"));
 	AIControllerClass = AMREnemyAIController::StaticClass();
 	MaxHealth = 50.f;
 	bAlive = true;
