@@ -23,13 +23,5 @@ protected:
 
 public:
 
-	/** Crosshair asset pointer */
-	UPROPERTY()
-	UTexture2D* CrosshairTex;
-
 	AMRGameHUD();
-
-	void BeginPlay() override;
-	
-	virtual void DrawHUD() override;
 };
