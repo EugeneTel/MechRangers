@@ -217,6 +217,11 @@ AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)
 	}
 }
 
+bool AMRMech::HasPilot() const
+{
+	return ControlType == EMechControlType::FP || ControlType == EMechControlType::VR;
+}
+
 IMRDamageTakerInterface::FOnDeath& AMRMech::OnDeath()
 {
 	return OnDeathEvent;

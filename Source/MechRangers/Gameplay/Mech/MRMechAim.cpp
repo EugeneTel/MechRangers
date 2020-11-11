@@ -24,9 +24,12 @@ void AMRMechAim::BeginPlay()
 	Super::BeginPlay();
 
 	// Cache mech
-	Mech = Cast<AMRMech>(GetOwner());
+	OwnerMech = Cast<AMRMech>(GetOwner());
 
-	SpawnCrosshair();
+	if (CrosshairType != ECrosshairType::ECT_None && OwnerMech->HasPilot())
+	{
+		SpawnCrosshair();
+	}
 }
 
 // Called every frame
@@ -66,7 +69,7 @@ void AMRMechAim::Trace()
 		Crosshair->SetActorLocation(EndPoint);
 
 		// Rotate crosshair to the Pilot
-		Crosshair->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Crosshair->GetActorLocation(), Mech->Cockpit->GetActorLocation()));
+		Crosshair->SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Crosshair->GetActorLocation(), OwnerMech->Cockpit->GetActorLocation()));
 	}
 }
 

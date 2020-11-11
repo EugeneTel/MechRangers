@@ -37,7 +37,7 @@ protected:
 
 	/** Owning mech */
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
-	AMRMech* Mech;
+	AMRMech* OwnerMech;
 
 	/** Crosshair instance for the armed mech part */
 	UPROPERTY(BlueprintReadWrite)

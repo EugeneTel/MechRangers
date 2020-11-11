@@ -54,6 +54,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual AMRMechCockpit* SpawnCockpit(FMechCockpit& CockpitData);
 
+	UFUNCTION(BlueprintCallable)
+	bool HasPilot() const;
+
 //----------------------------------------------------------------------------------------------------------------------
 // Components
 //----------------------------------------------------------------------------------------------------------------------
