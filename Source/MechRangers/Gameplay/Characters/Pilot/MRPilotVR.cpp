@@ -9,7 +9,8 @@
 #include "MechRangers/Modes/MRGameMode.h"
 #include "MechRangers/Gameplay/Characters/Animations/HandAnimInstance.h"
 #include "MechRangers/Gameplay/Mech/MRMech.h"
-#include "MechRangers/Gameplay/Mech/MRMechCockpit.h"
+#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpit.h"
+#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpitPilot.h"
 #include "PilotComponents/MRMechControlComponent.h"
 
 AMRPilotVR::AMRPilotVR()
@@ -99,13 +100,16 @@ void AMRPilotVR::SitIntoMech_Implementation(AMRMech* NewMech)
 {
     if (NewMech->Cockpit)
     {
-        // AttachToComponent(NewMech->Cockpit->GetPilotAttachmentPoint(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+        if (const auto CockpitPilot = Cast<AMRMechCockpitPilot>(NewMech->Cockpit))
+        {
+            // AttachToComponent(NewMech->Cockpit->GetPilotAttachmentPoint(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
-        const FTransform RelativeTransformToSeat = FTransform(FVector::ZeroVector, FVector::ZeroVector, FVector::ZeroVector,FVector::OneVector);
-        SetSeatedMode(NewMech->Cockpit->GetPilotAttachmentPoint(), true, RelativeTransformToSeat, VRReplicatedCamera->GetRelativeTransform());
-        MechControl->SitPilotIntoMech(NewMech);
-        NewMech->SetOwner(this);
-        Mech = NewMech;
+            const FTransform RelativeTransformToSeat = FTransform(FVector::ZeroVector, FVector::ZeroVector, FVector::ZeroVector,FVector::OneVector);
+            SetSeatedMode(CockpitPilot->GetPilotAttachmentPoint(), true, RelativeTransformToSeat, VRReplicatedCamera->GetRelativeTransform());
+            MechControl->SitPilotIntoMech(NewMech);
+            NewMech->SetOwner(this);
+            Mech = NewMech;
+        }
     }
     else
     {

@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-#include "MRMech.h"
 #include "GameFramework/Actor.h"
 #include "MRMechCockpit.generated.h"
 
@@ -31,20 +29,4 @@ private:
 	/** The main skeletal mesh associated with this Cockpit. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* MeshComponent;
-
-	/** Where a pilot should be attached */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	USceneComponent* PilotAttachmentPoint;
-
-	/** OwnedPilot head zone visualization */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	USphereComponent* HeadZoneVisualizer;
-
-public:
-
-	UFUNCTION(BlueprintCallable)
-	USceneComponent* GetPilotAttachmentPoint() const;
-
-	UFUNCTION(BlueprintCallable)
-	USphereComponent* GetHeadZoneVisualizer() const;
 };

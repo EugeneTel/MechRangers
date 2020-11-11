@@ -6,7 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "MechRangers/UI/HUD/MRCrosshair.h"
 #include "MRMech.h"
-#include "MRMechCockpit.h"
+#include "Cockpit/MRMechCockpit.h"
 
 // Sets default values
 AMRMechAim::AMRMechAim()

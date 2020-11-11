@@ -52,7 +52,7 @@ public:
 
 	/** Setup Cockpit for mech from Mech Model Data */
 	UFUNCTION(BlueprintCallable)
-	AMRMechCockpit* SpawnCockpit(FMechCockpit& CockpitData);
+	virtual AMRMechCockpit* SpawnCockpit(FMechCockpit& CockpitData);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Components
@@ -108,6 +108,12 @@ protected:
 	/** Is Combat mode or Movement mode. */
 	UPROPERTY(Category=MRMech, VisibleInstanceOnly, BlueprintReadWrite)
 	bool bIsCombatMode;
+
+	UPROPERTY(Category=MRMech, EditAnywhere, BlueprintReadWrite)
+	EMechControlType ControlType;
+
+	/** Set Mech Control Type */
+	virtual void SetupControlType();
 	
 public:
 

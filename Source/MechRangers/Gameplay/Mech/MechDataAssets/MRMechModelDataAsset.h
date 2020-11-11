@@ -67,9 +67,8 @@ struct FMechCockpit
 {
 	GENERATED_BODY()
 
-	/** Cockpit blueprint */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<AMRMechCockpit> CockpitClass;
+	TMap<EMechControlType, TSubclassOf<AMRMechCockpit>> CockpitClasses;
 
 	/** Cockpit attachment socket */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -110,11 +109,7 @@ struct FMechModelData
 
 	/** Cockpit for VR players */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FMechCockpit VRCockpit;
-	
-	/** Cockpit for First Person players */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FMechCockpit FPCockpit;
+	FMechCockpit Cockpit;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FMechDestructibleState MechDestructibleState;

@@ -6,6 +6,8 @@
 #include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "MRMech_Bot.generated.h"
 
+class AMRMechCockpit;
+
 /**
  * 
  */

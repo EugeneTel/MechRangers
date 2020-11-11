@@ -55,6 +55,16 @@ enum class ECrosshairType : uint8
     ECT_Basic UMETA(DisplayName = "Basic")
 };
 
+/** Mech Control Type */
+UENUM(BlueprintType)
+enum class EMechControlType : uint8
+{
+    None,
+    AI, // AI
+    VR, // Virtual reality
+    FP, // First Person
+};
+
 /**
  * Mech's weapon aim configuration
  */

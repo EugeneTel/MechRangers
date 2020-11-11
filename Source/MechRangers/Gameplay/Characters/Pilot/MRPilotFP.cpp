@@ -2,10 +2,11 @@
 
 #include "MRPilotFP.h"
 #include "PilotComponents/MRMechControlComponent.h"
-#include "MechRangers/Gameplay/Mech/MRMechCockpit.h"
+#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpit.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Log.h"
+#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpitPilot.h"
 
 // Sets default values
 AMRPilotFP::AMRPilotFP()
@@ -79,8 +80,11 @@ void AMRPilotFP::SitIntoMech_Implementation(AMRMech* NewMech)
 {
     if (NewMech->Cockpit)
     {
-        AttachToComponent(NewMech->Cockpit->GetPilotAttachmentPoint(),
-                          FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+        if (const auto CockpitPilot = Cast<AMRMechCockpitPilot>(NewMech->Cockpit))
+        {
+            AttachToComponent(CockpitPilot->GetPilotAttachmentPoint(),
+                  FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+        }
     }
     else
     {

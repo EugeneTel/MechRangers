@@ -10,7 +10,7 @@
 #include "MechDataAssets/MRMechHardpointDataAsset.h"
 #include "MechDataAssets/MRMechCapsuleDataAsset.h"
 #include "MRMechAnimInstance.h"
-#include "MRMechCockpit.h"
+#include "Cockpit/MRMechCockpit.h"
 #include "MechRangers/Modes/MRGameMode.h"
 #include "Engine/World.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -40,6 +40,7 @@ AMRMech::AMRMech(const FObjectInitializer& ObjectInitializer)
 	bManipulatorRightHeld = false;
 	GameplayTeam = EGameplayTeam::Player;
 	AgroChance = 0.5;
+	ControlType = EMechControlType::None;
 }
 
 // Called when the game starts or when spawned
@@ -128,6 +129,15 @@ bool AMRMech::Alive() const
 	return LivingComponent->GetHealthState() == EHealthState::EHS_Healthy || LivingComponent->GetHealthState() == EHealthState::EHS_Damaged;
 }
 
+void AMRMech::SetupControlType()
+{
+	// Set default control type if not set
+	if (ControlType == EMechControlType::None)
+	{
+		ControlType = Cast<AMRGameMode>(GetWorld()->GetAuthGameMode())->IsVR() ? EMechControlType::VR : EMechControlType::FP;
+	}
+}
+
 void AMRMech::SetLoadout(const FMechLoadout& NewLoadout)
 {
 	MechLoadout = NewLoadout;
@@ -136,6 +146,8 @@ void AMRMech::SetLoadout(const FMechLoadout& NewLoadout)
 
 void AMRMech::ConstructMech()
 {
+	SetupControlType();
+	
 	// Setup Skeletal Mesh
 	USkeletalMeshComponent* MechMesh = GetMesh();
 	MechMesh->SetSkeletalMesh(MechModelData.SkeletalMesh);
@@ -157,8 +169,7 @@ void AMRMech::ConstructMech()
 	GetCharacterMovement()->SetWalkableFloorAngle(CapsuleDataAsset->WalkableFloorAngle);
 
 	// Setup Cockpit
-	FMechCockpit& CurrentCockpit = Cast<AMRGameMode>(GetWorld()->GetAuthGameMode())->IsVR() ? MechModelData.VRCockpit : MechModelData.FPCockpit;
-	Cockpit = SpawnCockpit(CurrentCockpit);
+	Cockpit = SpawnCockpit(MechModelData.Cockpit);
 
 	const auto WeaponHardpointAsset = MechModelData.WeaponHardpointAsset;
 	if (!WeaponHardpointAsset)
@@ -183,13 +194,7 @@ void AMRMech::ConstructMech()
 
 AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)
 {
-	if (!CockpitData.CockpitClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Can't spawn a Cockpit! CockpitClass is not specified in CockpitData"));
-		return nullptr;
-	}
-
-	if (CockpitData.Socket.IsNone())
+	if (!CockpitData.CockpitClasses.Contains(ControlType) || !IsValid(CockpitData.CockpitClasses[ControlType]))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Can't spawn a Cockpit! Cockpit Socket is not specified in CockpitData"));
 		return nullptr;
@@ -197,7 +202,7 @@ AMRMechCockpit* AMRMech::SpawnCockpit(FMechCockpit& CockpitData)
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
-	AMRMechCockpit* NewMechCockpit = GetWorld()->SpawnActor<AMRMechCockpit>(CockpitData.CockpitClass, SpawnParams);
+	AMRMechCockpit* NewMechCockpit = GetWorld()->SpawnActor<AMRMechCockpit>(CockpitData.CockpitClasses[ControlType], SpawnParams);
 
 	if (NewMechCockpit)
 	{
