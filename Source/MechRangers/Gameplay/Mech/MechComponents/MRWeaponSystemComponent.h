@@ -9,7 +9,7 @@
 #include "MRWeaponSystemComponent.generated.h"
 
 class AMRMech;
-class AMRMechAim;
+class UMRMechAimComponent;
 
 USTRUCT(BlueprintType)
 struct FMechArmedPart
@@ -29,7 +29,7 @@ struct FMechArmedPart
 	TMap<EWeaponGroup, AMRWeapon*> Weapons;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
-	AMRMechAim* AimSystem;
+	UMRMechAimComponent* AimSystem;
 
 	/** Get weapon by Weapon Group from weapon list */
 	AMRWeapon* GetWeapon(const EWeaponGroup Group)
@@ -70,7 +70,7 @@ protected:
 
 	/** Owning mech */
 	UPROPERTY(Category=MRWeaponSystem, BlueprintReadWrite, VisibleInstanceOnly)
-	AMRMech* Mech;
+	AMRMech* OwnerMech;
 	
 	/** List of available armed parts for shooting */
 	UPROPERTY(Category=MRWeaponSystem, BlueprintReadWrite, VisibleInstanceOnly)

@@ -9,7 +9,7 @@
 #include "MRSimpleAimComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( Blueprintable, meta=(BlueprintSpawnableComponent) )
 class MECHRANGERS_API UMRSimpleAimComponent : public USceneComponent
 {
 	GENERATED_BODY()

@@ -2,11 +2,12 @@
 
 
 #include "MRWeaponSystemComponent.h"
+#include "Log.h"
+#include "MRMechAimComponent.h"
 #include "MechRangers/Gameplay/Weapons/MRWeapon.h"
 #include "../MRMech.h"
-#include "../MRMechAim.h"
 #include "../MechDataAssets/MRMechLoadoutDataAsset.h"
-#include "Log.h"
+
 
 // Sets default values for this component's properties
 UMRWeaponSystemComponent::UMRWeaponSystemComponent()
@@ -30,7 +31,7 @@ void UMRWeaponSystemComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UMRWeaponSystemComponent::Setup(AMRMech* InMech, TArray<FWeaponLoadout>& InWeaponLoadouts, TArray<FWeaponSlot>& InWeaponSlots, FMechAim& InMechAimConfig)
 {
-	Mech = InMech;
+	OwnerMech = InMech;
 
 	// Build mech armed parts
 	BuildArmedParts(InWeaponLoadouts, InWeaponSlots, InMechAimConfig);
@@ -109,27 +110,25 @@ AMRWeapon* UMRWeaponSystemComponent::SpawnWeapon(const FWeaponSpawnData& WeaponS
 
 void UMRWeaponSystemComponent::EquipWeapon(AMRWeapon* NewWeapon, const FWeaponSpawnData& WeaponSpawnData, FMechArmedPart& MechArmedPart)
 {
-	NewWeapon->SetOwningPawn(Mech);
-	NewWeapon->OnEquip(Mech->GetMesh(), WeaponSpawnData);
-	//NewWeapon->SetAimSystem(MechArmedPart.AimSystem);
+	NewWeapon->SetOwningPawn(OwnerMech);
+	NewWeapon->OnEquip(OwnerMech->GetMesh(), WeaponSpawnData);
+	NewWeapon->SetAimSystem(MechArmedPart.AimSystem);
 	MechArmedPart.Weapons.Add(WeaponSpawnData.Group, NewWeapon);
 }
 
 void UMRWeaponSystemComponent::SpawnAimSystem(FMechAim& MechAimConfig, FMechArmedPart& MechArmedPart)
 {
-	if (!MechAimConfig.MechAimClass)
+	if (!MechAimConfig.MechAimClass || !IsValid(OwnerMech))
 		return;
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Owner = Mech;
-	SpawnParams.Instigator = Mech;
-	
-	MechArmedPart.AimSystem = GetWorld()->SpawnActor<AMRMechAim>(MechAimConfig.MechAimClass, SpawnParams);
+	UMRMechAimComponent* AimComponent = NewObject<UMRMechAimComponent>(OwnerMech, MechAimConfig.MechAimClass);
 
-	if (MechArmedPart.AimSystem)
+	if (IsValid(AimComponent))
 	{
-		MechArmedPart.AimSystem->AttachToComponent(Mech->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, MechAimConfig.Socket);
+		AimComponent->SetupAttachment(OwnerMech->GetMesh(), MechAimConfig.Socket);
+		AimComponent->RegisterComponent();
+
+		MechArmedPart.AimSystem = AimComponent;
 	}
 	else
 	{
@@ -162,7 +161,11 @@ void UMRWeaponSystemComponent::DestroyArmedPart(const EMechPart MechPart)
 		}
 
 		// Destroy Aim System
-		ArmedParts[MechPart].AimSystem->Destroy();
+		if (IsValid(ArmedParts[MechPart].AimSystem))
+		{
+			ArmedParts[MechPart].AimSystem->DestroyComponent();
+		}
+
 	}
 }
 

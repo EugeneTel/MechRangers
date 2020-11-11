@@ -3,7 +3,7 @@
 #pragma once
 #include "MRMechTypes.generated.h"
 
-class AMRMechAim;
+class UMRMechAimComponent;
 class USoundBase;
 
 /**
@@ -73,12 +73,12 @@ struct FMechAim
 {
     GENERATED_BODY()
 
-    /** Cockpit attachment socket */
+    /** Cockpit attachment socket. Setting up on UMRWeaponSystemComponent::BuildArmedParts */
     UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly)
     FName Socket;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-    TSubclassOf<AMRMechAim> MechAimClass;
+    TSubclassOf<UMRMechAimComponent> MechAimClass;
 };
 
 

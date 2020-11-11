@@ -14,6 +14,7 @@ UMRSimpleAimComponent::UMRSimpleAimComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.TickInterval = 0.1f;
+	TraceEndPoint = FVector::ZeroVector;
 }
 
 // Called when the game starts
