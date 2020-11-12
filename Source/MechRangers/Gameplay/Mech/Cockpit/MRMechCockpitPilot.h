@@ -14,29 +14,31 @@ class MECHRANGERS_API AMRMechCockpitPilot : public AMRMechCockpit
 {
 	GENERATED_BODY()
 
-protected:
-	// Called when the game starts or when spawned
+public:
+
+	AMRMechCockpitPilot();
 	virtual void BeginPlay() override;
 
-public:
-	// Sets default values for this actor's properties
-	AMRMechCockpitPilot();
+	UFUNCTION(BlueprintCallable)
+    USceneComponent* GetPilotAttachmentPoint() const;
 
-private:
+	UFUNCTION(BlueprintCallable)
+    USphereComponent* GetHeadZoneVisualizer() const;
 
+protected:
 	/** Where a pilot should be attached */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USceneComponent* PilotAttachmentPoint;
 
 	/** OwnedPilot head zone visualization */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USphereComponent* HeadZoneVisualizer;
 
-public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UChildActorComponent* HealthDisplayContainer;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UChildActorComponent* MissionDisplayContainer;
 
-	UFUNCTION(BlueprintCallable)
-	USceneComponent* GetPilotAttachmentPoint() const;
-
-	UFUNCTION(BlueprintCallable)
-	USphereComponent* GetHeadZoneVisualizer() const;
+	void SetupHealthDisplay() const;
 };

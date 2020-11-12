@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "MechRangers/Gameplay/Mech/MRMech.h"
+
 #include "MRMechCockpit.generated.h"
 
 class USphereComponent;
@@ -16,17 +18,17 @@ class MECHRANGERS_API AMRMechCockpit : public AActor
 {
 	GENERATED_BODY()
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 public:
-	// Sets default values for this actor's properties
+
+	virtual void BeginPlay() override;
 	AMRMechCockpit();
 
-private:
+protected:
+
+	UPROPERTY(BlueprintReadWrite)
+	AMRMech* OwnerMech;
 
 	/** The main skeletal mesh associated with this Cockpit. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USkeletalMeshComponent* MeshComponent;
 };

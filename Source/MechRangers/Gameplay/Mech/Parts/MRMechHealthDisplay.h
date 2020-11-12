@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MechRangers/UI/Widgets/MRDisplayWidgetComponent.h"
-
+#include "MechRangers/Gameplay/Components/MRDisplayWidgetComponent.h"
 #include "MRMechHealthDisplay.generated.h"
 
 class UWidgetComponent;
+class AMRMech;
 
 UCLASS()
 class MECHRANGERS_API AMRMechHealthDisplay : public AActor
@@ -19,7 +19,13 @@ public:
 	// Sets default values for this actor's properties
 	AMRMechHealthDisplay();
 
+	UFUNCTION(BlueprintCallable)
+	void SetOwnerMech(AMRMech* InMech);
+
 protected:
+
+	UPROPERTY(BlueprintReadWrite)
+	AMRMech* OwnerMech;
 
 	/** */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = HealthDisplay)

@@ -3,7 +3,7 @@
 
 #include "MRMechMissionDisplay.h"
 #include "Components/WidgetComponent.h"
-#include "MechRangers/UI/Widgets/MRDisplayWidgetComponent.h"
+#include "MechRangers/Gameplay/Components/MRDisplayWidgetComponent.h"
 
 // Sets default values
 AMRMechMissionDisplay::AMRMechMissionDisplay()

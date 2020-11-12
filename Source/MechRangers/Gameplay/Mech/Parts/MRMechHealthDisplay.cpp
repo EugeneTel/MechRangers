@@ -22,3 +22,9 @@ AMRMechHealthDisplay::AMRMechHealthDisplay()
 	DisplayWidget->SetupAttachment(RootComponent);
 }
 
+void AMRMechHealthDisplay::SetOwnerMech(AMRMech* InMech)
+{
+	OwnerMech = InMech;
+
+	DisplayWidget->SetOwnerMech(InMech);
+}

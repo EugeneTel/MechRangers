@@ -102,7 +102,7 @@ UMRHealthComponent* UMRMechLivingComponent::FindHealthContainerByLocation(const 
 
         const float Distance = (SocketLocation - NearLocation).Size();
 
-        ULog::Number(Distance, "Nearest bone check: ", SocketName.ToString());
+        //ULog::Number(Distance, "Nearest bone check: ", SocketName.ToString());
 
         if (!PreviousBoneDistance || Distance < PreviousBoneDistance)
         {

@@ -3,6 +3,7 @@
 
 #include "MRMechCockpitPilot.h"
 #include "Components/SphereComponent.h"
+#include "MechRangers/Gameplay/Mech/Parts/MRMechHealthDisplay.h"
 
 // Sets default values
 AMRMechCockpitPilot::AMRMechCockpitPilot()
@@ -16,13 +17,22 @@ AMRMechCockpitPilot::AMRMechCockpitPilot()
 	HeadZoneVisualizer = CreateDefaultSubobject<USphereComponent>(TEXT("HeadZoneVisualizer"));
 	HeadZoneVisualizer->SetupAttachment(PilotAttachmentPoint);
 	HeadZoneVisualizer->SetSphereRadius(10.f);
+	HeadZoneVisualizer->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	HeadZoneVisualizer->SetCollisionProfileName(FName("NoCollision"));
+
+	HealthDisplayContainer = CreateDefaultSubobject<UChildActorComponent>(TEXT("HealthDisplay"));
+	HealthDisplayContainer->SetupAttachment(RootComponent);
+	
+	MissionDisplayContainer = CreateDefaultSubobject<UChildActorComponent>(TEXT("MissionDisplay"));
+	MissionDisplayContainer->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void AMRMechCockpitPilot::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetupHealthDisplay();
 }
 
 USceneComponent* AMRMechCockpitPilot::GetPilotAttachmentPoint() const
@@ -33,4 +43,13 @@ USceneComponent* AMRMechCockpitPilot::GetPilotAttachmentPoint() const
 USphereComponent* AMRMechCockpitPilot::GetHeadZoneVisualizer() const
 {
 	return HeadZoneVisualizer;
+}
+
+void AMRMechCockpitPilot::SetupHealthDisplay() const
+{
+	AMRMechHealthDisplay* HealthDisplay = Cast<AMRMechHealthDisplay>(HealthDisplayContainer->GetChildActor());
+	if (IsValid(HealthDisplay) && IsValid(OwnerMech))
+	{
+		HealthDisplay->SetOwnerMech(OwnerMech);
+	}
 }

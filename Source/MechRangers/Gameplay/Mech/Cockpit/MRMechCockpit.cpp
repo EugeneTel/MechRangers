@@ -21,5 +21,7 @@ AMRMechCockpit::AMRMechCockpit()
 void AMRMechCockpit::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Cache Mech
+	OwnerMech = Cast<AMRMech>(GetOwner());
 }
