@@ -13,7 +13,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "MechRangers/Gameplay/Components/MRSimpleAimComponent.h"
-#include "MechRangers/Gameplay/Weapons/MRWeaponTypes.h"
+#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponTypes.h"
 
 // Sets default values
 AMREnemy::AMREnemy()

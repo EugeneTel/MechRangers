@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MechRangers/Gameplay/Weapons/MRWeapon.h"
+#include "MechRangers/Public/CombatSystem/Weapons/MRWeapon.h"
 #include "MRWeaponProjectile.generated.h"
 
 class UProjectileMovementComponent;

@@ -1,9 +1,8 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRWeaponProjectile.h"
-
+#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponProjectile.h"
 #include "Kismet/GameplayStatics.h"
-#include "MechRangers/Gameplay/Weapons/Projectiles/MRProjectile.h"
+#include "MechRangers/Public/CombatSystem/Projectiles/MRProjectile.h"
 
 void AMRWeaponProjectile::ApplyWeaponConfig(FProjectileWeaponData& Data)
 {

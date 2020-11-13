@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Engine/DataAsset.h"
-#include "MechRangers/Gameplay/Weapons/MRWeaponTypes.h"
+#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponTypes.h"
 #include "MRMechHardpointDataAsset.generated.h"
 
 /**

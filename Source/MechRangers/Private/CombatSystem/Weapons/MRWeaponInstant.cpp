@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRWeaponInstant.h"
+#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponInstant.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "MechRangers/Effects/MRWeaponImpactEffect.h"
