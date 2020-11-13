@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MechRangers/Gameplay/Components/MRSimpleAimComponent.h"
+#include "CombatSystem/MRSimpleAimComponent.h"
 #include "../MRMechTypes.h"
 #include "MRMechAimComponent.generated.h"
 

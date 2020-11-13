@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRLivingActorComponent.h"
-#include "MRHealthComponent.h"
+#include "LivingSystem/MRLivingActorComponent.h"
+#include "LivingSystem/MRHealthComponent.h"
 
 #include "Log.h"
 

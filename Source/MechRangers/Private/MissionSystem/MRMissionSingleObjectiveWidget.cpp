@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 
-#include "MRMissionSingleObjectiveWidget.h"
+#include "MissionSystem/MRMissionSingleObjectiveWidget.h"
 
 void UMRMissionSingleObjectiveWidget::InitObjective(FMissionObjective& InObjective)
 {

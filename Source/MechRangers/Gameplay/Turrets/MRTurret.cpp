@@ -5,8 +5,8 @@
 #include "MRTurretAIController.h"
 #include "Components/SphereComponent.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
-#include "MechRangers/Gameplay/Components/MRSimpleLivingActorComponent.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeapon.h"
+#include "LivingSystem/MRSimpleLivingActorComponent.h"
+#include "CombatSystem/Weapons/MRWeapon.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 

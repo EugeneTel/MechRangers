@@ -3,7 +3,7 @@
 #include "MRMechLivingComponent.h"
 #include "Log.h"
 #include "DrawDebugHelpers.h"
-#include "MechRangers/Gameplay/Components/MRHealthComponent.h"
+#include "LivingSystem/MRHealthComponent.h"
 #include "MechRangers/Gameplay/Mech/MRMech.h"
 
 // Sets default values for this component's properties

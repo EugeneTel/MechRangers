@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Components/VerticalBox.h"
-#include "MechRangers/Gameplay/MissionSystem/MRMissionTypes.h"
+#include "MissionSystem/MRMissionTypes.h"
 #include "MechRangers/Gameplay/Widgets/MRDisplayWidget.h"
 #include "MRMissionDisplayWidget.generated.h"
 

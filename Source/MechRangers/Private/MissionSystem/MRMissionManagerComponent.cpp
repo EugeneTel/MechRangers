@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRMissionManagerComponent.h"
+#include "MissionSystem/MRMissionManagerComponent.h"
 #include "Log.h"
 #include "MechRangers/Modes/MRGameMode.h"
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "MechRangers/Gameplay/Components/MRSimpleAimComponent.h"
+#include "CombatSystem/MRSimpleAimComponent.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
 
 #include "MRTurret.generated.h"

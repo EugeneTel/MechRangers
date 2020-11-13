@@ -2,7 +2,7 @@
 
 #include "MRDestructiblePieceComponent.h"
 #include "Log.h"
-#include "MRHealthComponent.h"
+#include "LivingSystem/MRHealthComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties

@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRSimpleAimComponent.h"
+#include "CombatSystem/MRSimpleAimComponent.h"
 #include "Log.h"
 #include "DrawDebugHelpers.h"
 #include "MechRangers/MechRangers.h"

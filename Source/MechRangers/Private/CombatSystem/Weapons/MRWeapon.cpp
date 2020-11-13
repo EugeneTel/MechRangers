@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeapon.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponTypes.h"
+#include "CombatSystem/Weapons/MRWeapon.h"
+#include "CombatSystem/Weapons/MRWeaponTypes.h"
 #include "DrawDebugHelpers.h"
 #include "Log.h"
 #include "Kismet/GameplayStatics.h"
@@ -9,7 +9,7 @@
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
-#include "MechRangers/Gameplay/Components/MRSimpleAimComponent.h"
+#include "CombatSystem/MRSimpleAimComponent.h"
 
 // Sets default values
 AMRWeapon::AMRWeapon()

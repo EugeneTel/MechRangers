@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 
-#include "MRAggroComponent.h"
+#include "CombatSystem/MRAggroComponent.h"
 
 // Sets default values for this component's properties
 UMRAggroComponent::UMRAggroComponent()

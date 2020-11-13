@@ -4,7 +4,7 @@
 #include "MRWeaponSystemComponent.h"
 #include "Log.h"
 #include "MRMechAimComponent.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeapon.h"
+#include "CombatSystem/Weapons/MRWeapon.h"
 #include "../MRMech.h"
 #include "../MechDataAssets/MRMechLoadoutDataAsset.h"
 

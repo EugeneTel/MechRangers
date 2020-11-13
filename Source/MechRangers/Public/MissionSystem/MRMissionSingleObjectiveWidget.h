@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "MechRangers/Gameplay/MissionSystem/MRMissionTypes.h"
+#include "MissionSystem/MRMissionTypes.h"
 
 #include "MRMissionSingleObjectiveWidget.generated.h"
 

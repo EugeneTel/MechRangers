@@ -1,8 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-
-#include "MRMissionTargetComponent.h"
-
+#include "MissionSystem/MRMissionTargetComponent.h"
 #include "MechRangers/Modes/MRGameMode.h"
 
 // Sets default values for this component's properties

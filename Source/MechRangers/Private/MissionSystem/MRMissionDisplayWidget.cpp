@@ -1,10 +1,10 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRMissionDisplayWidget.h"
+#include "MissionSystem/MRMissionDisplayWidget.h"
 #include "Log.h"
 #include "MechRangers/Modes/MRGameMode.h"
-#include "MRMissionSingleObjectiveWidget.h"
-#include "MechRangers/Gameplay/MissionSystem/MRMissionManagerComponent.h"
+#include "MissionSystem/MRMissionSingleObjectiveWidget.h"
+#include "MissionSystem/MRMissionManagerComponent.h"
 
 void UMRMissionDisplayWidget::NativeConstruct()
 {

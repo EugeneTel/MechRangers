@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponDataAsset.h"
+#include "CombatSystem/Weapons/MRWeaponDataAsset.h"
 #include "MRTraceWeaponDataAsset.generated.h"
 
 /**

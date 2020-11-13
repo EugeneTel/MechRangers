@@ -3,7 +3,7 @@
 #include "MRDestructibleObject.h"
 #include "Log.h"
 #include "MechRangers/Gameplay/Components/MRDestructiblePieceComponent.h"
-#include "MechRangers/Gameplay/Components/MRSimpleLivingActorComponent.h"
+#include "LivingSystem/MRSimpleLivingActorComponent.h"
 
 // Sets default values
 AMRDestructibleObject::AMRDestructibleObject()

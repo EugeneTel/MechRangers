@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeapon.h"
+#include "CombatSystem/Weapons/MRWeapon.h"
 #include "MRWeaponInstant.generated.h"
 
 class AMRWeaponImpactEffect;

@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 
-#include "MRMissionComponent.h"
+#include "MissionSystem/MRMissionComponent.h"
 
 // Sets default values for this component's properties
 UMRMissionComponent::UMRMissionComponent()

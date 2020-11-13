@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponTypes.h"
+#include "CombatSystem/Weapons/MRWeaponTypes.h"
 #include "MechRangers/Gameplay/Mech/MRMechTypes.h"
 #include "MRWeaponSystemComponent.generated.h"
 

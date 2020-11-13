@@ -6,7 +6,7 @@
 #include "MREnemyAIController.h"
 #include "GameFramework/Character.h"
 #include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeapon.h"
+#include "CombatSystem/Weapons/MRWeapon.h"
 
 
 #include "MREnemy.generated.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "MechRangers/Public/CombatSystem/Weapons/MRWeaponTypes.h"
+#include "CombatSystem/Weapons/MRWeaponTypes.h"
 #include "MRMechLoadoutDataAsset.generated.h"
 
 class UMRMechModelDataAsset;

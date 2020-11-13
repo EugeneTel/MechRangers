@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "MechRangers/Gameplay/Managers/MRUnitManagerComponent.h"
-#include "MechRangers/Gameplay/MissionSystem/MRMissionManagerComponent.h"
+#include "MissionSystem/MRMissionManagerComponent.h"
 
 #include "MRGameMode.generated.h"
 
