@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MREnemyAIController.h"
 #include "GameFramework/Character.h"
-#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "LivingSystem/MRDamageTakerInterface.h"
 #include "CombatSystem/Weapons/MRWeapon.h"
 
 

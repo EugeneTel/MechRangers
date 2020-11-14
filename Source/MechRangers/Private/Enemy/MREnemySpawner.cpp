@@ -1,14 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright PlatoSpace.com All Rights Reserved.
 
-
-#include "EnemySpawner.h"
+#include "Enemy/MREnemySpawner.h"
 #include "NavigationSystem.h"
-#include "EnemyBase.h"
+#include "Enemy/MREnemy.h"
 #include "Components/BillboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
-AEnemySpawner::AEnemySpawner()
+AMREnemySpawner::AMREnemySpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,7 +26,7 @@ AEnemySpawner::AEnemySpawner()
 }
 
 // Called when the game starts or when spawned
-void AEnemySpawner::BeginPlay()
+void AMREnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -39,12 +38,12 @@ void AEnemySpawner::BeginPlay()
 }
 
 // Called every frame
-void AEnemySpawner::Tick(float DeltaTime)
+void AMREnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AEnemySpawner::SpawnEnemies()
+void AMREnemySpawner::SpawnEnemies()
 {
 	ensure(EnemyClass);
 
@@ -74,13 +73,13 @@ void AEnemySpawner::SpawnEnemies()
 	const float NextSpawnTime = FMath::RandRange(SpawnIntervalRange.X, SpawnIntervalRange.Y);
 	if (NextSpawnTime)
 	{
-		GetWorldTimerManager().SetTimer(TimerHandle_NextSpawn, this, &AEnemySpawner::SpawnEnemies, NextSpawnTime, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_NextSpawn, this, &AMREnemySpawner::SpawnEnemies, NextSpawnTime, false);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawn Enemies Finished. Spawned number: %i"), SpawnNumber);
+	UE_LOG(LogTemp, Warning, TEXT("Spawn Enemies Finished. Total number: %i"), SpawnedEnemies);
 }
 
-bool AEnemySpawner::GetRandomPoint(FVector& OutResult)
+bool AMREnemySpawner::GetRandomPoint(FVector& OutResult)
 {
 	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
 	if(!NavSys)
@@ -95,7 +94,7 @@ bool AEnemySpawner::GetRandomPoint(FVector& OutResult)
 	return bSuccess;
 }
 
-bool AEnemySpawner::SpawnEnemy(FVector& Location)
+bool AMREnemySpawner::SpawnEnemy(FVector& Location)
 {
 	if (!EnemyClass)
 		return false;
@@ -103,12 +102,13 @@ bool AEnemySpawner::SpawnEnemy(FVector& Location)
 	const FVector SpawnScale(FMath::RandRange(SpawnScaleRange.X, SpawnScaleRange.Y));
 	const FTransform SpawnTransform(FRotator::ZeroRotator, Location, SpawnScale);
 
-	AEnemyBase* NewEnemy = Cast<AEnemyBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, EnemyClass, SpawnTransform));
+	AMREnemy* NewEnemy = Cast<AMREnemy>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, EnemyClass, SpawnTransform));
 	if (NewEnemy)
 	{
 		NewEnemy->SetInstigator(GetInstigator());
 		NewEnemy->SetOwner(this);
-		NewEnemy->SetMoveToActor(MoveToActor);
+		NewEnemy->SetMoveToActor(EnemyMainTarget);
+		NewEnemy->SetMainTarget(EnemyMainTarget);
 
 		UGameplayStatics::FinishSpawningActor(NewEnemy, SpawnTransform);
 	}
@@ -120,26 +120,26 @@ bool AEnemySpawner::SpawnEnemy(FVector& Location)
 	return true;
 }
 
-void AEnemySpawner::OnConstruction(const FTransform& Transform)
+void AMREnemySpawner::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
 	VisualComp->SetSphereRadius(Radius);
 }
 
-void AEnemySpawner::Activate()
+void AMREnemySpawner::Activate()
 {
 	bSpawnerActive = true;
 	SpawnEnemies();
 }
 
-void AEnemySpawner::Deactivate()
+void AMREnemySpawner::Deactivate()
 {
 	bSpawnerActive = false;
 	GetWorldTimerManager().ClearTimer(TimerHandle_NextSpawn);
 }
 
-void AEnemySpawner::Reset()
+void AMREnemySpawner::Reset()
 {
 	SpawnedEnemies = 0;
 }

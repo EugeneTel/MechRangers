@@ -4,7 +4,7 @@
 #include "Log.h"
 #include "DrawDebugHelpers.h"
 #include "MechRangers/MechRangers.h"
-#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "LivingSystem/MRDamageTakerInterface.h"
 
 UMRSimpleAimComponent::UMRSimpleAimComponent()
 {

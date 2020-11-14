@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MechRangers/MechRangersTypes.h"
-#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "LivingSystem/MRDamageTakerInterface.h"
 
 #include "MRDestructibleObject.generated.h"
 

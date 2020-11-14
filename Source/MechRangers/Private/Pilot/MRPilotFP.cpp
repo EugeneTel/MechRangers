@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRPilotFP.h"
-#include "PilotComponents/MRMechControlComponent.h"
+#include "Pilot/MRPilotFP.h"
+#include "Pilot/MRMechControlComponent.h"
 #include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpit.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"

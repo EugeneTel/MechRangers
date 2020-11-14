@@ -4,7 +4,7 @@
 #include "Log.h"
 #include "MRTurretAIController.h"
 #include "Components/SphereComponent.h"
-#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "LivingSystem/MRDamageTakerInterface.h"
 #include "LivingSystem/MRSimpleLivingActorComponent.h"
 #include "CombatSystem/Weapons/MRWeapon.h"
 #include "Components/CapsuleComponent.h"

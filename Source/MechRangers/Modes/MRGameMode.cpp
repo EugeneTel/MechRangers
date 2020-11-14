@@ -5,7 +5,7 @@
 #include "MechRangers/Gameplay/Managers/MRUnitManagerComponent.h"
 #include "MechRangers/Gameplay/Mech/MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "Log.h"
-#include "MechRangers/Gameplay/Characters/Pilot/MRPilotInterface.h"
+#include "Pilot/MRPilotInterface.h"
 
 AMRGameMode::AMRGameMode()
 {

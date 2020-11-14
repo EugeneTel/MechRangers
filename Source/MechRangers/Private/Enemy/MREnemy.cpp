@@ -1,9 +1,9 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MREnemy.h"
+#include "Enemy/MREnemy.h"
 #include "Log.h"
 #include "DrawDebugHelpers.h"
-#include "MREnemyAIController.h"
+#include "Enemy/MREnemyAIController.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
 #include "TimerManager.h"

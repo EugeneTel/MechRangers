@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MRPilotVR.h"
+#include "Pilot/MRPilotVR.h"
 #include "Log.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/SphereComponent.h"
 #include "MechRangers/MechRangers.h"
 #include "MechRangers/Modes/MRGameMode.h"
-#include "MechRangers/Gameplay/Characters/Animations/HandAnimInstance.h"
+#include "Pilot/MRSingleHandAnimInstance.h"
 #include "MechRangers/Gameplay/Mech/MRMech.h"
 #include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpit.h"
 #include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpitPilot.h"
-#include "PilotComponents/MRMechControlComponent.h"
+#include "Pilot/MRMechControlComponent.h"
 
 AMRPilotVR::AMRPilotVR()
 {
@@ -375,12 +375,12 @@ void AMRPilotVR::CheckAndHandleGripAnimations()
 {
     // Left Hand
     CheckAndHandleGripControllerAnimations(GrabSphereLeft, LeftMotionController, bGripPressedLeft, GripStateLeft);
-    UHandAnimInstance* LeftAnimInst = Cast<UHandAnimInstance>(HandMeshLeft->GetAnimInstance());
+    UMRSingleHandAnimInstance* LeftAnimInst = Cast<UMRSingleHandAnimInstance>(HandMeshLeft->GetAnimInstance());
     LeftAnimInst->GripState = GripStateLeft;
 	
     // Right Hand
     CheckAndHandleGripControllerAnimations(GrabSphereRight, RightMotionController, bGripPressedRight, GripStateRight);
-    UHandAnimInstance* RightAnimInst = Cast<UHandAnimInstance>(HandMeshRight->GetAnimInstance());
+    UMRSingleHandAnimInstance* RightAnimInst = Cast<UMRSingleHandAnimInstance>(HandMeshRight->GetAnimInstance());
     RightAnimInst->GripState = GripStateRight;
 }
 

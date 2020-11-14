@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRMechControlComponent.h"
+#include "Pilot/MRMechControlComponent.h"
 #include "Log.h"
 
 // Sets default values for this component's properties

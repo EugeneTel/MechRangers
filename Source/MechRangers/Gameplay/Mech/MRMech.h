@@ -10,7 +10,7 @@
 #include "MechDataAssets/MRMechDestructionHierarchyAsset.h"
 #include "MechDataAssets/MRMechLoadoutDataAsset.h"
 #include "MechDataAssets/MRMechModelDataAsset.h"
-#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "LivingSystem/MRDamageTakerInterface.h"
 
 #include "MRMech.generated.h"
 

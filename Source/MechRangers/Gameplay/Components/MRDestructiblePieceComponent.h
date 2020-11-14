@@ -6,7 +6,7 @@
 
 #include "Components/SceneComponent.h"
 #include "MechRangers/MechRangersTypes.h"
-#include "MechRangers/Gameplay/Interfaces/MRDamageTakerInterface.h"
+#include "LivingSystem/MRDamageTakerInterface.h"
 #include "Sound/SoundCue.h"
 #include "UObject/ObjectMacros.h"
 

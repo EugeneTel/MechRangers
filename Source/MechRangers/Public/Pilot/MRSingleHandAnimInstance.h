@@ -6,13 +6,13 @@
 #include "Animation/AnimInstance.h"
 #include "MechRangers/MechRangersTypes.h"
 
-#include "HandAnimInstance.generated.h"
+#include "MRSingleHandAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class MECHRANGERS_API UHandAnimInstance : public UAnimInstance
+class MECHRANGERS_API UMRSingleHandAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
