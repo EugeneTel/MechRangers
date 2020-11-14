@@ -1,8 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 #include "UI/MRDisplayWidgetComponent.h"
-
-#include "Mech/Living/MRMechPaperDollWidget.h"
+#include "Mech/UI/MRMechPaperDollWidget.h"
 
 void UMRDisplayWidgetComponent::SetOwnerMech(AMRMech* InMech)
 {

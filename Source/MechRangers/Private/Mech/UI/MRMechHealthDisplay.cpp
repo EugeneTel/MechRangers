@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "Mech/Living/MRMechHealthDisplay.h"
+#include "Mech/UI/MRMechHealthDisplay.h"
 #include "Components/WidgetComponent.h"
 
 // Sets default values

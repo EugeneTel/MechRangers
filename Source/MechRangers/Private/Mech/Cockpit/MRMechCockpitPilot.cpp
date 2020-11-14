@@ -3,7 +3,7 @@
 
 #include "Mech/Cockpit/MRMechCockpitPilot.h"
 #include "Components/SphereComponent.h"
-#include "Mech/Living/MRMechHealthDisplay.h"
+#include "Mech/UI/MRMechHealthDisplay.h"
 
 // Sets default values
 AMRMechCockpitPilot::AMRMechCockpitPilot()

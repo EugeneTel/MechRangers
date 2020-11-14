@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 
-#include "Mech/Mission/MRMechMissionDisplay.h"
+#include "Mech/UI/MRMechMissionDisplay.h"
 #include "Components/WidgetComponent.h"
 #include "UI/MRDisplayWidgetComponent.h"
 

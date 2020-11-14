@@ -3,7 +3,7 @@
 #include "Mech/Combat/MRMechAimComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Mech/MRMech.h"
-#include "Mech/Combat/MRCrosshair.h"
+#include "Mech/UI/MRCrosshair.h"
 #include "Mech/Cockpit/MRMechCockpit.h"
 
 UMRMechAimComponent::UMRMechAimComponent()

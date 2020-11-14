@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "Mech/Combat/MRCrosshair.h"
+#include "Mech/UI/MRCrosshair.h"
 
 // Sets default values
 AMRCrosshair::AMRCrosshair()
