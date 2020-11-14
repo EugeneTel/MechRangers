@@ -1,11 +1,11 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "CombatSystem/Weapons/MRWeaponInstant.h"
+#include "CombatSystem/Weapon/MRWeapon_Instant.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "CombatSystem/Effects/MRWeaponImpactEffect.h"
 
-void AMRWeaponInstant::FireWeapon()
+void AMRWeapon_Instant::FireWeapon()
 {
     const int32 RandomSeed = FMath::Rand();
     const FRandomStream WeaponRandomStream(RandomSeed);
@@ -24,14 +24,14 @@ void AMRWeaponInstant::FireWeapon()
     CurrentFiringSpread = FMath::Min(InstantConfig.FiringSpreadMax, CurrentFiringSpread + InstantConfig.FiringSpreadIncrement);
 }
 
-void AMRWeaponInstant::OnBurstFinished()
+void AMRWeapon_Instant::OnBurstFinished()
 {
     Super::OnBurstFinished();
 
     CurrentFiringSpread = 0.0f;
 }
 
-float AMRWeaponInstant::GetCurrentSpread() const
+float AMRWeapon_Instant::GetCurrentSpread() const
 {
     float FinalSpread = InstantConfig.WeaponSpread + CurrentFiringSpread;
 
@@ -41,7 +41,7 @@ float AMRWeaponInstant::GetCurrentSpread() const
     return FinalSpread;
 }
 
-void AMRWeaponInstant::ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir,
+void AMRWeapon_Instant::ProcessInstantHit(const FHitResult& Impact, const FVector& Origin, const FVector& ShootDir,
     int32 RandomSeed, float ReticleSpread)
 {
     // @TODO: Implement Server Notification
@@ -50,7 +50,7 @@ void AMRWeaponInstant::ProcessInstantHit(const FHitResult& Impact, const FVector
     ProcessInstantHit_Confirmed(Impact, Origin, ShootDir, RandomSeed, ReticleSpread);
 }
 
-void AMRWeaponInstant::ProcessInstantHit_Confirmed(const FHitResult& Impact, const FVector& Origin,
+void AMRWeapon_Instant::ProcessInstantHit_Confirmed(const FHitResult& Impact, const FVector& Origin,
     const FVector& ShootDir, int32 RandomSeed, float ReticleSpread)
 {
     // handle damage
@@ -72,7 +72,7 @@ void AMRWeaponInstant::ProcessInstantHit_Confirmed(const FHitResult& Impact, con
     }
 }
 
-bool AMRWeaponInstant::ShouldDealDamage(AActor* TestActor) const
+bool AMRWeapon_Instant::ShouldDealDamage(AActor* TestActor) const
 {
     // if we're an actor on the server, or the actor's role is authoritative, we should register damage
     if (TestActor)
@@ -88,7 +88,7 @@ bool AMRWeaponInstant::ShouldDealDamage(AActor* TestActor) const
     return false;
 }
 
-void AMRWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)
+void AMRWeapon_Instant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)
 {
     FPointDamageEvent PointDmg;
     PointDmg.DamageTypeClass = InstantConfig.DamageType;
@@ -111,7 +111,7 @@ void AMRWeaponInstant::DealDamage(const FHitResult& Impact, const FVector& Shoot
 // Effects
 //----------------------------------------------------------------------------------------------------------------------
 
-void AMRWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
+void AMRWeapon_Instant::SpawnImpactEffects(const FHitResult& Impact)
 {
     if (ImpactTemplate && Impact.bBlockingHit)
     {
@@ -136,7 +136,7 @@ void AMRWeaponInstant::SpawnImpactEffects(const FHitResult& Impact)
     }
 }
 
-void AMRWeaponInstant::SpawnTrailEffect(const FVector& EndPoint) const
+void AMRWeapon_Instant::SpawnTrailEffect(const FVector& EndPoint) const
 {
     if (!TrailFX)
         return;

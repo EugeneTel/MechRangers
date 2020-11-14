@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CombatSystem/Effects/MRExplosionEffect.h"
-#include "CombatSystem/Weapons/MRWeaponProjectile.h"
+#include "CombatSystem/Weapon/MRWeapon_Projectile.h"
 
 #include "MRProjectile.generated.h"
 

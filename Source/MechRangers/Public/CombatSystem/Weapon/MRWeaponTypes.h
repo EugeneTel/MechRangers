@@ -3,7 +3,7 @@
 #pragma once
 
 #include "UObject/ObjectMacros.h"
-#include "CombatSystem/Weapons/MRWeaponDataAsset.h"
+#include "CombatSystem/Weapon/MRWeaponDataAsset.h"
 #include "MRWeaponTypes.generated.h"
 
 class UMRSlotTypeDataAsset;

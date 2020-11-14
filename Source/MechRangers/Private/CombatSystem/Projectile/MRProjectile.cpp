@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "CombatSystem/Projectiles/MRProjectile.h"
+#include "CombatSystem/Projectile/MRProjectile.h"
 #include "MechRangers.h"
 #include "DrawDebugHelpers.h"
 #include "Components/SphereComponent.h"
@@ -51,7 +51,7 @@ void AMRProjectile::PostInitializeComponents()
     MovementComp->OnProjectileStop.AddDynamic(this, &AMRProjectile::OnImpact);
     CollisionComp->MoveIgnoreActors.Add(GetInstigator());
 
-    AMRWeaponProjectile* OwnerWeapon = Cast<AMRWeaponProjectile>(GetOwner());
+    AMRWeapon_Projectile* OwnerWeapon = Cast<AMRWeapon_Projectile>(GetOwner());
     if (OwnerWeapon)
     {
         OwnerWeapon->ApplyWeaponConfig(WeaponConfig);

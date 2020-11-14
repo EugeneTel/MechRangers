@@ -6,7 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "LivingSystem/MRDamageTakerInterface.h"
 #include "LivingSystem/MRSimpleLivingActorComponent.h"
-#include "CombatSystem/Weapons/MRWeapon.h"
+#include "CombatSystem/Weapon/MRWeapon.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 

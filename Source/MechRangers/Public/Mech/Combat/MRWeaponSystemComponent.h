@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CombatSystem/Weapons/MRWeaponTypes.h"
+#include "CombatSystem/Weapon/MRWeaponTypes.h"
 #include "Mech/MRMechTypes.h"
 #include "MRWeaponSystemComponent.generated.h"
 

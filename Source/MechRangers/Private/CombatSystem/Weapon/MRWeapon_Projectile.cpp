@@ -1,15 +1,15 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "CombatSystem/Weapons/MRWeaponProjectile.h"
+#include "CombatSystem/Weapon/MRWeapon_Projectile.h"
 #include "Kismet/GameplayStatics.h"
-#include "CombatSystem/Projectiles/MRProjectile.h"
+#include "CombatSystem/Projectile/MRProjectile.h"
 
-void AMRWeaponProjectile::ApplyWeaponConfig(FProjectileWeaponData& Data)
+void AMRWeapon_Projectile::ApplyWeaponConfig(FProjectileWeaponData& Data)
 {
     Data = ProjectileConfig;
 }
 
-void AMRWeaponProjectile::FireWeapon()
+void AMRWeapon_Projectile::FireWeapon()
 {
     FVector ShootDir = GetAdjustedAim();
     FVector Origin = GetMuzzleLocation();
@@ -62,7 +62,7 @@ void AMRWeaponProjectile::FireWeapon()
     ServerFireProjectile(Origin, ShootDir);
 }
 
-void AMRWeaponProjectile::ServerFireProjectile_Implementation(const FVector Origin, FVector_NetQuantizeNormal ShootDir)
+void AMRWeapon_Projectile::ServerFireProjectile_Implementation(const FVector Origin, FVector_NetQuantizeNormal ShootDir)
 {
     const FTransform SpawnTransform(ShootDir.Rotation(), Origin);
     AMRProjectile* Projectile = Cast<AMRProjectile>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ProjectileConfig.ProjectileClass, SpawnTransform));
@@ -76,7 +76,7 @@ void AMRWeaponProjectile::ServerFireProjectile_Implementation(const FVector Orig
     }
 }
 
-bool AMRWeaponProjectile::ServerFireProjectile_Validate(FVector Origin, FVector_NetQuantizeNormal ShootDir)
+bool AMRWeapon_Projectile::ServerFireProjectile_Validate(FVector Origin, FVector_NetQuantizeNormal ShootDir)
 {
     return true;
 }

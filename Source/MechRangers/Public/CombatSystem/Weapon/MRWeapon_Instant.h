@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CombatSystem/Weapons/MRWeapon.h"
-#include "MRWeaponInstant.generated.h"
+#include "CombatSystem/Weapon/MRWeapon.h"
+#include "MRWeapon_Instant.generated.h"
 
 class AMRWeaponImpactEffect;
 
@@ -71,7 +71,7 @@ struct FInstantWeaponData
  * 
  */
 UCLASS()
-class MECHRANGERS_API AMRWeaponInstant : public AMRWeapon
+class MECHRANGERS_API AMRWeapon_Instant : public AMRWeapon
 {
 	GENERATED_BODY()
 

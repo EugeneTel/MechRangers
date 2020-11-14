@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CombatSystem/Weapons/MRWeapon.h"
-#include "MRWeaponProjectile.generated.h"
+#include "CombatSystem/Weapon/MRWeapon.h"
+#include "MRWeapon_Projectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
@@ -47,7 +47,7 @@ struct FProjectileWeaponData
 };
 
 UCLASS(Abstract, Blueprintable)
-class MECHRANGERS_API AMRWeaponProjectile : public AMRWeapon
+class MECHRANGERS_API AMRWeapon_Projectile : public AMRWeapon
 {
 	GENERATED_BODY()
 

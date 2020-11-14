@@ -6,7 +6,7 @@
 #include "MREnemyAIController.h"
 #include "GameFramework/Character.h"
 #include "LivingSystem/MRDamageTakerInterface.h"
-#include "CombatSystem/Weapons/MRWeapon.h"
+#include "CombatSystem/Weapon/MRWeapon.h"
 
 
 #include "MREnemy.generated.h"

@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "CombatSystem/Weapons/MRWeapon.h"
-#include "CombatSystem/Weapons/MRWeaponTypes.h"
+#include "CombatSystem/Weapon/MRWeapon.h"
+#include "CombatSystem/Weapon/MRWeaponTypes.h"
 #include "DrawDebugHelpers.h"
 #include "Log.h"
 #include "Kismet/GameplayStatics.h"
