@@ -1,4 +1,4 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRDisplayWidget.h"
+#include "UI/MRDisplayWidget.h"
 

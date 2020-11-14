@@ -6,7 +6,7 @@
 
 #include "Components/VerticalBox.h"
 #include "MissionSystem/MRMissionTypes.h"
-#include "MechRangers/Gameplay/Widgets/MRDisplayWidget.h"
+#include "UI/MRDisplayWidget.h"
 #include "MRMissionDisplayWidget.generated.h"
 
 class UMRMissionManagerComponent;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MechRangers/MechRangersTypes.h"
+#include "MechRangersTypes.h"
 #include "MRWeaponImpactEffect.generated.h"
 
 class USoundCue;

@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRExplosionEffect.h"
+#include "CombatSystem/Effects/MRExplosionEffect.h"
 #include "Sound/SoundCue.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/PointLightComponent.h"

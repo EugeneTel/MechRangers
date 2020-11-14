@@ -3,7 +3,7 @@
 #include "CombatSystem/Weapons/MRWeaponInstant.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "MechRangers/Effects/MRWeaponImpactEffect.h"
+#include "CombatSystem/Effects/MRWeaponImpactEffect.h"
 
 void AMRWeaponInstant::FireWeapon()
 {

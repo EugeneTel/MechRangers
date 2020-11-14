@@ -1,8 +1,8 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRDestructibleObject.h"
+#include "Gameplay/MRDestructibleObject.h"
 #include "Log.h"
-#include "MechRangers/Gameplay/Components/MRDestructiblePieceComponent.h"
+#include "Gameplay/MRDestructiblePieceComponent.h"
 #include "LivingSystem/MRSimpleLivingActorComponent.h"
 
 // Sets default values

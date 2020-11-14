@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "MechRangers/MechRangersTypes.h"
+#include "MechRangersTypes.h"
 #include "UObject/Interface.h"
 #include "MRDamageTakerInterface.generated.h"
 

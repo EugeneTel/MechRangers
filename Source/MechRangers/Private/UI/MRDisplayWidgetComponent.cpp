@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRDisplayWidgetComponent.h"
+#include "UI/MRDisplayWidgetComponent.h"
 
 #include "Mech/Living/MRMechPaperDollWidget.h"
 

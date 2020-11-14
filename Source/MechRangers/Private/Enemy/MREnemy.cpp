@@ -9,7 +9,7 @@
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/SphereComponent.h"
-#include "MechRangers/MechRangers.h"
+#include "MechRangers.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "CombatSystem/MRSimpleAimComponent.h"

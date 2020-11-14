@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "MechRangers/Gameplay/Turrets/MRTurret.h"
+#include "Turret/MRTurret.h"
 #include "MRTurret_Mechanic.generated.h"
 
 class UMRDestructiblePieceComponent;

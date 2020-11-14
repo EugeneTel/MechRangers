@@ -5,7 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "Log.h"
 #include "Kismet/GameplayStatics.h"
-#include "MechRangers/MechRangers.h"
+#include "MechRangers.h"
 #include "Sound/SoundCue.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"

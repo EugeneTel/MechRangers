@@ -1,7 +1,7 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 #include "CombatSystem/Projectiles/MRProjectile.h"
-#include "MechRangers/MechRangers.h"
+#include "MechRangers.h"
 #include "DrawDebugHelpers.h"
 #include "Components/SphereComponent.h"
 #include "Components/AudioComponent.h"

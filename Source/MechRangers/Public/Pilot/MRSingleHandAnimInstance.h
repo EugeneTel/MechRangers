@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "MechRangers/MechRangersTypes.h"
+#include "MechRangersTypes.h"
 
 #include "MRSingleHandAnimInstance.generated.h"
 

@@ -6,7 +6,7 @@
 
 #include "MRPilotInterface.h"
 #include "VRCharacter.h"
-#include "MechRangers/MechRangersTypes.h"
+#include "MechRangersTypes.h"
 
 #include "MRPilotVR.generated.h"
 

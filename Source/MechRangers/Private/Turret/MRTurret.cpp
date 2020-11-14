@@ -1,8 +1,8 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRTurret.h"
+#include "Turret/MRTurret.h"
 #include "Log.h"
-#include "MRTurretAIController.h"
+#include "Turret/MRTurretAIController.h"
 #include "Components/SphereComponent.h"
 #include "LivingSystem/MRDamageTakerInterface.h"
 #include "LivingSystem/MRSimpleLivingActorComponent.h"

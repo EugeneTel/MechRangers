@@ -11,7 +11,7 @@
 #include "Mech/Structure/MRMechCapsuleDataAsset.h"
 #include "Mech/MRMechAnimInstance.h"
 #include "Mech/Cockpit/MRMechCockpit.h"
-#include "MechRangers/Modes/MRGameMode.h"
+#include "Framework/MRGameMode.h"
 #include "Engine/World.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"

@@ -2,7 +2,7 @@
 
 #include "MissionSystem/MRMissionDisplayWidget.h"
 #include "Log.h"
-#include "MechRangers/Modes/MRGameMode.h"
+#include "Framework/MRGameMode.h"
 #include "MissionSystem/MRMissionSingleObjectiveWidget.h"
 #include "MissionSystem/MRMissionManagerComponent.h"
 

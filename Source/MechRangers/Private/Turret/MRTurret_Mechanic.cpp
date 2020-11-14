@@ -1,8 +1,8 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRTurret_Mechanic.h"
+#include "Turret/MRTurret_Mechanic.h"
 #include "Log.h"
-#include "MechRangers/Gameplay/Components/MRDestructiblePieceComponent.h"
+#include "Gameplay/MRDestructiblePieceComponent.h"
 
 AMRTurret_Mechanic::AMRTurret_Mechanic(const class FObjectInitializer& ObjectInitializer)
     : Super(ObjectInitializer)

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Components/SceneComponent.h"
-#include "MechRangers/MechRangersTypes.h"
+#include "MechRangersTypes.h"
 #include "LivingSystem/MRDamageTakerInterface.h"
 #include "Sound/SoundCue.h"
 #include "UObject/ObjectMacros.h"

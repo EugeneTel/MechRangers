@@ -2,7 +2,7 @@
 
 #include "MissionSystem/MRMissionManagerComponent.h"
 #include "Log.h"
-#include "MechRangers/Modes/MRGameMode.h"
+#include "Framework/MRGameMode.h"
 
 void UMRMissionManagerComponent::BeginPlay()
 {

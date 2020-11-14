@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "MechRangers/Gameplay/Widgets/MRDisplayWidget.h"
+#include "UI/MRDisplayWidget.h"
 #include "MRMechPaperDollWidget.generated.h"
 
 class AMRMech;

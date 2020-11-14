@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MechRangers/Gameplay/Components/MRDisplayWidgetComponent.h"
+#include "UI/MRDisplayWidgetComponent.h"
 #include "MRMechHealthDisplay.generated.h"
 
 class UWidgetComponent;

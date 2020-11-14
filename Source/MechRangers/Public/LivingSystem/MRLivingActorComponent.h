@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "Components/ActorComponent.h"
-#include "MechRangers/MechRangersTypes.h"
+#include "MechRangersTypes.h"
 
 #include "MRLivingActorComponent.generated.h"
 

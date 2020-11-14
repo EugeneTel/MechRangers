@@ -3,7 +3,7 @@
 #include "CombatSystem/MRSimpleAimComponent.h"
 #include "Log.h"
 #include "DrawDebugHelpers.h"
-#include "MechRangers/MechRangers.h"
+#include "MechRangers.h"
 #include "LivingSystem/MRDamageTakerInterface.h"
 
 UMRSimpleAimComponent::UMRSimpleAimComponent()

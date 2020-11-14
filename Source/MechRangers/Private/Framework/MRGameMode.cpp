@@ -1,8 +1,8 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
 
-#include "MRGameMode.h"
-#include "MechRangers/Gameplay/Managers/MRUnitManagerComponent.h"
+#include "Framework/MRGameMode.h"
+#include "Framework/MRUnitManagerComponent.h"
 #include "Mech/Structure/MRMechLoadoutDataAsset.h"
 #include "Log.h"
 #include "Pilot/MRPilotInterface.h"

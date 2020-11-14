@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRWeaponImpactEffect.h"
+#include "CombatSystem/Effects/MRWeaponImpactEffect.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"

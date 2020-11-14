@@ -1,6 +1,6 @@
 // Copyright PlatoSpace.com All Rights Reserved.
 
-#include "MRDestructiblePieceComponent.h"
+#include "Gameplay/MRDestructiblePieceComponent.h"
 #include "Log.h"
 #include "LivingSystem/MRHealthComponent.h"
 #include "Kismet/GameplayStatics.h"
