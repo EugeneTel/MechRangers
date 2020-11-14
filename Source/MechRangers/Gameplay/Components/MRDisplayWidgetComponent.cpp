@@ -2,7 +2,7 @@
 
 #include "MRDisplayWidgetComponent.h"
 
-#include "MechRangers/Gameplay/Mech/Widgets/MRMechPaperDollWidget.h"
+#include "Mech/Living/MRMechPaperDollWidget.h"
 
 void UMRDisplayWidgetComponent::SetOwnerMech(AMRMech* InMech)
 {

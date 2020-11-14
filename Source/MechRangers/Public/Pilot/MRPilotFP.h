@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MRPilotInterface.h"
 #include "GameFramework/Character.h"
-#include "MechRangers/Gameplay/Mech/MRMech.h"
+#include "Mech/MRMech.h"
 
 #include "MRPilotFP.generated.h"
 

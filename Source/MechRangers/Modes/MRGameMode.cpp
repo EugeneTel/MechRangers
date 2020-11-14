@@ -3,7 +3,7 @@
 
 #include "MRGameMode.h"
 #include "MechRangers/Gameplay/Managers/MRUnitManagerComponent.h"
-#include "MechRangers/Gameplay/Mech/MechDataAssets/MRMechLoadoutDataAsset.h"
+#include "Mech/Structure/MRMechLoadoutDataAsset.h"
 #include "Log.h"
 #include "Pilot/MRPilotInterface.h"
 

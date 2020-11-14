@@ -2,11 +2,11 @@
 
 #include "Pilot/MRPilotFP.h"
 #include "Pilot/MRMechControlComponent.h"
-#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpit.h"
+#include "Mech/Cockpit/MRMechCockpit.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Log.h"
-#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpitPilot.h"
+#include "Mech/Cockpit/MRMechCockpitPilot.h"
 
 // Sets default values
 AMRPilotFP::AMRPilotFP()

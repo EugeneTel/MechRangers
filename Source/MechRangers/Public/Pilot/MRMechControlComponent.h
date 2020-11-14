@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MechRangers/Gameplay/Mech/MRMech.h"
+#include "Mech/MRMech.h"
 
 #include "MRMechControlComponent.generated.h"
 

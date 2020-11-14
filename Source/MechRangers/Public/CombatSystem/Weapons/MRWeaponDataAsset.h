@@ -6,7 +6,7 @@
 
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "MechRangers/Gameplay/Mech/MRMechTypes.h"
+#include "Mech/MRMechTypes.h"
 #include "MRWeaponDataAsset.generated.h"
 
 class AMRWeapon;

@@ -8,9 +8,9 @@
 #include "MechRangers/MechRangers.h"
 #include "MechRangers/Modes/MRGameMode.h"
 #include "Pilot/MRSingleHandAnimInstance.h"
-#include "MechRangers/Gameplay/Mech/MRMech.h"
-#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpit.h"
-#include "MechRangers/Gameplay/Mech/Cockpit/MRMechCockpitPilot.h"
+#include "Mech/MRMech.h"
+#include "Mech/Cockpit/MRMechCockpit.h"
+#include "Mech/Cockpit/MRMechCockpitPilot.h"
 #include "Pilot/MRMechControlComponent.h"
 
 AMRPilotVR::AMRPilotVR()
