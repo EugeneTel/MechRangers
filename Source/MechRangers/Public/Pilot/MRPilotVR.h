@@ -162,9 +162,11 @@ protected:
     UFUNCTION()
     void GripDropped(UGripMotionControllerComponent* GripController, UObject* DroppedObject);
 
+    /** @deprecated */
     UFUNCTION(BlueprintCallable)
     void CheckAndHandleGripAnimations();
 
+    /** @deprecated */
     // Set Grip Controller Animation property
     UFUNCTION(BlueprintCallable)
     void CheckAndHandleGripControllerAnimations(UPrimitiveComponent* GrabSphere, UGripMotionControllerComponent* CallingController, bool bGripPressed, EGripState& GripState);
